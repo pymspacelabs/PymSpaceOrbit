@@ -33,3 +33,31 @@ public enum CardSlotCategory
     EnvironmentAndSuits = 5,
     DonkiSpaceWeatherCounter = 6
 }
+
+public enum BackgroundMusic
+{
+    MainMenu,
+    Options,
+    InfoCardSets,
+    GameplayBuild,
+    GameplayTurns,
+    DonkiSolarStorm,
+    VictoryReturn,
+    GameOver
+}
+
+public enum SoundEffect
+{
+    UiButtonTap,
+    BioshipCruisingLoop,
+    CardDrawFlip,
+    CardEquipLock,
+    TelemetryNotification,
+    StageTransitionRiser,
+    SolarStormImpact,
+    MarsLunarWind,
+    EvaRegolithFootsteps,
+    IssMetalFootsteps,
+    AirlockHatchOpen,
+    EclssWaterBioreactor
+}

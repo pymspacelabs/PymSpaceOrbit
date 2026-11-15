@@ -4,6 +4,7 @@
 @using PymSpaceOrbit.Shared.Components.Cards
 @using PymSpaceOrbit.Shared.Models.Game
 @inject IGameService GameService
+@inject IAudioService AudioService
 @inject NavigationManager Navigation
 @inject IDialogService DialogService
 
@@ -19,7 +20,7 @@
             <div class="hud-tab-frame hud-back-frame">
                 <MudButton Variant="Variant.Text"
                            Class="info-back-btn"
-                           OnClick="@(() => Navigation.NavigateTo("/"))"
+                           OnClick="NavigateBackToMenu"
                            StartIcon="@Icons.Material.Filled.ArrowBack"
                            Size="Size.Medium">
                     @(IsPortuguese ? "VOLTAR" : "BACK")
@@ -31,7 +32,7 @@
                 <div class="hud-tab-frame @(_activeTab == 0 ? "tab-frame-active" : "tab-frame-inactive")">
                     <MudButton Variant="Variant.Text"
                                Class="@($"info-deck-tab {(_activeTab == 0 ? "active-tab" : "")}")"
-                               OnClick="@(() => SelectTab(0))"
+                               OnClick="@(() => SelectTabAsync(0))"
                                StartIcon="@Icons.Material.Filled.Rocket">
                         @(IsPortuguese ? "1. Ship Build" : "1. Ship Build")
                     </MudButton>
@@ -40,7 +41,7 @@
                 <div class="hud-tab-frame @(_activeTab == 1 ? "tab-frame-active" : "tab-frame-inactive")">
                     <MudButton Variant="Variant.Text"
                                Class="@($"info-deck-tab {(_activeTab == 1 ? "active-tab" : "")}")"
-                               OnClick="@(() => SelectTab(1))"
+                               OnClick="@(() => SelectTabAsync(1))"
                                StartIcon="@Icons.Material.Filled.WaterDrop">
                         @(IsPortuguese ? "2. ECLSS Loop" : "2. ECLSS Loop")
                     </MudButton>
@@ -49,7 +50,7 @@
                 <div class="hud-tab-frame @(_activeTab == 2 ? "tab-frame-active" : "tab-frame-inactive")">
                     <MudButton Variant="Variant.Text"
                                Class="@($"info-deck-tab {(_activeTab == 2 ? "active-tab" : "")}")"
-                               OnClick="@(() => SelectTab(2))"
+                               OnClick="@(() => SelectTabAsync(2))"
                                StartIcon="@Icons.Material.Filled.Public">
                         @(IsPortuguese ? "3. Ambientes" : "3. Environment")
                     </MudButton>
@@ -58,7 +59,7 @@
                 <div class="hud-tab-frame @(_activeTab == 3 ? "tab-frame-active" : "tab-frame-inactive")">
                     <MudButton Variant="Variant.Text"
                                Class="@($"info-deck-tab {(_activeTab == 3 ? "active-tab" : "")}")"
-                               OnClick="@(() => SelectTab(3))"
+                               OnClick="@(() => SelectTabAsync(3))"
                                StartIcon="@Icons.Material.Filled.Architecture">
                         @(IsPortuguese ? "4. Decisões Base" : "4. Architecture")
                     </MudButton>
@@ -67,7 +68,7 @@
                 <div class="hud-tab-frame @(_activeTab == 4 ? "tab-frame-active" : "tab-frame-inactive")">
                     <MudButton Variant="Variant.Text"
                                Class="@($"info-deck-tab {(_activeTab == 4 ? "active-tab" : "")}")"
-                               OnClick="@(() => SelectTab(4))"
+                               OnClick="@(() => SelectTabAsync(4))"
                                StartIcon="@Icons.Material.Filled.WbTwilight">
                         @(IsPortuguese ? "5. Clima DONKI" : "5. Space Weather")
                     </MudButton>
@@ -88,7 +89,7 @@
                                            Size="Size.Small"
                                            Color="Color.Primary"
                                            Disabled="@(_currentPage <= 1)"
-                                           OnClick="@(() => _currentPage--)" />
+                                           OnClick="PreviousPageAsync" />
                             <span class="info-pagination-label">
                                 @(IsPortuguese ? $"Pág. {_currentPage}/{TotalPages}" : $"Page {_currentPage}/{TotalPages}")
                                 (@(_filteredCards.Count) @(IsPortuguese ? "cartas" : "cards"))
@@ -97,7 +98,7 @@
                                            Size="Size.Small"
                                            Color="Color.Primary"
                                            Disabled="@(_currentPage >= TotalPages)"
-                                           OnClick="@(() => _currentPage++)" />
+                                           OnClick="NextPageAsync" />
                         </div>
                     }
                 </div>
@@ -294,7 +295,7 @@
         </div>
     </DialogContent>
     <DialogActions>
-        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => _showGlossaryModal = false)">
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="CloseGeneralGlossaryModal">
             @(IsPortuguese ? "Fechar Glossário" : "Close Glossary")
         </MudButton>
     </DialogActions>
@@ -316,7 +317,7 @@
         </MudText>
     </DialogContent>
     <DialogActions>
-        <MudButton Color="Color.Primary" OnClick="@(() => _showTermModal = false)">
+        <MudButton Color="Color.Primary" OnClick="CloseTermDialog">
             @(IsPortuguese ? "Entendi" : "Got it")
         </MudButton>
     </DialogActions>
@@ -338,7 +339,7 @@
     .hud-info-canvas {
         position: relative;
         width: 100%;
-        max-width: 1440px;
+        max-width: 1680px;
         aspect-ratio: 16 / 9;
         border-radius: 12px;
         overflow: hidden;
@@ -764,6 +765,36 @@
         SelectTab(0);
     }
 
+    private async Task NavigateBackToMenu()
+    {
+        await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
+        Navigation.NavigateTo("/");
+    }
+
+    private async Task SelectTabAsync(int tabIndex)
+    {
+        await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
+        SelectTab(tabIndex);
+    }
+
+    private async Task PreviousPageAsync()
+    {
+        if (_currentPage > 1)
+        {
+            _currentPage--;
+            await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
+        }
+    }
+
+    private async Task NextPageAsync()
+    {
+        if (_currentPage < TotalPages)
+        {
+            _currentPage++;
+            await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
+        }
+    }
+
     private void SelectTab(int tabIndex)
     {
         _activeTab = tabIndex;
@@ -787,19 +818,34 @@
         _selectedCard = _filteredCards.FirstOrDefault();
     }
 
-    private void SelectCard(GameCardModel card)
+    private async Task SelectCard(GameCardModel card)
     {
         _selectedCard = card;
+        await AudioService.PlaySoundEffectAsync(SoundEffect.CardDrawFlip);
     }
 
-    private void OpenTermDialog(TechnicalTermNote term)
+    private async Task OpenTermDialog(TechnicalTermNote term)
     {
         _activeTerm = term;
         _showTermModal = true;
+        await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
     }
 
-    private void OpenGeneralGlossaryModal()
+    private async Task CloseTermDialog()
+    {
+        _showTermModal = false;
+        await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
+    }
+
+    private async Task OpenGeneralGlossaryModal()
     {
         _showGlossaryModal = true;
+        await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
+    }
+
+    private async Task CloseGeneralGlossaryModal()
+    {
+        _showGlossaryModal = false;
+        await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
     }
 }

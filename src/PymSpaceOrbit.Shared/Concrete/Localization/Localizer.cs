@@ -1,7 +1,7 @@
-using  PymGameOrbit.Shared.Abstractions.Localization;
+using  PymSpaceOrbit.Shared.Abstractions.Localization;
 using System.Globalization;
 using Microsoft.Extensions.Localization;
-namespace PymGameOrbit.Shared.Concrete.Localization;
+namespace PymSpaceOrbit.Shared.Concrete.Localization;
 
 public class Localizer<T>(IStringLocalizerFactory factory) : ILocalizer<T> 
 {

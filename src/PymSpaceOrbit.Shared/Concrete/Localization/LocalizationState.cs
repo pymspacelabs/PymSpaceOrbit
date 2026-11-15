@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PymGameOrbit.Shared.Concrete.Localization;
+namespace PymSpaceOrbit.Shared.Concrete.Localization;
 
 
 public sealed class LocalizationState

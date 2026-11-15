@@ -42,3 +42,16 @@ All background music (**BGM**) and sound effects (**SFX**) used in **PymSpaceOrb
 
 - **Permitted**: Free for commercial and non-commercial use across games (`.NET MAUI`, `Blazor WebAssembly`), videos, and digital applications worldwide without mandatory attribution.
 - **Restricted**: Standalone redistribution or sale of unmodified audio files outside the game/application bundle is not permitted.
+
+---
+
+## 4. Cross-Platform Audio Service Architecture
+
+- **Audio Engine & JS Interop**: `IAudioService` (`src/PymSpaceOrbit.Shared/Abstractions/Game/IAudioService.cs`) and `AudioService` (`src/PymSpaceOrbit.Shared/Concrete/Game/AudioService.cs`) drive a dedicated JavaScript ES module (`src/PymSpaceOrbit.Shared/wwwroot/js/audioService.js`) via `IJSRuntime` using native `HTMLAudioElement` instances.
+- **Asset Registry & Subpath Resolution**: `BackgroundMusic` and `SoundEffect` enums (`GameEnums.cs`) map through `PymGameOrbitAssets` (`PymGameOrbitAssets.cs`) to relative `_content/PymSpaceOrbit.Shared/audio/{bgm|sfx}/` paths resolved dynamically against `document.baseURI` for seamless compatibility across `.NET MAUI BlazorWebView`, `Blazor Web`, and `GitHub Pages` repository subpaths.
+- **Three Independent Playback Channels**:
+  1. **Music Channel**: Single looping `HTMLAudioElement` with centralized screen and phase transition management (`SyncScreenMusicAsync` / `SyncGameplayMusicAsync`) that prevents duplicate restarts on same-track navigation and ensures only one BGM track plays at a time.
+  2. **SFX Channel**: Controlled pool of up to 12 concurrent `HTMLAudioElement` instances allowing overlapping gameplay and UI sound effects without interrupting BGM or other active SFX.
+  3. **Ambient Channel**: Dedicated continuous loop player (`sfx_bioship_cruising_loop.mp3`) active during in-progress missions on the gameplay board.
+- **Audio Settings & Persistence**: Immediate Master, Music (BGM), SFX/Ambient volume sliders and a non-destructive Mute toggle on `OptionsPage.razor` persist automatically to `window.localStorage` (`PymSpaceOrbit.AudioSettings.v1`) and restore on initialization.
+- **Browser Autoplay & Visibility Lifecycle**: Rejected playback promises prior to user gesture are queued and unlocked automatically on the first user interaction (`pointerdown`, `keydown`, `touchstart`, `click`), and active BGM/ambient channels pause and resume across `visibilitychange` events.

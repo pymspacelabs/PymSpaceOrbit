@@ -6,6 +6,7 @@
 @using PymSpaceOrbit.Shared.Models.Game
 @using PymSpaceOrbit.Shared.Models.ML
 @inject IGameService GameService
+@inject IAudioService AudioService
 @inject IPymGameOrbitMlModelService MlModelService
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
@@ -192,7 +193,7 @@
                         @for (int i = 0; i < 5; i++)
                         {
                             var handCard = i < Session.PlayerHand.Count ? Session.PlayerHand[i] : null;
-                            <div class="hud-hand-slot-bay" @onclick="@(() => { if (handCard is not null) EquipCard(handCard); })">
+                            <div class="hud-hand-slot-bay" @onclick="@(async () => { if (handCard is not null) await EquipCard(handCard); })">
                                 @if (handCard is not null)
                                 {
                                     <PymGameOrbitCard Card="@handCard"
@@ -340,7 +341,7 @@
                             @for (int i = 0; i < 5; i++)
                             {
                                 var cardInHand = i < Session.PlayerHand.Count ? Session.PlayerHand[i] : null;
-                                <div class="hud-hand-slot-bay" @onclick="@(() => { if (cardInHand is not null) PlayCard(cardInHand); })">
+                                <div class="hud-hand-slot-bay" @onclick="@(async () => { if (cardInHand is not null) await PlayCard(cardInHand); })">
                                     @if (cardInHand is not null)
                                     {
                                         <PymGameOrbitCard Card="@cardInHand"
@@ -447,7 +448,7 @@
         </div>
     </DialogContent>
     <DialogActions>
-        <MudButton Variant="Variant.Outlined" Color="Color.Default" OnClick="@(() => Navigation.NavigateTo("/"))">
+        <MudButton Variant="Variant.Outlined" Color="Color.Default" OnClick="ReturnToMainMenu">
             @(IsPortuguese ? "MENU PRINCIPAL" : "MAIN MENU")
         </MudButton>
         <MudButton Variant="Variant.Filled"
@@ -492,7 +493,7 @@
         </div>
     </DialogContent>
     <DialogActions>
-        <MudButton Color="Color.Primary" OnClick="@(() => _showJournalModal = false)">
+        <MudButton Color="Color.Primary" OnClick="CloseJournalModal">
             @(IsPortuguese ? "Fechar" : "Close")
         </MudButton>
     </DialogActions>
@@ -1263,43 +1264,66 @@
         }
     }
 
-    private void EquipCard(GameCardModel card)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await AudioService.InitializeAsync();
+            await AudioService.SyncGameplayMusicAsync(Session);
+        }
+    }
+
+    private async Task EquipCard(GameCardModel card)
     {
         if (GameService.PlayCardFromHand(card.CardId, out var msg))
         {
             Snackbar.Add(msg, Severity.Success, c => { c.ShowCloseIcon = false; c.VisibleStateDuration = 1800; });
+            await AudioService.TriggerCardEquippedAudioAsync(card, Session.Destination);
         }
         else
         {
             Snackbar.Add(msg, Severity.Warning, c => { c.ShowCloseIcon = true; });
+            await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
         }
     }
 
-    private void PlayCard(GameCardModel card)
+    private async Task PlayCard(GameCardModel card)
     {
         if (GameService.PlayCardFromHand(card.CardId, out var msg))
         {
             Snackbar.Add(msg, Severity.Success, c => { c.ShowCloseIcon = false; c.VisibleStateDuration = 1800; });
+            await AudioService.TriggerCardEquippedAudioAsync(card, Session.Destination);
         }
         else
         {
             Snackbar.Add(msg, Severity.Warning, c => { c.ShowCloseIcon = true; });
+            await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
         }
     }
 
-    private void ConfirmBaseConstruction()
+    private async Task ConfirmBaseConstruction()
     {
         if (GameService.CompleteInitialBaseConstruction(out var msg))
         {
             Snackbar.Add(msg, Severity.Success, c => { c.ShowCloseIcon = true; c.VisibleStateDuration = 3000; });
+            await AudioService.PlaySoundEffectAsync(SoundEffect.StageTransitionRiser);
+            if (Session.PendingExplorationEvent is not null)
+            {
+                await AudioService.TriggerExplorationEventAudioAsync(Session.PendingExplorationEvent, Session);
+            }
+            else
+            {
+                await AudioService.SyncGameplayMusicAsync(Session);
+            }
         }
         else
         {
             Snackbar.Add(msg, Severity.Error, c => { c.ShowCloseIcon = true; });
+            await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
         }
     }
 
-    private void ResetAssembly()
+    private async Task ResetAssembly()
     {
         foreach (var c in Session.EquippedShipAndBaseCards.ToList())
         {
@@ -1307,11 +1331,16 @@
         }
         Session.EquippedShipAndBaseCards.Clear();
         Session.CardsPlayedThisTurn = 0;
+        await AudioService.PlaySoundEffectAsync(SoundEffect.CardDrawFlip);
         Snackbar.Add(IsPortuguese ? "Montagem reiniciada. Cartas retornadas à mão." : "Assembly reset. Cards returned to hand.", Severity.Info);
     }
 
-    private void MakeExplorationDecision(string optionId)
+    private async Task MakeExplorationDecision(string optionId)
     {
+        var activeEvent = Session.PendingExplorationEvent ?? GameService.DrawTurnExplorationEvent();
+        var selectedOption = activeEvent.Choices.FirstOrDefault(o => o.OptionId.Equals(optionId, StringComparison.OrdinalIgnoreCase))
+                             ?? activeEvent.Choices[0];
+
         var result = GameService.ResolveExplorationDecisionAndAdvanceTurn(optionId);
 
         string outcomeMsg = IsPortuguese ? result.OutcomeSummaryPtBr : result.OutcomeSummaryEn;
@@ -1326,26 +1355,47 @@
         {
             Snackbar.Add(outcomeMsg, Severity.Info, c => { c.VisibleStateDuration = 3500; });
         }
+
+        await AudioService.TriggerExplorationDecisionAudioAsync(activeEvent, selectedOption, result, Session);
     }
 
-    private void DrawNewDilemma()
+    private async Task DrawNewDilemma()
     {
-        GameService.DrawTurnExplorationEvent();
+        var drawnEvent = GameService.DrawTurnExplorationEvent();
         Snackbar.Add(IsPortuguese ? "Novo evento espacial sorteado!" : "New space exploration challenge drawn!", Severity.Normal);
+        await AudioService.PlaySoundEffectAsync(SoundEffect.CardDrawFlip);
+        await AudioService.TriggerExplorationEventAudioAsync(drawnEvent, Session);
     }
 
-    private void OpenJournalModal()
+    private async Task OpenJournalModal()
     {
         _showJournalModal = true;
+        await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
+    }
+
+    private async Task CloseJournalModal()
+    {
+        _showJournalModal = false;
+        await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
+    }
+
+    private async Task ReturnToMainMenu()
+    {
+        _showEndingModal = false;
+        await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
+        Navigation.NavigateTo("/");
     }
 
     private async Task RestartGame()
     {
         _showEndingModal = false;
+        await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
         await GameService.StartNewCampaignAsync(
             Session.Destination,
             Session.CrewCount,
             Session.MinimumCardsToBuildBase,
             Session.Locale);
+        await AudioService.PlaySoundEffectAsync(SoundEffect.CardDrawFlip);
+        await AudioService.SyncGameplayMusicAsync(Session);
     }
 }

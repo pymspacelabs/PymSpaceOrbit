@@ -4,6 +4,7 @@
 @using PymSpaceOrbit.Shared.Abstractions.Game
 @using PymSpaceOrbit.Shared.Models.Game
 @inject IGameService GameService
+@inject IAudioService AudioService
 @inject NavigationManager Navigation
 @inject IDialogService DialogService
 
@@ -50,7 +51,7 @@
             <div class="hud-menu-btn-frame frame-gold">
                 <MudButton Variant="Variant.Text"
                            Class="menu-glass-btn btn-info"
-                           OnClick="@(() => Navigation.NavigateTo("/info"))"
+                           OnClick="NavigateToInfo"
                            StartIcon="@Icons.Material.Filled.CollectionsBookmark"
                            Size="Size.Large">
                     @(IsPortuguese ? "SOBRE & CARD SETS" : "ABOUT & DECKS")
@@ -61,7 +62,7 @@
             <div class="hud-menu-btn-frame frame-blue">
                 <MudButton Variant="Variant.Text"
                            Class="menu-glass-btn btn-options"
-                           OnClick="@(() => Navigation.NavigateTo("/options"))"
+                           OnClick="NavigateToOptions"
                            StartIcon="@Icons.Material.Filled.Settings"
                            Size="Size.Large">
                     @(IsPortuguese ? "OPÇÕES" : "OPTIONS")
@@ -133,7 +134,7 @@
         </div>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="@(() => _showLaunchModal = false)" Color="Color.Default" Variant="Variant.Text">
+        <MudButton OnClick="ClosePlayDialog" Color="Color.Default" Variant="Variant.Text">
             @(IsPortuguese ? "Cancelar" : "Cancel")
         </MudButton>
         <MudButton OnClick="LaunchCampaign"
@@ -358,17 +359,37 @@
         _minCards = GameService.CurrentSession.MinimumCardsToBuildBase;
     }
 
-    private void OpenPlayDialog()
+    private async Task OpenPlayDialog()
     {
+        await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
         _selectedDestination = GameService.CurrentSession.Destination;
         _crewCount = GameService.CurrentSession.CrewCount;
         _minCards = GameService.CurrentSession.MinimumCardsToBuildBase;
         _showLaunchModal = true;
     }
 
+    private async Task ClosePlayDialog()
+    {
+        _showLaunchModal = false;
+        await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
+    }
+
+    private async Task NavigateToInfo()
+    {
+        await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
+        Navigation.NavigateTo("/info");
+    }
+
+    private async Task NavigateToOptions()
+    {
+        await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
+        Navigation.NavigateTo("/options");
+    }
+
     private async Task LaunchCampaign()
     {
         _showLaunchModal = false;
+        await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
         await GameService.StartNewCampaignAsync(
             _selectedDestination,
             _crewCount,
@@ -379,6 +400,7 @@
 
     private async Task StartBaseBuilderMode()
     {
+        await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
         await GameService.StartNewCampaignAsync(
             GameService.CurrentSession.Destination,
             GameService.CurrentSession.CrewCount,

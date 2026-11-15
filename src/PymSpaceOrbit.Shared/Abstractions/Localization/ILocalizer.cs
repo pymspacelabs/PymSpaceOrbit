@@ -1,4 +1,4 @@
-namespace PymGameOrbit.Shared.Abstractions.Localization;
+namespace PymSpaceOrbit.Shared.Abstractions.Localization;
 
 public interface ILocalizer<T>
 {

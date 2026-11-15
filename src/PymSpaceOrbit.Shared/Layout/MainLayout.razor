@@ -1,9 +1,12 @@
 @inherits LayoutComponentBase
+@implements IDisposable
 @namespace PymSpaceOrbit.Shared.Layout
 @using MudBlazor
+@using Microsoft.AspNetCore.Components.Routing
 @using PymSpaceOrbit.Shared.Abstractions.Game
 @using PymSpaceOrbit.Shared.Models.Game
 @inject IGameService GameService
+@inject IAudioService AudioService
 @inject NavigationManager Navigation
 
 <MudThemeProvider Theme="_spaceTheme" @bind-IsDarkMode="_isDarkMode" />
@@ -120,7 +123,7 @@
         </div>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="@(() => _showTopPlayModal = false)" Color="Color.Default" Variant="Variant.Text">
+        <MudButton OnClick="CloseTopPlayDialog" Color="Color.Default" Variant="Variant.Text">
             @(IsPortuguese ? "Cancelar" : "Cancel")
         </MudButton>
         <MudButton OnClick="LaunchCampaignFromTopBar"
@@ -230,32 +233,70 @@
         }
     };
 
-    private void OpenPlayCampaignDialog()
+    protected override void OnInitialized()
     {
+        Navigation.LocationChanged += HandleLocationChanged;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await AudioService.InitializeAsync();
+            await AudioService.SyncScreenMusicAsync(Navigation.Uri, GameService.CurrentSession);
+        }
+    }
+
+    private void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        _ = InvokeAsync(async () =>
+        {
+            await AudioService.SyncScreenMusicAsync(e.Location, GameService.CurrentSession);
+        });
+    }
+
+    private async Task OpenPlayCampaignDialog()
+    {
+        await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
         _selectedDestination = GameService.CurrentSession.Destination;
         _crewCount = GameService.CurrentSession.CrewCount;
         _minCards = GameService.CurrentSession.MinimumCardsToBuildBase;
         _showTopPlayModal = true;
     }
 
+    private async Task CloseTopPlayDialog()
+    {
+        _showTopPlayModal = false;
+        await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
+    }
+
     private async Task LaunchCampaignFromTopBar()
     {
         _showTopPlayModal = false;
+        await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
         await GameService.StartNewCampaignAsync(
             _selectedDestination,
             _crewCount,
             _minCards,
             GameService.CurrentSession.Locale);
         Navigation.NavigateTo("/play");
+        await AudioService.SyncGameplayMusicAsync(GameService.CurrentSession);
     }
 
-    private void ToggleLocale()
+    private async Task ToggleLocale()
     {
+        await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
         GameService.CurrentSession.Locale = IsPortuguese ? "en-US" : "pt-BR";
     }
 
-    private void ToggleTheme()
+    private async Task ToggleTheme()
     {
+        await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
         _isDarkMode = !_isDarkMode;
+    }
+
+    public void Dispose()
+    {
+        Navigation.LocationChanged -= HandleLocationChanged;
     }
 }

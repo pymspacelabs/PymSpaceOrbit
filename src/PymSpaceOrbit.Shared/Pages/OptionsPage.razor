@@ -4,6 +4,7 @@
 @using PymSpaceOrbit.Shared.Abstractions.ML
 @using PymSpaceOrbit.Shared.Models.Game
 @inject IGameService GameService
+@inject IAudioService AudioService
 @inject IPymGameOrbitMlModelService MlModelService
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
@@ -32,69 +33,138 @@
             </div>
         </div>
 
-        <!-- Central Dark-Glass Console Container with 4 Horizontal Rows -->
+        <!-- Central Dark-Glass Console Container with 2-Column Sci-Fi HUD Grid (Mission Telemetry + Audio Console) -->
         <div class="hud-options-central-panel">
-            <!-- Row 1: Idioma / Language -->
-            <div class="hud-options-row">
-                <div class="hud-options-label-box">
-                    <MudIcon Icon="@Icons.Material.Filled.Translate" Size="Size.Small" Color="Color.Primary" Class="mr-2" />
-                    <span>@(IsPortuguese ? "Idioma da Missão / Language" : "Mission Language / Idioma")</span>
+            <!-- Left Column: Mission & Telemetry Parameters -->
+            <div class="hud-options-column">
+                <!-- Row 1: Idioma / Language -->
+                <div class="hud-options-row">
+                    <div class="hud-options-label-box">
+                        <MudIcon Icon="@Icons.Material.Filled.Translate" Size="Size.Small" Color="Color.Primary" Class="mr-2" />
+                        <span>@(IsPortuguese ? "Idioma da Missão / Language" : "Mission Language / Idioma")</span>
+                    </div>
+                    <div class="hud-options-control-box">
+                        <MudSelect T="string" @bind-Value="_selectedLocale"
+                                   Variant="Variant.Outlined"
+                                   Margin="Margin.Dense"
+                                   Dense="true"
+                                   Class="options-input">
+                            <MudSelectItem Value="@("pt-BR")">🇧🇷 Português (Brasil)</MudSelectItem>
+                            <MudSelectItem Value="@("en-US")">🇺🇸 English (United States)</MudSelectItem>
+                        </MudSelect>
+                    </div>
                 </div>
-                <div class="hud-options-control-box">
-                    <MudSelect T="string" @bind-Value="_selectedLocale"
-                               Variant="Variant.Outlined"
-                               Margin="Margin.Dense"
-                               Dense="true"
-                               Class="options-input">
-                        <MudSelectItem Value="@("pt-BR")">🇧🇷 Português (Brasil)</MudSelectItem>
-                        <MudSelectItem Value="@("en-US")">🇺🇸 English (United States)</MudSelectItem>
-                    </MudSelect>
-                </div>
-            </div>
 
-            <!-- Row 2: Tamanho da Tripulação / Crew Count -->
-            <div class="hud-options-row">
-                <div class="hud-options-label-box">
-                    <MudIcon Icon="@Icons.Material.Filled.Groups" Size="Size.Small" Color="Color.Tertiary" Class="mr-2" />
-                    <span>@(IsPortuguese ? "Tripulação da Nave (1–16)" : "Outpost Crew Size (1–16)")</span>
+                <!-- Row 2: Tamanho da Tripulação / Crew Count -->
+                <div class="hud-options-row">
+                    <div class="hud-options-label-box">
+                        <MudIcon Icon="@Icons.Material.Filled.Groups" Size="Size.Small" Color="Color.Tertiary" Class="mr-2" />
+                        <span>@(IsPortuguese ? "Tripulação da Nave (1–16)" : "Outpost Crew Size (1–16)")</span>
+                    </div>
+                    <div class="hud-options-control-box">
+                        <div class="slider-control-inner">
+                            <MudSlider T="int" Min="1" Max="16" @bind-Value="_crewCount" Color="Color.Tertiary" Class="mr-3" />
+                            <span class="hud-value-readout readout-emerald">
+                                @_crewCount @(IsPortuguese ? "astronautas" : "crew")
+                            </span>
+                        </div>
+                    </div>
                 </div>
-                <div class="hud-options-control-box">
-                    <div class="slider-control-inner">
-                        <MudSlider T="int" Min="1" Max="16" @bind-Value="_crewCount" Color="Color.Tertiary" Class="mr-3" />
-                        <span class="hud-value-readout readout-emerald">
-                            @_crewCount @(IsPortuguese ? "astronautas" : "crew")
-                        </span>
+
+                <!-- Row 3: Sincronização Ao Vivo NASA DONKI & Imagens API -->
+                <div class="hud-options-row">
+                    <div class="hud-options-label-box">
+                        <MudIcon Icon="@Icons.Material.Filled.CloudSync" Size="Size.Small" Color="Color.Info" Class="mr-2" />
+                        <span>@(IsPortuguese ? "Sincronização Ao Vivo NASA API" : "Live NASA DONKI & Image Sync")</span>
+                    </div>
+                    <div class="hud-options-control-box">
+                        <div class="switch-control-inner">
+                            <MudSwitch T="bool" @bind-Value="_liveNasaSync"
+                                       Color="Color.Info"
+                                       Label="@(_liveNasaSync ? (IsPortuguese ? "ATIVO (NASA API)" : "ONLINE (NASA API)") : (IsPortuguese ? "OFFLINE (CACHE)" : "OFFLINE (CACHE)"))" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 4: Mínimo de Cartas para Construir a Base -->
+                <div class="hud-options-row">
+                    <div class="hud-options-label-box">
+                        <MudIcon Icon="@Icons.Material.Filled.DashboardCustomize" Size="Size.Small" Color="Color.Secondary" Class="mr-2" />
+                        <span>@(IsPortuguese ? "Mín. Cartas Construção Base" : "Min. Base Build Cards (3–8)")</span>
+                    </div>
+                    <div class="hud-options-control-box">
+                        <div class="slider-control-inner">
+                            <MudSlider T="int" Min="3" Max="8" @bind-Value="_minBaseCards" Color="Color.Secondary" Class="mr-3" />
+                            <span class="hud-value-readout readout-gold">
+                                @_minBaseCards @(IsPortuguese ? "cartas" : "cards")
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Row 3: Sincronização Ao Vivo NASA DONKI & Imagens API -->
-            <div class="hud-options-row">
-                <div class="hud-options-label-box">
-                    <MudIcon Icon="@Icons.Material.Filled.CloudSync" Size="Size.Small" Color="Color.Info" Class="mr-2" />
-                    <span>@(IsPortuguese ? "Sincronização Ao Vivo NASA API" : "Live NASA DONKI & Image Sync")</span>
-                </div>
-                <div class="hud-options-control-box">
-                    <div class="switch-control-inner">
-                        <MudSwitch T="bool" @bind-Value="_liveNasaSync"
-                                   Color="Color.Info"
-                                   Label="@(_liveNasaSync ? (IsPortuguese ? "ATIVO (NASA API)" : "ONLINE (NASA API)") : (IsPortuguese ? "OFFLINE (CACHE)" : "OFFLINE (CACHE)"))" />
+            <!-- Right Column: Audio Mixer & Mute Controls -->
+            <div class="hud-options-column">
+                <!-- Row 5: Master Volume -->
+                <div class="hud-options-row">
+                    <div class="hud-options-label-box">
+                        <MudIcon Icon="@Icons.Material.Filled.VolumeUp" Size="Size.Small" Color="Color.Primary" Class="mr-2" />
+                        <span>@(IsPortuguese ? "Volume Geral / Master" : "Master Volume")</span>
+                    </div>
+                    <div class="hud-options-control-box">
+                        <div class="slider-control-inner">
+                            <MudSlider T="int" Min="0" Max="100" Value="_masterVolumePct" ValueChanged="OnMasterVolumeChanged" Color="Color.Primary" Class="mr-3" />
+                            <span class="hud-value-readout readout-cyan">
+                                @(_masterVolumePct)%
+                            </span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Row 4: Mínimo de Cartas para Construir a Base -->
-            <div class="hud-options-row">
-                <div class="hud-options-label-box">
-                    <MudIcon Icon="@Icons.Material.Filled.DashboardCustomize" Size="Size.Small" Color="Color.Secondary" Class="mr-2" />
-                    <span>@(IsPortuguese ? "Mín. Cartas Construção Base" : "Min. Base Build Cards (3–8)")</span>
+                <!-- Row 6: Music Volume (BGM) -->
+                <div class="hud-options-row">
+                    <div class="hud-options-label-box">
+                        <MudIcon Icon="@Icons.Material.Filled.MusicNote" Size="Size.Small" Color="Color.Secondary" Class="mr-2" />
+                        <span>@(IsPortuguese ? "Volume da Música (BGM)" : "Music Volume (BGM)")</span>
+                    </div>
+                    <div class="hud-options-control-box">
+                        <div class="slider-control-inner">
+                            <MudSlider T="int" Min="0" Max="100" Value="_musicVolumePct" ValueChanged="OnMusicVolumeChanged" Color="Color.Secondary" Class="mr-3" />
+                            <span class="hud-value-readout readout-gold">
+                                @(_musicVolumePct)%
+                            </span>
+                        </div>
+                    </div>
                 </div>
-                <div class="hud-options-control-box">
-                    <div class="slider-control-inner">
-                        <MudSlider T="int" Min="3" Max="8" @bind-Value="_minBaseCards" Color="Color.Secondary" Class="mr-3" />
-                        <span class="hud-value-readout readout-gold">
-                            @_minBaseCards @(IsPortuguese ? "cartas" : "cards")
-                        </span>
+
+                <!-- Row 7: SFX Volume -->
+                <div class="hud-options-row">
+                    <div class="hud-options-label-box">
+                        <MudIcon Icon="@Icons.Material.Filled.GraphicEq" Size="Size.Small" Color="Color.Tertiary" Class="mr-2" />
+                        <span>@(IsPortuguese ? "Efeitos Sonoros (SFX)" : "SFX & Ambient Volume")</span>
+                    </div>
+                    <div class="hud-options-control-box">
+                        <div class="slider-control-inner">
+                            <MudSlider T="int" Min="0" Max="100" Value="_sfxVolumePct" ValueChanged="OnSfxVolumeChanged" Color="Color.Tertiary" Class="mr-3" />
+                            <span class="hud-value-readout readout-emerald">
+                                @(_sfxVolumePct)%
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 8: Mute Toggle -->
+                <div class="hud-options-row">
+                    <div class="hud-options-label-box">
+                        <MudIcon Icon="@(_isMuted ? Icons.Material.Filled.VolumeOff : Icons.Material.Filled.VolumeMute)" Size="Size.Small" Color="@(_isMuted ? Color.Error : Color.Info)" Class="mr-2" />
+                        <span>@(IsPortuguese ? "Silenciar Áudio / Mute" : "Mute All Audio")</span>
+                    </div>
+                    <div class="hud-options-control-box">
+                        <div class="switch-control-inner">
+                            <MudSwitch T="bool" Value="_isMuted" ValueChanged="OnMutedChanged"
+                                       Color="Color.Warning"
+                                       Label="@(_isMuted ? (IsPortuguese ? "SILENCIADO (MUTE)" : "MUTED") : (IsPortuguese ? "ÁUDIO ATIVO" : "AUDIO ACTIVE"))" />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -105,7 +175,7 @@
             <div class="hud-bottom-plaque plaque-cyan">
                 <MudButton Variant="Variant.Text"
                            Class="hud-plaque-btn btn-cyan-text"
-                           OnClick="@(() => Navigation.NavigateTo("/"))"
+                           OnClick="NavigateBackToMenu"
                            StartIcon="@Icons.Material.Filled.ArrowBack"
                            Size="Size.Large">
                     @(IsPortuguese ? "VOLTAR" : "BACK")
@@ -256,23 +326,31 @@
         font-weight: 600;
     }
 
-    /* Central Dark-Glass Console Panel with 4 Horizontal Rows */
+    /* Central Dark-Glass Console Panel with 2 Columns x 4 Horizontal Rows */
     .hud-options-central-panel {
-        width: 76%;
-        height: 58%;
+        width: 88%;
+        height: 60%;
         background: linear-gradient(180deg, rgba(16, 36, 54, 0.85) 0%, rgba(10, 22, 36, 0.92) 100%);
         border: 2px solid rgba(98, 132, 160, 0.65);
         border-radius: 12px;
         box-shadow:
             0 12px 32px rgba(0, 0, 0, 0.8),
             inset 0 1px 16px rgba(0, 229, 255, 0.12);
-        padding: 2% 2.5%;
+        padding: 1.6% 2.0%;
         box-sizing: border-box;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2.2%;
+        z-index: 2;
+    }
+
+    .hud-options-column {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         gap: 2.8%;
-        z-index: 2;
+        min-width: 0;
+        height: 100%;
     }
 
     .hud-options-row {
@@ -349,6 +427,12 @@
         letter-spacing: 0.5px;
     }
 
+    .readout-cyan {
+        background: rgba(0, 229, 255, 0.16);
+        border: 1px solid #00E5FF;
+        color: #00E5FF;
+    }
+
     .readout-emerald {
         background: rgba(0, 230, 118, 0.16);
         border: 1px solid #00E676;
@@ -423,6 +507,11 @@
     private int _minBaseCards = 5;
     private bool _liveNasaSync = true;
 
+    private int _masterVolumePct = 85;
+    private int _musicVolumePct = 70;
+    private int _sfxVolumePct = 85;
+    private bool _isMuted;
+
     private bool IsPortuguese => _selectedLocale.StartsWith("pt", StringComparison.OrdinalIgnoreCase);
 
     protected override void OnInitialized()
@@ -431,18 +520,77 @@
         _crewCount = GameService.CurrentSession.CrewCount;
         _minBaseCards = GameService.CurrentSession.MinimumCardsToBuildBase;
         _liveNasaSync = MlModelService.LiveNasaApiSyncEnabled;
+        SyncAudioReadoutsFromService();
     }
 
-    private void SaveOptions()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await AudioService.InitializeAsync();
+            SyncAudioReadoutsFromService();
+            StateHasChanged();
+        }
+    }
+
+    private void SyncAudioReadoutsFromService()
+    {
+        _masterVolumePct = (int)Math.Round(AudioService.MasterVolume * 100.0);
+        _musicVolumePct = (int)Math.Round(AudioService.MusicVolume * 100.0);
+        _sfxVolumePct = (int)Math.Round(AudioService.SoundEffectsVolume * 100.0);
+        _isMuted = AudioService.IsMuted;
+    }
+
+    private async Task OnMasterVolumeChanged(int value)
+    {
+        _masterVolumePct = Math.Clamp(value, 0, 100);
+        await AudioService.SetMasterVolumeAsync(_masterVolumePct / 100.0);
+    }
+
+    private async Task OnMusicVolumeChanged(int value)
+    {
+        _musicVolumePct = Math.Clamp(value, 0, 100);
+        await AudioService.SetMusicVolumeAsync(_musicVolumePct / 100.0);
+    }
+
+    private async Task OnSfxVolumeChanged(int value)
+    {
+        _sfxVolumePct = Math.Clamp(value, 0, 100);
+        await AudioService.SetSoundEffectsVolumeAsync(_sfxVolumePct / 100.0);
+    }
+
+    private async Task OnMutedChanged(bool muted)
+    {
+        _isMuted = muted;
+        await AudioService.SetMutedAsync(muted);
+        if (!muted)
+        {
+            await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
+        }
+    }
+
+    private async Task NavigateBackToMenu()
+    {
+        await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
+        Navigation.NavigateTo("/");
+    }
+
+    private async Task SaveOptions()
     {
         GameService.CurrentSession.Locale = _selectedLocale;
         GameService.CurrentSession.CrewCount = _crewCount;
         GameService.CurrentSession.MinimumCardsToBuildBase = _minBaseCards;
         MlModelService.LiveNasaApiSyncEnabled = _liveNasaSync;
 
+        await AudioService.SetMasterVolumeAsync(_masterVolumePct / 100.0);
+        await AudioService.SetMusicVolumeAsync(_musicVolumePct / 100.0);
+        await AudioService.SetSoundEffectsVolumeAsync(_sfxVolumePct / 100.0);
+        await AudioService.SetMutedAsync(_isMuted);
+        await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
+
         string msg = IsPortuguese
-            ? "Configurações aplicadas com sucesso! Telemetria e parâmetros salvos."
-            : "Settings applied successfully! Telemetry and parameters saved.";
+            ? "Configurações de missão e áudio aplicadas e salvas com sucesso!"
+            : "Mission and audio settings applied and saved successfully!";
 
         Snackbar.Add(msg, Severity.Success, config =>
         {
