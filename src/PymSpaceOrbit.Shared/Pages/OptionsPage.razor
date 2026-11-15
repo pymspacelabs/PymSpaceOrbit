@@ -153,17 +153,17 @@
                     </div>
                 </div>
 
-                <!-- Row 8: Mute Toggle -->
+                <!-- Row 8: Audio Enabled / Mute Toggle -->
                 <div class="hud-options-row">
                     <div class="hud-options-label-box">
-                        <MudIcon Icon="@(_isMuted ? Icons.Material.Filled.VolumeOff : Icons.Material.Filled.VolumeMute)" Size="Size.Small" Color="@(_isMuted ? Color.Error : Color.Info)" Class="mr-2" />
-                        <span>@(IsPortuguese ? "Silenciar Áudio / Mute" : "Mute All Audio")</span>
+                        <MudIcon Icon="@(_isMuted ? Icons.Material.Filled.VolumeOff : Icons.Material.Filled.VolumeUp)" Size="Size.Small" Color="@(_isMuted ? Color.Error : Color.Success)" Class="mr-2" />
+                        <span>@(IsPortuguese ? "Saída de Áudio / Som" : "Audio Output / Sound")</span>
                     </div>
                     <div class="hud-options-control-box">
                         <div class="switch-control-inner">
-                            <MudSwitch T="bool" Value="_isMuted" ValueChanged="OnMutedChanged"
-                                       Color="Color.Warning"
-                                       Label="@(_isMuted ? (IsPortuguese ? "SILENCIADO (MUTE)" : "MUTED") : (IsPortuguese ? "ÁUDIO ATIVO" : "AUDIO ACTIVE"))" />
+                            <MudSwitch T="bool" Value="@(!_isMuted)" ValueChanged="OnAudioEnabledChanged"
+                                       Color="Color.Success"
+                                       Label="@(!_isMuted ? (IsPortuguese ? "ÁUDIO HABILITADO" : "AUDIO ENABLED") : (IsPortuguese ? "SILENCIADO (MUTE)" : "MUTED"))" />
                         </div>
                     </div>
                 </div>
@@ -545,27 +545,54 @@
     private async Task OnMasterVolumeChanged(int value)
     {
         _masterVolumePct = Math.Clamp(value, 0, 100);
+        if (_isMuted && _masterVolumePct > 0)
+        {
+            _isMuted = false;
+            await AudioService.SetMutedAsync(false);
+        }
+
         await AudioService.SetMasterVolumeAsync(_masterVolumePct / 100.0);
+        if (!_isMuted && _masterVolumePct > 0)
+        {
+            await AudioService.SyncScreenMusicAsync("/options", GameService.CurrentSession);
+        }
     }
 
     private async Task OnMusicVolumeChanged(int value)
     {
         _musicVolumePct = Math.Clamp(value, 0, 100);
+        if (_isMuted && _musicVolumePct > 0)
+        {
+            _isMuted = false;
+            await AudioService.SetMutedAsync(false);
+        }
+
         await AudioService.SetMusicVolumeAsync(_musicVolumePct / 100.0);
+        if (!_isMuted && _musicVolumePct > 0)
+        {
+            await AudioService.SyncScreenMusicAsync("/options", GameService.CurrentSession);
+        }
     }
 
     private async Task OnSfxVolumeChanged(int value)
     {
         _sfxVolumePct = Math.Clamp(value, 0, 100);
+        if (_isMuted && _sfxVolumePct > 0)
+        {
+            _isMuted = false;
+            await AudioService.SetMutedAsync(false);
+        }
+
         await AudioService.SetSoundEffectsVolumeAsync(_sfxVolumePct / 100.0);
     }
 
-    private async Task OnMutedChanged(bool muted)
+    private async Task OnAudioEnabledChanged(bool enabled)
     {
-        _isMuted = muted;
-        await AudioService.SetMutedAsync(muted);
-        if (!muted)
+        _isMuted = !enabled;
+        await AudioService.SetMutedAsync(_isMuted);
+        if (enabled)
         {
+            await AudioService.SyncScreenMusicAsync("/options", GameService.CurrentSession);
             await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
         }
     }

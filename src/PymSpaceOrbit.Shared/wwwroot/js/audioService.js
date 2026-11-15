@@ -1,7 +1,7 @@
 // PymSpaceOrbit Cross-Platform Audio Engine
-// Supports .NET 11 MAUI Blazor Hybrid (Android, Windows WebView2, iOS, MacCatalyst) + Blazor Web + GitHub Pages
+// Supports .NET 11 MAUI Blazor Hybrid (Android, Windows WebView2, iOS, MacCatalyst) + Blazor Web / WASM + GitHub Pages
 
-const STORAGE_KEY = 'PymSpaceOrbit.AudioSettings.v1';
+const STORAGE_KEY = 'PymSpaceOrbit.AudioSettings.v2';
 const MAX_CONCURRENT_SFX = 12;
 const AMBIENT_VOLUME_SCALE = 0.42;
 
@@ -13,34 +13,52 @@ const INITIAL_ROUTE_TRACKS = {
     'play': { key: 'GameplayBuild', path: '_content/PymSpaceOrbit.Shared/audio/bgm/bgm_gameplay_build.mp3' }
 };
 
-const state = {
-    initialized: false,
-    masterVolume: 0.85,
-    musicVolume: 0.70,
-    sfxVolume: 0.85,
-    isMuted: false,
-    currentTrackKey: null,
-    currentTrackUrl: null,
-    bgmLoop: true,
-    bgmPaused: false,
-    pendingBgmPlay: false,
-    autoMutedByBrowserPolicy: false,
-    currentAmbientKey: null,
-    currentAmbientUrl: null,
-    ambientLoop: true,
-    pendingAmbientPlay: false,
-    autoMutedAmbientByPolicy: false,
-    wasBgmPlayingBeforeHide: false,
-    wasAmbientPlayingBeforeHide: false,
-    unlockListenersAttached: false,
-    visibilityListenerAttached: false
-};
+// Use a single global engine singleton on window so multiple ES module imports never conflict
+const engine = (typeof window !== 'undefined' && window.__pymAudioEngine)
+    ? window.__pymAudioEngine
+    : {
+        state: {
+            initialized: false,
+            masterVolume: 0.85,
+            musicVolume: 0.70,
+            sfxVolume: 0.85,
+            isMuted: false,
+            currentTrackKey: null,
+            currentTrackUrl: null,
+            bgmLoop: true,
+            bgmPaused: false,
+            bgmLoading: false,
+            pendingBgmPlay: false,
+            currentAmbientKey: null,
+            currentAmbientUrl: null,
+            ambientLoop: true,
+            ambientLoading: false,
+            pendingAmbientPlay: false,
+            wasBgmPlayingBeforeHide: false,
+            wasAmbientPlayingBeforeHide: false,
+            unlockListenersAttached: false,
+            visibilityListenerAttached: false,
+            requestCounter: 0,
+            ambientRequestCounter: 0
+        },
+        bgmPlayer: null,
+        ambientPlayer: null,
+        activeSfx: new Set(),
+        blobUrlCache: new Map(),
+        blobFetchPromises: new Map(),
+        audioBufferCache: new Map(),
+        audioCtx: null
+    };
 
-let bgmPlayer = null;
-let ambientPlayer = null;
-const activeSfx = new Set();
-const blobUrlCache = new Map();
-const blobFetchPromises = new Map();
+if (typeof window !== 'undefined') {
+    window.__pymAudioEngine = engine;
+}
+
+const state = engine.state;
+const activeSfx = engine.activeSfx;
+const blobUrlCache = engine.blobUrlCache;
+const blobFetchPromises = engine.blobFetchPromises;
+const audioBufferCache = engine.audioBufferCache;
 
 function clamp01(value, fallback) {
     const num = Number(value);
@@ -52,7 +70,7 @@ function isMauiWebView() {
     if (typeof window === 'undefined' || !window.location) return false;
     const host = (window.location.hostname || '').toLowerCase();
     const proto = (window.location.protocol || '').toLowerCase();
-    return host === '0.0.0.0' || proto === 'app:' || proto === 'ms-appx-web:';
+    return host === '0.0.0.0' || host === '0.0.0.1' || proto === 'app:' || proto === 'ms-appx-web:';
 }
 
 function resolveAssetUrl(relativePath) {
@@ -70,6 +88,30 @@ function resolveAssetUrl(relativePath) {
         return new URL(cleanPath, baseUri).href;
     } catch {
         return cleanPath;
+    }
+}
+
+function getOrCreateAudioContext() {
+    if (engine.audioCtx) return engine.audioCtx;
+    if (typeof window === 'undefined') return null;
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return null;
+    try {
+        engine.audioCtx = new AudioCtx();
+    } catch {
+        engine.audioCtx = null;
+    }
+    return engine.audioCtx;
+}
+
+function tryResumeAudioContext() {
+    const ctx = getOrCreateAudioContext();
+    if (ctx && ctx.state === 'suspended' && typeof ctx.resume === 'function') {
+        try {
+            ctx.resume().catch(() => {});
+        } catch {
+            // Ignore resume restriction until next gesture
+        }
     }
 }
 
@@ -103,6 +145,17 @@ function fetchBlobUrl(url) {
             const objectUrl = URL.createObjectURL(blob);
             blobUrlCache.set(url, objectUrl);
             blobFetchPromises.delete(url);
+
+            // If small SFX (< 1 MB), also pre-decode into Web Audio API AudioBuffer for 0ms playback
+            if (buffer.byteLength < 1048576 && !audioBufferCache.has(url)) {
+                const ctx = getOrCreateAudioContext();
+                if (ctx && typeof ctx.decodeAudioData === 'function') {
+                    ctx.decodeAudioData(buffer.slice(0))
+                        .then(decoded => audioBufferCache.set(url, decoded))
+                        .catch(() => {});
+                }
+            }
+
             return objectUrl;
         })
         .catch(() => {
@@ -161,30 +214,6 @@ function savePersistedSettings() {
     }
 }
 
-function applyVolumesToPlayers() {
-    if (bgmPlayer) {
-        bgmPlayer.volume = getEffectiveMusicVolume();
-        if (!state.autoMutedByBrowserPolicy) {
-            bgmPlayer.muted = state.isMuted;
-        }
-    }
-    if (ambientPlayer) {
-        ambientPlayer.volume = getEffectiveAmbientVolume();
-        if (!state.autoMutedAmbientByPolicy) {
-            ambientPlayer.muted = state.isMuted;
-        }
-    }
-    const sfxVol = getEffectiveSfxVolume();
-    for (const entry of activeSfx) {
-        try {
-            entry.audio.volume = sfxVol;
-            entry.audio.muted = state.isMuted;
-        } catch {
-            // Ignore element state error
-        }
-    }
-}
-
 function configureDomAudioElement(el, id) {
     el.id = id;
     el.preload = 'auto';
@@ -207,94 +236,147 @@ function configureDomAudioElement(el, id) {
 function ensurePlayers() {
     if (typeof Audio === 'undefined' && typeof document === 'undefined') return false;
 
-    if (!bgmPlayer) {
-        bgmPlayer = (typeof document !== 'undefined' && document.getElementById('pym-bgm-player'))
+    if (!engine.bgmPlayer) {
+        engine.bgmPlayer = (typeof document !== 'undefined' && document.getElementById('pym-bgm-player'))
             || (typeof document !== 'undefined' ? document.createElement('audio') : new Audio());
-        configureDomAudioElement(bgmPlayer, 'pym-bgm-player');
-        bgmPlayer.volume = getEffectiveMusicVolume();
-    } else if (typeof document !== 'undefined' && document.body && !bgmPlayer.parentElement) {
-        configureDomAudioElement(bgmPlayer, 'pym-bgm-player');
+        configureDomAudioElement(engine.bgmPlayer, 'pym-bgm-player');
+        engine.bgmPlayer.volume = getEffectiveMusicVolume();
+        engine.bgmPlayer.muted = state.isMuted;
+    } else if (typeof document !== 'undefined' && document.body && !engine.bgmPlayer.parentElement) {
+        configureDomAudioElement(engine.bgmPlayer, 'pym-bgm-player');
     }
 
-    if (!ambientPlayer) {
-        ambientPlayer = (typeof document !== 'undefined' && document.getElementById('pym-ambient-player'))
+    if (!engine.ambientPlayer) {
+        engine.ambientPlayer = (typeof document !== 'undefined' && document.getElementById('pym-ambient-player'))
             || (typeof document !== 'undefined' ? document.createElement('audio') : new Audio());
-        configureDomAudioElement(ambientPlayer, 'pym-ambient-player');
-        ambientPlayer.volume = getEffectiveAmbientVolume();
-    } else if (typeof document !== 'undefined' && document.body && !ambientPlayer.parentElement) {
-        configureDomAudioElement(ambientPlayer, 'pym-ambient-player');
+        configureDomAudioElement(engine.ambientPlayer, 'pym-ambient-player');
+        engine.ambientPlayer.volume = getEffectiveAmbientVolume();
+        engine.ambientPlayer.muted = state.isMuted;
+    } else if (typeof document !== 'undefined' && document.body && !engine.ambientPlayer.parentElement) {
+        configureDomAudioElement(engine.ambientPlayer, 'pym-ambient-player');
     }
 
     return true;
 }
 
+function applyVolumesToPlayers() {
+    ensurePlayers();
+
+    if (engine.bgmPlayer) {
+        engine.bgmPlayer.muted = state.isMuted;
+        engine.bgmPlayer.volume = getEffectiveMusicVolume();
+    }
+    if (engine.ambientPlayer) {
+        engine.ambientPlayer.muted = state.isMuted;
+        engine.ambientPlayer.volume = getEffectiveAmbientVolume();
+    }
+    const sfxVol = getEffectiveSfxVolume();
+    for (const entry of activeSfx) {
+        try {
+            if (entry.gainNode) {
+                entry.gainNode.gain.value = sfxVol;
+            }
+            if (entry.audio) {
+                entry.audio.muted = state.isMuted;
+                entry.audio.volume = sfxVol;
+            }
+        } catch {
+            // Ignore element state error
+        }
+    }
+}
+
+function ensureActiveTracksResumedIfUnmuted() {
+    if (state.isMuted) return;
+
+    tryResumeAudioContext();
+
+    if (engine.bgmPlayer && state.currentTrackKey && !state.bgmPaused && !state.bgmLoading && engine.bgmPlayer.paused) {
+        if (engine.bgmPlayer.src) {
+            startBgmElementPlayback(engine.bgmPlayer, state.currentTrackKey, state.currentTrackUrl, state.requestCounter);
+        } else if (state.currentTrackUrl) {
+            const key = state.currentTrackKey;
+            const url = state.currentTrackUrl;
+            const loop = state.bgmLoop;
+            state.currentTrackKey = null;
+            playMusic(key, url, loop);
+        }
+    }
+
+    if (engine.ambientPlayer && state.currentAmbientKey && !state.ambientLoading && engine.ambientPlayer.paused) {
+        if (engine.ambientPlayer.src) {
+            startAmbientElementPlayback(engine.ambientPlayer, state.currentAmbientKey, state.currentAmbientUrl, state.ambientRequestCounter);
+        } else if (state.currentAmbientUrl) {
+            const key = state.currentAmbientKey;
+            const url = state.currentAmbientUrl;
+            const loop = state.ambientLoop;
+            state.currentAmbientKey = null;
+            playAmbient(key, url, loop);
+        }
+    }
+}
+
 function checkAndDetachUnlockListeners() {
-    if (!state.pendingBgmPlay && !state.pendingAmbientPlay && !state.autoMutedByBrowserPolicy && !state.autoMutedAmbientByPolicy) {
+    if (!state.pendingBgmPlay && !state.pendingAmbientPlay) {
         detachUnlockListeners();
     }
 }
 
-function unlockBgmPlayback() {
-    if (!bgmPlayer || !state.currentTrackKey || state.bgmPaused) return;
-    if (!state.pendingBgmPlay && !state.autoMutedByBrowserPolicy && !bgmPlayer.paused) return;
-
-    state.autoMutedByBrowserPolicy = false;
-    bgmPlayer.muted = state.isMuted;
-    bgmPlayer.volume = getEffectiveMusicVolume();
-
-    try {
-        const playPromise = bgmPlayer.play();
-        if (playPromise && typeof playPromise.then === 'function') {
-            playPromise
-                .then(() => {
-                    state.pendingBgmPlay = false;
-                    state.autoMutedByBrowserPolicy = false;
-                    checkAndDetachUnlockListeners();
-                })
-                .catch(() => {
-                    state.pendingBgmPlay = true;
-                });
-        } else {
-            state.pendingBgmPlay = false;
-            checkAndDetachUnlockListeners();
-        }
-    } catch {
-        state.pendingBgmPlay = true;
-    }
-}
-
-function unlockAmbientPlayback() {
-    if (!ambientPlayer || !state.currentAmbientKey) return;
-    if (!state.pendingAmbientPlay && !state.autoMutedAmbientByPolicy && !ambientPlayer.paused) return;
-
-    state.autoMutedAmbientByPolicy = false;
-    ambientPlayer.muted = state.isMuted;
-    ambientPlayer.volume = getEffectiveAmbientVolume();
-
-    try {
-        const ambPromise = ambientPlayer.play();
-        if (ambPromise && typeof ambPromise.then === 'function') {
-            ambPromise
-                .then(() => {
-                    state.pendingAmbientPlay = false;
-                    state.autoMutedAmbientByPolicy = false;
-                    checkAndDetachUnlockListeners();
-                })
-                .catch(() => {
-                    state.pendingAmbientPlay = true;
-                });
-        } else {
-            state.pendingAmbientPlay = false;
-            checkAndDetachUnlockListeners();
-        }
-    } catch {
-        state.pendingAmbientPlay = true;
-    }
-}
-
 function handleUserInteractionUnlock() {
-    unlockBgmPlayback();
-    unlockAmbientPlayback();
+    tryResumeAudioContext();
+
+    if (engine.bgmPlayer && state.currentTrackKey && !state.bgmPaused && !state.bgmLoading) {
+        if (state.pendingBgmPlay || engine.bgmPlayer.paused) {
+            engine.bgmPlayer.muted = state.isMuted;
+            engine.bgmPlayer.volume = getEffectiveMusicVolume();
+            try {
+                const playPromise = engine.bgmPlayer.play();
+                if (playPromise && typeof playPromise.then === 'function') {
+                    playPromise
+                        .then(() => {
+                            state.pendingBgmPlay = false;
+                            checkAndDetachUnlockListeners();
+                        })
+                        .catch(err => {
+                            if (err && err.name === 'AbortError') return;
+                            state.pendingBgmPlay = true;
+                        });
+                } else {
+                    state.pendingBgmPlay = false;
+                    checkAndDetachUnlockListeners();
+                }
+            } catch {
+                state.pendingBgmPlay = true;
+            }
+        }
+    }
+
+    if (engine.ambientPlayer && state.currentAmbientKey && !state.ambientLoading) {
+        if (state.pendingAmbientPlay || engine.ambientPlayer.paused) {
+            engine.ambientPlayer.muted = state.isMuted;
+            engine.ambientPlayer.volume = getEffectiveAmbientVolume();
+            try {
+                const ambPromise = engine.ambientPlayer.play();
+                if (ambPromise && typeof ambPromise.then === 'function') {
+                    ambPromise
+                        .then(() => {
+                            state.pendingAmbientPlay = false;
+                            checkAndDetachUnlockListeners();
+                        })
+                        .catch(err => {
+                            if (err && err.name === 'AbortError') return;
+                            state.pendingAmbientPlay = true;
+                        });
+                } else {
+                    state.pendingAmbientPlay = false;
+                    checkAndDetachUnlockListeners();
+                }
+            } catch {
+                state.pendingAmbientPlay = true;
+            }
+        }
+    }
+
     checkAndDetachUnlockListeners();
 }
 
@@ -348,36 +430,22 @@ function handleVisibilityChange() {
     if (typeof document === 'undefined') return;
     try {
         if (document.hidden) {
-            state.wasBgmPlayingBeforeHide = Boolean(bgmPlayer && !bgmPlayer.paused && state.currentTrackKey && !state.bgmPaused);
-            state.wasAmbientPlayingBeforeHide = Boolean(ambientPlayer && !ambientPlayer.paused && state.currentAmbientKey);
-            if (state.wasBgmPlayingBeforeHide && bgmPlayer) {
-                bgmPlayer.pause();
+            state.wasBgmPlayingBeforeHide = Boolean(engine.bgmPlayer && !engine.bgmPlayer.paused && state.currentTrackKey && !state.bgmPaused);
+            state.wasAmbientPlayingBeforeHide = Boolean(engine.ambientPlayer && !engine.ambientPlayer.paused && state.currentAmbientKey);
+            if (state.wasBgmPlayingBeforeHide && engine.bgmPlayer) {
+                engine.bgmPlayer.pause();
             }
-            if (state.wasAmbientPlayingBeforeHide && ambientPlayer) {
-                ambientPlayer.pause();
+            if (state.wasAmbientPlayingBeforeHide && engine.ambientPlayer) {
+                engine.ambientPlayer.pause();
             }
         } else {
-            if (state.wasBgmPlayingBeforeHide && bgmPlayer && state.currentTrackKey && !state.bgmPaused) {
+            if (state.wasBgmPlayingBeforeHide && engine.bgmPlayer && state.currentTrackKey && !state.bgmPaused) {
                 state.wasBgmPlayingBeforeHide = false;
-                bgmPlayer.volume = getEffectiveMusicVolume();
-                const p = bgmPlayer.play();
-                if (p && typeof p.catch === 'function') {
-                    p.catch(() => {
-                        state.pendingBgmPlay = true;
-                        attachUnlockListeners();
-                    });
-                }
+                startBgmElementPlayback(engine.bgmPlayer, state.currentTrackKey, state.currentTrackUrl, state.requestCounter);
             }
-            if (state.wasAmbientPlayingBeforeHide && ambientPlayer && state.currentAmbientKey) {
+            if (state.wasAmbientPlayingBeforeHide && engine.ambientPlayer && state.currentAmbientKey) {
                 state.wasAmbientPlayingBeforeHide = false;
-                ambientPlayer.volume = getEffectiveAmbientVolume();
-                const p = ambientPlayer.play();
-                if (p && typeof p.catch === 'function') {
-                    p.catch(() => {
-                        state.pendingAmbientPlay = true;
-                        attachUnlockListeners();
-                    });
-                }
+                startAmbientElementPlayback(engine.ambientPlayer, state.currentAmbientKey, state.currentAmbientUrl, state.ambientRequestCounter);
             }
         }
     } catch {
@@ -391,10 +459,10 @@ function ensureVisibilityListener() {
     document.addEventListener('visibilitychange', handleVisibilityChange);
 }
 
-function startBgmElementPlayback(player, expectedTrackKey, canonicalUrl) {
+function startBgmElementPlayback(player, expectedTrackKey, canonicalUrl, reqId) {
     if (!player || state.currentTrackKey !== expectedTrackKey || state.bgmPaused) return;
+    if (reqId !== undefined && reqId !== state.requestCounter) return;
 
-    state.autoMutedByBrowserPolicy = false;
     player.muted = state.isMuted;
     player.volume = getEffectiveMusicVolume();
 
@@ -403,47 +471,38 @@ function startBgmElementPlayback(player, expectedTrackKey, canonicalUrl) {
         if (playPromise && typeof playPromise.then === 'function') {
             playPromise
                 .then(() => {
+                    if (state.currentTrackKey !== expectedTrackKey) return;
                     state.pendingBgmPlay = false;
-                    state.autoMutedByBrowserPolicy = false;
                     checkAndDetachUnlockListeners();
                 })
                 .catch(err => {
                     if (state.currentTrackKey !== expectedTrackKey) return;
+                    if (reqId !== undefined && reqId !== state.requestCounter) return;
+
                     const errName = (err && err.name) ? err.name : '';
 
-                    // If direct virtual-host URL failed to decode in MAUI WebView, swap to Blob URL
+                    // Ignore AbortError caused by rapid track switching or concurrent load
+                    if (errName === 'AbortError') {
+                        return;
+                    }
+
+                    // If direct URL failed to decode in WebView, swap to Blob URL
                     if (errName === 'NotSupportedError' && canonicalUrl && !player.src.startsWith('blob:')) {
+                        state.bgmLoading = true;
                         fetchBlobUrl(canonicalUrl).then(blobUrl => {
-                            if (state.currentTrackKey === expectedTrackKey && blobUrl && blobUrl !== canonicalUrl) {
+                            state.bgmLoading = false;
+                            if (state.currentTrackKey === expectedTrackKey && reqId === state.requestCounter && blobUrl && blobUrl !== canonicalUrl) {
                                 player.src = blobUrl;
                                 player.loop = state.bgmLoop;
-                                startBgmElementPlayback(player, expectedTrackKey, null);
+                                startBgmElementPlayback(player, expectedTrackKey, null, reqId);
                             }
                         });
                         return;
                     }
 
-                    // Browser autoplay restriction (NotAllowedError):
-                    // Start muted autoplay so track is buffered & rolling, then unmute on first user activation
+                    // Browser autoplay restriction (NotAllowedError): queue for first user interaction
                     state.pendingBgmPlay = true;
                     attachUnlockListeners();
-
-                    if (!state.isMuted && !isMauiWebView()) {
-                        try {
-                            state.autoMutedByBrowserPolicy = true;
-                            player.muted = true;
-                            const mutedPromise = player.play();
-                            if (mutedPromise && typeof mutedPromise.catch === 'function') {
-                                mutedPromise.catch(() => {
-                                    state.autoMutedByBrowserPolicy = false;
-                                    player.muted = state.isMuted;
-                                });
-                            }
-                        } catch {
-                            state.autoMutedByBrowserPolicy = false;
-                            player.muted = state.isMuted;
-                        }
-                    }
                 });
         }
     } catch {
@@ -480,34 +539,32 @@ export function playMusic(trackKey, relativePath, loop = true) {
     if (!url) return;
 
     const shouldLoop = loop !== false;
+    const player = engine.bgmPlayer;
 
-    // Do not restart the same track if already playing or queued for autoplay
-    if (state.currentTrackKey === trackKey && bgmPlayer) {
-        bgmPlayer.loop = shouldLoop;
+    // Never restart or abort the same track if it is already active, loading, or pending autoplay unlock
+    if (state.currentTrackKey === trackKey && player) {
+        player.loop = shouldLoop;
         state.bgmLoop = shouldLoop;
-        bgmPlayer.volume = getEffectiveMusicVolume();
+        player.muted = state.isMuted;
+        player.volume = getEffectiveMusicVolume();
 
-        if (!bgmPlayer.paused && !state.autoMutedByBrowserPolicy) {
+        if (!player.paused || state.bgmLoading) {
             return;
         }
-        if (state.pendingBgmPlay && !state.bgmPaused) {
-            unlockBgmPlayback();
-            if (state.pendingBgmPlay) {
-                attachUnlockListeners();
-            }
-            return;
+
+        state.bgmPaused = false;
+        if (player.src) {
+            startBgmElementPlayback(player, trackKey, url, state.requestCounter);
         }
-        if (state.bgmPaused) {
-            state.bgmPaused = false;
-            startBgmElementPlayback(bgmPlayer, trackKey, url);
-            return;
-        }
+        return;
     }
+
+    const reqId = ++state.requestCounter;
 
     // Stop any previously active track before switching
     try {
-        bgmPlayer.pause();
-        bgmPlayer.currentTime = 0;
+        player.pause();
+        player.currentTime = 0;
     } catch {
         // Ignore reset error
     }
@@ -517,56 +574,58 @@ export function playMusic(trackKey, relativePath, loop = true) {
     state.bgmLoop = shouldLoop;
     state.bgmPaused = false;
     state.pendingBgmPlay = false;
-    state.autoMutedByBrowserPolicy = false;
 
-    bgmPlayer.loop = shouldLoop;
-    bgmPlayer.volume = getEffectiveMusicVolume();
-    bgmPlayer.muted = state.isMuted;
+    player.loop = shouldLoop;
+    player.volume = getEffectiveMusicVolume();
+    player.muted = state.isMuted;
 
-    // In MAUI BlazorWebView (0.0.0.0 / app://), load via Blob URL so OS MediaPlayer/AVPlayer never fails on virtual origin
     if (blobUrlCache.has(url)) {
-        bgmPlayer.src = blobUrlCache.get(url);
-        startBgmElementPlayback(bgmPlayer, trackKey, url);
+        state.bgmLoading = false;
+        player.src = blobUrlCache.get(url);
+        startBgmElementPlayback(player, trackKey, url, reqId);
     } else if (isMauiWebView()) {
+        state.bgmLoading = true;
         fetchBlobUrl(url).then(resolvedUrl => {
-            if (state.currentTrackKey !== trackKey || !bgmPlayer) return;
-            bgmPlayer.src = resolvedUrl || url;
-            bgmPlayer.loop = state.bgmLoop;
-            startBgmElementPlayback(bgmPlayer, trackKey, null);
+            if (state.currentTrackKey !== trackKey || reqId !== state.requestCounter || !engine.bgmPlayer) return;
+            state.bgmLoading = false;
+            engine.bgmPlayer.src = resolvedUrl || url;
+            engine.bgmPlayer.loop = state.bgmLoop;
+            startBgmElementPlayback(engine.bgmPlayer, trackKey, null, reqId);
         });
     } else {
-        bgmPlayer.src = url;
-        startBgmElementPlayback(bgmPlayer, trackKey, url);
-        // Pre-cache Blob URL in background for instant replay
+        state.bgmLoading = false;
+        player.src = url;
+        startBgmElementPlayback(player, trackKey, url, reqId);
         fetchBlobUrl(url);
     }
 }
 
 export function stopMusic() {
+    ++state.requestCounter;
+    state.bgmLoading = false;
     state.pendingBgmPlay = false;
-    state.autoMutedByBrowserPolicy = false;
     state.bgmPaused = false;
     state.currentTrackKey = null;
     state.currentTrackUrl = null;
 
-    if (!bgmPlayer) return;
+    if (!engine.bgmPlayer) return;
     try {
-        bgmPlayer.pause();
-        bgmPlayer.currentTime = 0;
-        bgmPlayer.removeAttribute('src');
-        bgmPlayer.load();
+        engine.bgmPlayer.pause();
+        engine.bgmPlayer.currentTime = 0;
+        engine.bgmPlayer.removeAttribute('src');
+        engine.bgmPlayer.load();
     } catch {
         // Ignore stop errors
     }
 }
 
 export function pauseMusic() {
-    if (!bgmPlayer) return;
+    if (!engine.bgmPlayer) return;
     state.bgmPaused = true;
     state.pendingBgmPlay = false;
     try {
-        if (!bgmPlayer.paused) {
-            bgmPlayer.pause();
+        if (!engine.bgmPlayer.paused) {
+            engine.bgmPlayer.pause();
         }
     } catch {
         // Ignore pause errors
@@ -574,27 +633,30 @@ export function pauseMusic() {
 }
 
 export function resumeMusic() {
-    if (!bgmPlayer || !state.currentTrackKey) return;
+    if (!engine.bgmPlayer || !state.currentTrackKey) return;
     state.bgmPaused = false;
-    bgmPlayer.volume = getEffectiveMusicVolume();
+    engine.bgmPlayer.muted = state.isMuted;
+    engine.bgmPlayer.volume = getEffectiveMusicVolume();
 
-    if (!bgmPlayer.paused && !state.autoMutedByBrowserPolicy) return;
+    if (!engine.bgmPlayer.paused) return;
 
-    startBgmElementPlayback(bgmPlayer, state.currentTrackKey, state.currentTrackUrl);
+    startBgmElementPlayback(engine.bgmPlayer, state.currentTrackKey, state.currentTrackUrl, state.requestCounter);
 }
 
 export function playSoundEffect(effectKey, relativePath) {
     if (!state.initialized) {
         initialize();
     }
-    if (typeof Audio === 'undefined') return;
     const url = resolveAssetUrl(relativePath);
     if (!url) return;
 
-    // Any SFX trigger often coincides with a user click; unlock pending BGM/Ambient too
-    if (state.pendingBgmPlay || state.autoMutedByBrowserPolicy || state.pendingAmbientPlay) {
+    // Any SFX trigger coincides with a user interaction; unlock pending BGM/Ambient & AudioContext
+    tryResumeAudioContext();
+    if (state.pendingBgmPlay || state.pendingAmbientPlay || (engine.bgmPlayer && engine.bgmPlayer.paused && state.currentTrackKey && !state.bgmPaused)) {
         handleUserInteractionUnlock();
     }
+
+    if (state.isMuted) return;
 
     // Enforce pool limit without interrupting BGM or newer SFX
     if (activeSfx.size >= MAX_CONCURRENT_SFX) {
@@ -602,15 +664,42 @@ export function playSoundEffect(effectKey, relativePath) {
         if (oldest) {
             activeSfx.delete(oldest);
             try {
-                oldest.audio.pause();
-                oldest.audio.removeAttribute('src');
+                if (oldest.sourceNode) {
+                    oldest.sourceNode.stop();
+                }
+                if (oldest.audio) {
+                    oldest.audio.pause();
+                    oldest.audio.removeAttribute('src');
+                }
             } catch {
                 // Ignore cleanup error
             }
         }
     }
 
+    // Fast path: if decoded in Web Audio API AudioBuffer cache and AudioContext is running, play with 0ms latency
+    const ctx = getOrCreateAudioContext();
+    if (ctx && ctx.state === 'running' && audioBufferCache.has(url)) {
+        try {
+            const sourceNode = ctx.createBufferSource();
+            const gainNode = ctx.createGain();
+            sourceNode.buffer = audioBufferCache.get(url);
+            gainNode.gain.value = getEffectiveSfxVolume();
+            sourceNode.connect(gainNode);
+            gainNode.connect(ctx.destination);
+
+            const entry = { key: effectKey, sourceNode, gainNode, audio: null };
+            activeSfx.add(entry);
+            sourceNode.onended = () => activeSfx.delete(entry);
+            sourceNode.start(0);
+            return;
+        } catch {
+            // Fall through to HTMLAudioElement
+        }
+    }
+
     const playResolvedSfx = (playableUrl) => {
+        if (typeof Audio === 'undefined') return;
         try {
             const sfxAudio = new Audio(playableUrl);
             sfxAudio.preload = 'auto';
@@ -619,7 +708,7 @@ export function playSoundEffect(effectKey, relativePath) {
             sfxAudio.muted = state.isMuted;
             sfxAudio.volume = getEffectiveSfxVolume();
 
-            const entry = { key: effectKey, audio: sfxAudio };
+            const entry = { key: effectKey, audio: sfxAudio, sourceNode: null, gainNode: null };
             activeSfx.add(entry);
 
             const cleanup = () => {
@@ -656,9 +745,14 @@ export function stopSoundEffect(effectKey) {
         if (entry.key === effectKey) {
             activeSfx.delete(entry);
             try {
-                entry.audio.pause();
-                entry.audio.currentTime = 0;
-                entry.audio.removeAttribute('src');
+                if (entry.sourceNode) {
+                    entry.sourceNode.stop();
+                }
+                if (entry.audio) {
+                    entry.audio.pause();
+                    entry.audio.currentTime = 0;
+                    entry.audio.removeAttribute('src');
+                }
             } catch {
                 // Ignore stop error
             }
@@ -670,19 +764,24 @@ export function stopAllSoundEffects() {
     for (const entry of Array.from(activeSfx)) {
         activeSfx.delete(entry);
         try {
-            entry.audio.pause();
-            entry.audio.currentTime = 0;
-            entry.audio.removeAttribute('src');
+            if (entry.sourceNode) {
+                entry.sourceNode.stop();
+            }
+            if (entry.audio) {
+                entry.audio.pause();
+                entry.audio.currentTime = 0;
+                entry.audio.removeAttribute('src');
+            }
         } catch {
             // Ignore stop error
         }
     }
 }
 
-function startAmbientElementPlayback(player, expectedAmbientKey, canonicalUrl) {
+function startAmbientElementPlayback(player, expectedAmbientKey, canonicalUrl, reqId) {
     if (!player || state.currentAmbientKey !== expectedAmbientKey) return;
+    if (reqId !== undefined && reqId !== state.ambientRequestCounter) return;
 
-    state.autoMutedAmbientByPolicy = false;
     player.muted = state.isMuted;
     player.volume = getEffectiveAmbientVolume();
 
@@ -691,19 +790,26 @@ function startAmbientElementPlayback(player, expectedAmbientKey, canonicalUrl) {
         if (playPromise && typeof playPromise.then === 'function') {
             playPromise
                 .then(() => {
+                    if (state.currentAmbientKey !== expectedAmbientKey) return;
                     state.pendingAmbientPlay = false;
-                    state.autoMutedAmbientByPolicy = false;
                     checkAndDetachUnlockListeners();
                 })
                 .catch(err => {
                     if (state.currentAmbientKey !== expectedAmbientKey) return;
+                    if (reqId !== undefined && reqId !== state.ambientRequestCounter) return;
+
                     const errName = (err && err.name) ? err.name : '';
+                    if (errName === 'AbortError') {
+                        return;
+                    }
                     if (errName === 'NotSupportedError' && canonicalUrl && !player.src.startsWith('blob:')) {
+                        state.ambientLoading = true;
                         fetchBlobUrl(canonicalUrl).then(blobUrl => {
-                            if (state.currentAmbientKey === expectedAmbientKey && blobUrl && blobUrl !== canonicalUrl) {
+                            state.ambientLoading = false;
+                            if (state.currentAmbientKey === expectedAmbientKey && reqId === state.ambientRequestCounter && blobUrl && blobUrl !== canonicalUrl) {
                                 player.src = blobUrl;
                                 player.loop = state.ambientLoop;
-                                startAmbientElementPlayback(player, expectedAmbientKey, null);
+                                startAmbientElementPlayback(player, expectedAmbientKey, null, reqId);
                             }
                         });
                         return;
@@ -727,26 +833,28 @@ export function playAmbient(ambientKey, relativePath, loop = true) {
     if (!url) return;
 
     const shouldLoop = loop !== false;
+    const player = engine.ambientPlayer;
 
-    if (state.currentAmbientKey === ambientKey && ambientPlayer) {
-        ambientPlayer.loop = shouldLoop;
+    if (state.currentAmbientKey === ambientKey && player) {
+        player.loop = shouldLoop;
         state.ambientLoop = shouldLoop;
-        ambientPlayer.volume = getEffectiveAmbientVolume();
-        if (!ambientPlayer.paused && !state.autoMutedAmbientByPolicy) {
+        player.muted = state.isMuted;
+        player.volume = getEffectiveAmbientVolume();
+
+        if (!player.paused || state.ambientLoading) {
             return;
         }
-        if (state.pendingAmbientPlay) {
-            unlockAmbientPlayback();
-            if (state.pendingAmbientPlay) {
-                attachUnlockListeners();
-            }
-            return;
+        if (player.src) {
+            startAmbientElementPlayback(player, ambientKey, url, state.ambientRequestCounter);
         }
+        return;
     }
 
+    const reqId = ++state.ambientRequestCounter;
+
     try {
-        ambientPlayer.pause();
-        ambientPlayer.currentTime = 0;
+        player.pause();
+        player.currentTime = 0;
     } catch {
         // Ignore reset error
     }
@@ -755,41 +863,45 @@ export function playAmbient(ambientKey, relativePath, loop = true) {
     state.currentAmbientUrl = url;
     state.ambientLoop = shouldLoop;
     state.pendingAmbientPlay = false;
-    state.autoMutedAmbientByPolicy = false;
 
-    ambientPlayer.loop = shouldLoop;
-    ambientPlayer.volume = getEffectiveAmbientVolume();
-    ambientPlayer.muted = state.isMuted;
+    player.loop = shouldLoop;
+    player.volume = getEffectiveAmbientVolume();
+    player.muted = state.isMuted;
 
     if (blobUrlCache.has(url)) {
-        ambientPlayer.src = blobUrlCache.get(url);
-        startAmbientElementPlayback(ambientPlayer, ambientKey, url);
+        state.ambientLoading = false;
+        player.src = blobUrlCache.get(url);
+        startAmbientElementPlayback(player, ambientKey, url, reqId);
     } else if (isMauiWebView()) {
+        state.ambientLoading = true;
         fetchBlobUrl(url).then(resolvedUrl => {
-            if (state.currentAmbientKey !== ambientKey || !ambientPlayer) return;
-            ambientPlayer.src = resolvedUrl || url;
-            ambientPlayer.loop = state.ambientLoop;
-            startAmbientElementPlayback(ambientPlayer, ambientKey, null);
+            if (state.currentAmbientKey !== ambientKey || reqId !== state.ambientRequestCounter || !engine.ambientPlayer) return;
+            state.ambientLoading = false;
+            engine.ambientPlayer.src = resolvedUrl || url;
+            engine.ambientPlayer.loop = state.ambientLoop;
+            startAmbientElementPlayback(engine.ambientPlayer, ambientKey, null, reqId);
         });
     } else {
-        ambientPlayer.src = url;
-        startAmbientElementPlayback(ambientPlayer, ambientKey, url);
+        state.ambientLoading = false;
+        player.src = url;
+        startAmbientElementPlayback(player, ambientKey, url, reqId);
         fetchBlobUrl(url);
     }
 }
 
 export function stopAmbient() {
+    ++state.ambientRequestCounter;
+    state.ambientLoading = false;
     state.pendingAmbientPlay = false;
-    state.autoMutedAmbientByPolicy = false;
     state.currentAmbientKey = null;
     state.currentAmbientUrl = null;
 
-    if (!ambientPlayer) return;
+    if (!engine.ambientPlayer) return;
     try {
-        ambientPlayer.pause();
-        ambientPlayer.currentTime = 0;
-        ambientPlayer.removeAttribute('src');
-        ambientPlayer.load();
+        engine.ambientPlayer.pause();
+        engine.ambientPlayer.currentTime = 0;
+        engine.ambientPlayer.removeAttribute('src');
+        engine.ambientPlayer.load();
     } catch {
         // Ignore stop error
     }
@@ -799,28 +911,30 @@ export function setMasterVolume(volume) {
     state.masterVolume = clamp01(volume, state.masterVolume);
     applyVolumesToPlayers();
     savePersistedSettings();
+    ensureActiveTracksResumedIfUnmuted();
 }
 
 export function setMusicVolume(volume) {
     state.musicVolume = clamp01(volume, state.musicVolume);
     applyVolumesToPlayers();
     savePersistedSettings();
+    ensureActiveTracksResumedIfUnmuted();
 }
 
 export function setSoundEffectsVolume(volume) {
     state.sfxVolume = clamp01(volume, state.sfxVolume);
     applyVolumesToPlayers();
     savePersistedSettings();
+    ensureActiveTracksResumedIfUnmuted();
 }
 
 export function setMuted(muted) {
     state.isMuted = Boolean(muted);
-    if (!state.isMuted) {
-        state.autoMutedByBrowserPolicy = false;
-        state.autoMutedAmbientByPolicy = false;
-    }
     applyVolumesToPlayers();
     savePersistedSettings();
+    if (!state.isMuted) {
+        ensureActiveTracksResumedIfUnmuted();
+    }
 }
 
 export function disposeAudio() {
@@ -838,7 +952,7 @@ function autoStartInitialScreenMusic() {
     if (typeof window === 'undefined' || !window.location) return;
     initialize();
 
-    // Pre-cache UI tap SFX immediately
+    // Pre-cache and decode UI button tap SFX immediately
     fetchBlobUrl(resolveAssetUrl('_content/PymSpaceOrbit.Shared/audio/sfx/sfx_ui_button_tap.mp3'));
 
     if (state.currentTrackKey) return;
@@ -851,7 +965,6 @@ function autoStartInitialScreenMusic() {
     playMusic(routeTrack.key, routeTrack.path, true);
 }
 
-// Expose globally on window for direct synchronous/single-hop Blazor JS interop
 if (typeof window !== 'undefined') {
     window.pymAudioService = {
         initialize,
