@@ -1,0 +1,328 @@
+@namespace PymSpaceOrbit.Shared.Components.Cards
+@using PymSpaceOrbit.Shared.Models.Game
+@using PymSpaceOrbit.Shared.Services
+@inject NasaCardImageResolver ImageResolver
+
+<div class="pymgameorbit-card-container @(IsSelected ? "pymgameorbit-card-selected" : "") @CustomClass"
+     style="@GetContainerStyle()"
+     @onclick="HandleCardClick">
+
+    <!-- Background Template / Back Layer -->
+    <img src="@GetTemplateBackground()"
+         alt="Card Template"
+         class="pymgameorbit-card-template-img" />
+
+    @if (!IsFaceDown && Card is not null)
+    {
+        <!-- Central 90° Rectangular Window for NASA Official Photo -->
+        <div class="pymgameorbit-card-nasa-window">
+            @if (!string.IsNullOrWhiteSpace(_currentPhotoUrl))
+            {
+                <img src="@_currentPhotoUrl"
+                     alt="@CardName"
+                     class="pymgameorbit-card-photo"
+                     loading="lazy" />
+            }
+            else
+            {
+                <div class="pymgameorbit-card-photo-placeholder">
+                    <MudIcon Icon="@Icons.Material.Filled.PhotoCamera" Size="Size.Small" Style="color: rgba(255,255,255,0.4);" />
+                </div>
+            }
+        </div>
+
+        <!-- Top Banner: Title & Kid Summary Tooltip -->
+        <div class="pymgameorbit-card-top-banner">
+            <MudTooltip Text="@KidSummary" Arrow="true" Placement="Placement.Top">
+                <span class="pymgameorbit-card-title">@CardName</span>
+            </MudTooltip>
+        </div>
+
+        <!-- Bottom Panel: Costs, Trade-Offs & Technical Glossary Chips -->
+        <div class="pymgameorbit-card-bottom-panel">
+            <div class="pymgameorbit-card-attributes-text" title="@UiLabel">
+                @UiLabel
+            </div>
+
+            @if (Card.TechnicalGlossary is not null && Card.TechnicalGlossary.Count > 0)
+            {
+                <div class="pymgameorbit-card-chips-row">
+                    @foreach (var term in Card.TechnicalGlossary.Values.Take(3))
+                    {
+                        <span class="pymgameorbit-card-glossary-chip"
+                              @onclick:stopPropagation="true"
+                              @onclick="@(() => HandleTermClick(term))"
+                              title="@(IsPortuguese ? term.ExplanationPtBr : term.ExplanationEn)">
+                            @term.Term
+                        </span>
+                    }
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<style>
+    .pymgameorbit-card-container {
+        position: relative;
+        aspect-ratio: 2 / 3;
+        width: 100%;
+        max-width: 280px;
+        border-radius: 10px;
+        overflow: hidden;
+        user-select: none;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+        transition: transform 0.22s ease, box-shadow 0.22s ease;
+        background-color: #060911;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .pymgameorbit-card-container:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 8px 22px rgba(0, 229, 255, 0.45);
+        z-index: 10;
+    }
+
+    .pymgameorbit-card-selected {
+        outline: 3px solid #00E5FF;
+        box-shadow: 0 0 20px rgba(0, 229, 255, 0.75);
+    }
+
+    .pymgameorbit-card-template-img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: fill;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .pymgameorbit-card-nasa-window {
+        position: absolute;
+        top: 18.5%;
+        left: 13.5%;
+        width: 73%;
+        height: 47.5%;
+        overflow: hidden;
+        z-index: 2;
+        border-radius: 4px;
+        background-color: #020408;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .pymgameorbit-card-photo {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.3s ease;
+    }
+
+    .pymgameorbit-card-container:hover .pymgameorbit-card-photo {
+        transform: scale(1.06);
+    }
+
+    .pymgameorbit-card-photo-placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #0d1b2a, #1b263b);
+    }
+
+    .pymgameorbit-card-top-banner {
+        position: absolute;
+        top: 6.5%;
+        left: 10%;
+        width: 80%;
+        height: 8.5%;
+        z-index: 3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 0 4px;
+    }
+
+    .pymgameorbit-card-title {
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-weight: 700;
+        font-size: clamp(8px, 1.1vw, 12px);
+        color: #FFFFFF;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95), 0 0 8px rgba(0, 229, 255, 0.5);
+        letter-spacing: 0.3px;
+    }
+
+    .pymgameorbit-card-bottom-panel {
+        position: absolute;
+        top: 69%;
+        left: 9%;
+        width: 82%;
+        height: 24%;
+        z-index: 3;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        padding: 3px 4px;
+        box-sizing: border-box;
+    }
+
+    .pymgameorbit-card-attributes-text {
+        width: 100%;
+        font-size: clamp(7.5px, 0.95vw, 11px);
+        color: #E0F7FA;
+        font-weight: 600;
+        text-align: center;
+        text-shadow: 0 1px 2px #000000;
+        line-height: 1.15;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .pymgameorbit-card-chips-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2px;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        max-height: 52%;
+        overflow: hidden;
+    }
+
+    .pymgameorbit-card-glossary-chip {
+        display: inline-block;
+        padding: 1px 5px;
+        font-size: clamp(6.5px, 0.8vw, 9px);
+        font-weight: 600;
+        background: rgba(0, 229, 255, 0.2);
+        color: #00E5FF;
+        border: 1px solid rgba(0, 229, 255, 0.45);
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 90%;
+        overflow: hidden;
+    }
+
+    .pymgameorbit-card-glossary-chip:hover {
+        background: rgba(0, 229, 255, 0.45);
+        color: #FFFFFF;
+        box-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
+    }
+</style>
+
+@code {
+    [Parameter] public GameCardModel? Card { get; set; }
+    [Parameter] public bool IsFaceDown { get; set; }
+    [Parameter] public bool IsSelected { get; set; }
+    [Parameter] public string Locale { get; set; } = "pt-BR";
+    [Parameter] public string? CustomStyle { get; set; }
+    [Parameter] public string? CustomClass { get; set; }
+    [Parameter] public EventCallback<GameCardModel> OnCardClicked { get; set; }
+    [Parameter] public EventCallback<TechnicalTermNote> OnTermClicked { get; set; }
+
+    private string _currentPhotoUrl = string.Empty;
+    private string? _loadedCardId;
+
+    private bool IsPortuguese => Locale.StartsWith("pt", StringComparison.OrdinalIgnoreCase);
+
+    private string CardName => Card is null
+        ? string.Empty
+        : (IsPortuguese ? (string.IsNullOrWhiteSpace(Card.NamePtBr) ? Card.NameEn : Card.NamePtBr) : Card.NameEn);
+
+    private string KidSummary => Card is null
+        ? string.Empty
+        : (IsPortuguese ? (string.IsNullOrWhiteSpace(Card.KidSummaryPtBr) ? Card.KidSummaryEn : Card.KidSummaryPtBr) : Card.KidSummaryEn);
+
+    private string UiLabel => Card is null
+        ? string.Empty
+        : (IsPortuguese ? (string.IsNullOrWhiteSpace(Card.GameUiLabelPtBr) ? Card.GameUiLabelEn : Card.GameUiLabelPtBr) : Card.GameUiLabelEn);
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Card is null || IsFaceDown)
+        {
+            _currentPhotoUrl = string.Empty;
+            return;
+        }
+
+        if (_loadedCardId != Card.CardId)
+        {
+            _loadedCardId = Card.CardId;
+            _currentPhotoUrl = Card.NasaImageAssetUrl;
+
+            if (!string.IsNullOrWhiteSpace(Card.NasaImageApiUrl))
+            {
+                var resolved = await ImageResolver.ResolveImageUrlAsync(Card.NasaImageApiUrl, Card.NasaImageAssetUrl);
+                if (!string.IsNullOrWhiteSpace(resolved) && resolved != _currentPhotoUrl)
+                {
+                    _currentPhotoUrl = resolved;
+                }
+            }
+        }
+    }
+
+    private string GetTemplateBackground()
+    {
+        if (IsFaceDown || Card is null)
+            return PymGameOrbitAssets.CardBack;
+
+        string id = Card.CardId;
+        if (id.StartsWith("BLD", StringComparison.OrdinalIgnoreCase))
+            return PymGameOrbitAssets.Deck1ShipBuild;
+        if (id.StartsWith("ECL", StringComparison.OrdinalIgnoreCase))
+            return PymGameOrbitAssets.Deck2Eclss;
+        if (id.StartsWith("ENV", StringComparison.OrdinalIgnoreCase))
+            return PymGameOrbitAssets.Deck3Environment;
+        if (id.StartsWith("ARC", StringComparison.OrdinalIgnoreCase))
+            return PymGameOrbitAssets.Deck4OutpostDecisions;
+        if (id.StartsWith("SWX", StringComparison.OrdinalIgnoreCase))
+            return PymGameOrbitAssets.Deck5SpaceWeather;
+
+        return Card.Category switch
+        {
+            CardSlotCategory.ShipAndBaseHull or CardSlotCategory.PowerAndThermal => PymGameOrbitAssets.Deck1ShipBuild,
+            CardSlotCategory.MarshallEclssLoop => PymGameOrbitAssets.Deck2Eclss,
+            CardSlotCategory.EnvironmentAndSuits => PymGameOrbitAssets.Deck3Environment,
+            CardSlotCategory.OutpostArchitecture => PymGameOrbitAssets.Deck4OutpostDecisions,
+            CardSlotCategory.DonkiSpaceWeatherCounter => PymGameOrbitAssets.Deck5SpaceWeather,
+            _ => PymGameOrbitAssets.Deck1ShipBuild
+        };
+    }
+
+    private string GetContainerStyle()
+    {
+        return CustomStyle ?? string.Empty;
+    }
+
+    private async Task HandleCardClick()
+    {
+        if (Card is not null && OnCardClicked.HasDelegate)
+        {
+            await OnCardClicked.InvokeAsync(Card);
+        }
+    }
+
+    private async Task HandleTermClick(TechnicalTermNote term)
+    {
+        if (OnTermClicked.HasDelegate)
+        {
+            await OnTermClicked.InvokeAsync(term);
+        }
+    }
+}

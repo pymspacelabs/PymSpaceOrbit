@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using PymSpaceOrbit.Shared.Services;
 using PymSpaceOrbit.Services;
 using PymSpaceOrbit.Shared.Abstractions.Game;
@@ -6,6 +6,7 @@ using PymSpaceOrbit.Shared.Abstractions.ML;
 using PymSpaceOrbit.Shared.Concrete.Game;
 using PymSpaceOrbit.Shared.Concrete.ML;
 using PymSpaceOrbit.Shared.Extensions;
+using MudBlazor.Services;
 namespace PymSpaceOrbit;
 
 public static class MauiProgram
@@ -35,6 +36,7 @@ public static class MauiProgram
         });
 
         builder.Services.AddPymSpaceOrbitGameServices();
+        builder.Services.AddMudServices();
 
         return builder.Build();
     }

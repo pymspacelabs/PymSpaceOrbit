@@ -7,6 +7,7 @@ using PymSpaceOrbit.Shared.Concrete.Game;
 using PymSpaceOrbit.Shared.Concrete.ML;
 using PymSpaceOrbit.Shared.Extensions;
 using PymSpaceOrbit.Web;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,7 @@ builder.Services.AddScoped(sp => new HttpClient
     BaseAddress = new Uri("https://pymspacelabs.github.io/Simulator/")
 });
 builder.Services.AddPymSpaceOrbitGameServices();
+builder.Services.AddMudServices();
 // Add device-specific services used by the PymSpaceOrbit.Shared project
 builder.Services.AddSingleton<IFormFactor, FormFactor>();
 
@@ -34,6 +36,15 @@ app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages:
 app.UseHttpsRedirection();
 
 app.UseAntiforgery();
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path.StartsWithSegments("/assets", out var remaining))
+    {
+        context.Request.Path = "/_content/PymSpaceOrbit.Shared/assets" + remaining;
+    }
+    await next();
+});
 
 app.MapStaticAssets();
 

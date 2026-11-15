@@ -29,5 +29,6 @@ public sealed record GameCardModel(
     float SuitDurabilityBonusPct,
     float CrewHealthBuffBonus,
     float BiomeShieldingBuffBonus,
-    Dictionary<string, TechnicalTermNote> TechnicalGlossary
+    Dictionary<string, TechnicalTermNote> TechnicalGlossary,
+    string? NasaImageApiUrl = null
 );

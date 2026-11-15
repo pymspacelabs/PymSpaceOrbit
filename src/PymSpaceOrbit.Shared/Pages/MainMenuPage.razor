@@ -1,0 +1,327 @@
+@page "/"
+@page "/menu"
+@namespace PymSpaceOrbit.Shared.Pages
+@using PymSpaceOrbit.Shared.Abstractions.Game
+@using PymSpaceOrbit.Shared.Models.Game
+@inject IGameService GameService
+@inject NavigationManager Navigation
+@inject IDialogService DialogService
+
+<PageTitle>Pym Space Orbit — Main Menu</PageTitle>
+
+<div class="menu-screen-wrapper">
+    <div class="menu-screen-canvas">
+        <!-- 16:9 Background Graphic from Shared Project -->
+        <img src="@PymGameOrbitAssets.ScreenMainMenu" alt="Pym Space Orbit Main Menu" class="menu-bg-img" />
+
+        <!-- Top Metallic Banner: Logo Title & Bilingual Subtitle -->
+        <div class="menu-top-banner">
+            <h1 class="menu-game-title">PYM SPACE ORBIT</h1>
+            <p class="menu-game-subtitle">
+                @(IsPortuguese ? "PymGameOrbit — Card Game de Exploração Espacial & Sobrevivência" : "PymGameOrbit — Space Exploration & Survival Card Game")
+            </p>
+        </div>
+
+        <!-- 4 Stacked Rectangular Button Placeholders -->
+        <div class="menu-buttons-column">
+            <!-- 1. JOGAR / PLAY -->
+            <MudButton Variant="Variant.Filled"
+                       Class="menu-glass-btn btn-play"
+                       OnClick="OpenPlayDialog"
+                       StartIcon="@Icons.Material.Filled.PlayArrow"
+                       Size="Size.Large">
+                @(IsPortuguese ? "JOGAR" : "PLAY")
+            </MudButton>
+
+            <!-- 2. MODO CONSTRUÇÃO / BASE BUILDER -->
+            <MudButton Variant="Variant.Filled"
+                       Class="menu-glass-btn btn-builder"
+                       OnClick="StartBaseBuilderMode"
+                       StartIcon="@Icons.Material.Filled.BuildCircle"
+                       Size="Size.Large">
+                @(IsPortuguese ? "MODO CONSTRUÇÃO" : "BASE BUILDER")
+            </MudButton>
+
+            <!-- 3. SOBRE & CARD SETS / ABOUT & DECKS -->
+            <MudButton Variant="Variant.Filled"
+                       Class="menu-glass-btn btn-info"
+                       OnClick="@(() => Navigation.NavigateTo("/info"))"
+                       StartIcon="@Icons.Material.Filled.CollectionsBookmark"
+                       Size="Size.Large">
+                @(IsPortuguese ? "SOBRE & CARD SETS" : "ABOUT & DECKS")
+            </MudButton>
+
+            <!-- 4. OPÇÕES / OPTIONS -->
+            <MudButton Variant="Variant.Filled"
+                       Class="menu-glass-btn btn-options"
+                       OnClick="@(() => Navigation.NavigateTo("/options"))"
+                       StartIcon="@Icons.Material.Filled.Settings"
+                       Size="Size.Large">
+                @(IsPortuguese ? "OPÇÕES" : "OPTIONS")
+            </MudButton>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Início de Missão / New Campaign Dialog -->
+<MudDialog @bind-Visible="_showLaunchModal" Options="_dialogOptions">
+    <TitleContent>
+        <div class="d-flex align-center">
+            <MudIcon Icon="@Icons.Material.Filled.RocketLaunch" Color="Color.Primary" Class="mr-2" />
+            <MudText Typo="Typo.h6" Style="color: #00E5FF; font-weight: bold;">
+                @(IsPortuguese ? "CONFIGURAR NOVA EXPEDIÇÃO" : "NEW MISSION CAMPAIGN SETUP")
+            </MudText>
+        </div>
+    </TitleContent>
+    <DialogContent>
+        <MudText Typo="Typo.subtitle2" Class="mb-3" Style="color: #8B949E;">
+            @(IsPortuguese ? "Selecione o destino da sua nave PymGameOrbit, tamanho da tripulação e regras de construção:"
+                           : "Select your PymGameOrbit mission destination, astronaut crew size and base building rules:")
+        </MudText>
+
+        <!-- Destination Selector -->
+        <MudText Typo="Typo.body2" Class="font-weight-bold mb-1" Style="color: #FFD700;">
+            @(IsPortuguese ? "Destino da Missão:" : "Mission Destination:")
+        </MudText>
+        <MudRadioGroup @bind-Value="_selectedDestination" T="OutpostDestination" Class="d-flex flex-wrap justify-space-between mb-4">
+            <MudRadio Value="OutpostDestination.ISS" Color="Color.Primary" Dense="true">
+                <span style="font-weight: 600;">🛰️ ISS</span>
+                <span style="font-size: 11px; color: #8B949E; display: block;">(LEO 414 km / 8 @(IsPortuguese ? "turnos" : "turns"))</span>
+            </MudRadio>
+            <MudRadio Value="OutpostDestination.Moon" Color="Color.Secondary" Dense="true">
+                <span style="font-weight: 600;">🌕 @(IsPortuguese ? "Lua (Moon)" : "Moon")</span>
+                <span style="font-size: 11px; color: #8B949E; display: block;">(Artemis Gateway / 10 @(IsPortuguese ? "turnos" : "turns"))</span>
+            </MudRadio>
+            <MudRadio Value="OutpostDestination.Mars" Color="Color.Error" Dense="true">
+                <span style="font-weight: 600;">🔴 @(IsPortuguese ? "Marte (Mars)" : "Mars")</span>
+                <span style="font-size: 11px; color: #8B949E; display: block;">(ISRU Surface / 12 @(IsPortuguese ? "turnos" : "turns"))</span>
+            </MudRadio>
+        </MudRadioGroup>
+
+        <!-- Crew Count -->
+        <div class="mb-4">
+            <div class="d-flex justify-space-between align-center mb-1">
+                <MudText Typo="Typo.body2" Style="color: #00E676; font-weight: 600;">
+                    @(IsPortuguese ? "Tamanho da Tripulação:" : "Astronaut Crew Count:")
+                </MudText>
+                <MudChip T="string" Size="Size.Small" Color="Color.Tertiary" Variant="Variant.Outlined">
+                    @_crewCount @(IsPortuguese ? "astronautas" : "astronauts")
+                </MudChip>
+            </div>
+            <MudSlider T="int" Min="1" Max="16" @bind-Value="_crewCount" Color="Color.Tertiary" ValueLabel="true" />
+        </div>
+
+        <!-- Minimum Cards to Build Base -->
+        <div class="mb-2">
+            <div class="d-flex justify-space-between align-center mb-1">
+                <MudText Typo="Typo.body2" Style="color: #00E5FF; font-weight: 600;">
+                    @(IsPortuguese ? "Mínimo de Cartas para a Base:" : "Min. Base Build Cards:")
+                </MudText>
+                <MudChip T="string" Size="Size.Small" Color="Color.Primary" Variant="Variant.Outlined">
+                    @_minCards @(IsPortuguese ? "cartas" : "cards")
+                </MudChip>
+            </div>
+            <MudSlider T="int" Min="3" Max="8" @bind-Value="_minCards" Color="Color.Primary" ValueLabel="true" />
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="@(() => _showLaunchModal = false)" Color="Color.Default" Variant="Variant.Text">
+            @(IsPortuguese ? "Cancelar" : "Cancel")
+        </MudButton>
+        <MudButton OnClick="LaunchCampaign"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.Launch"
+                   Style="font-weight: bold; background: linear-gradient(90deg, #00E5FF, #0097A7); color: #000;">
+            @(IsPortuguese ? "INICIAR MISSÃO" : "LAUNCH MISSION")
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+<style>
+    .menu-screen-wrapper {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #060911;
+        padding: 12px;
+        box-sizing: border-box;
+        min-height: calc(100vh - 48px);
+    }
+
+    .menu-screen-canvas {
+        position: relative;
+        width: 100%;
+        max-width: 1440px;
+        aspect-ratio: 16 / 9;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.85), 0 0 30px rgba(0, 229, 255, 0.15);
+        border: 1px solid rgba(0, 229, 255, 0.25);
+        background-color: #050811;
+    }
+
+    .menu-bg-img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    /* Top Logo Banner Placeholder */
+    .menu-top-banner {
+        position: absolute;
+        top: 10.5%;
+        left: 17%;
+        width: 66%;
+        height: 15.5%;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        pointer-events: none;
+    }
+
+    .menu-game-title {
+        margin: 0;
+        padding: 0;
+        font-family: 'Roboto', 'Segoe UI', sans-serif;
+        font-weight: 900;
+        font-size: clamp(20px, 3.2vw, 44px);
+        letter-spacing: 4px;
+        color: #FFFFFF;
+        text-shadow: 0 0 14px rgba(0, 229, 255, 0.8), 0 2px 4px rgba(0, 0, 0, 0.9);
+        text-transform: uppercase;
+        background: linear-gradient(180deg, #FFFFFF 20%, #00E5FF 90%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .menu-game-subtitle {
+        margin: 4px 0 0 0;
+        padding: 0;
+        font-family: 'Roboto', 'Segoe UI', sans-serif;
+        font-weight: 500;
+        font-size: clamp(10px, 1.25vw, 16px);
+        letter-spacing: 1.5px;
+        color: #FFD700;
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.6), 0 1px 3px rgba(0, 0, 0, 0.9);
+    }
+
+    /* 4 Stacked Rectangular Button Placeholders */
+    .menu-buttons-column {
+        position: absolute;
+        top: 48%;
+        left: 31%;
+        width: 38%;
+        height: 44%;
+        z-index: 3;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 2%;
+    }
+
+    .menu-glass-btn {
+        flex: 1;
+        width: 100%;
+        background: rgba(8, 16, 32, 0.55) !important;
+        backdrop-filter: blur(8px);
+        border: 1.5px solid rgba(0, 229, 255, 0.45) !important;
+        border-radius: 8px !important;
+        color: #FFFFFF !important;
+        font-family: 'Roboto', 'Segoe UI', sans-serif;
+        font-weight: 800 !important;
+        letter-spacing: 2px !important;
+        font-size: clamp(11px, 1.25vw, 17px) !important;
+        text-transform: uppercase !important;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
+        transition: all 0.22s ease !important;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5) !important;
+    }
+
+    .menu-glass-btn:hover {
+        background: rgba(0, 229, 255, 0.28) !important;
+        border-color: #00E5FF !important;
+        transform: scale(1.025);
+        box-shadow: 0 0 22px rgba(0, 229, 255, 0.7), inset 0 0 12px rgba(0, 229, 255, 0.3) !important;
+        color: #E0F7FA !important;
+    }
+
+    .btn-play:hover {
+        border-color: #00E676 !important;
+        box-shadow: 0 0 22px rgba(0, 230, 118, 0.7) !important;
+    }
+
+    .btn-builder:hover {
+        border-color: #00E5FF !important;
+        box-shadow: 0 0 22px rgba(0, 229, 255, 0.7) !important;
+    }
+
+    .btn-info:hover {
+        border-color: #FFD700 !important;
+        box-shadow: 0 0 22px rgba(255, 215, 0, 0.7) !important;
+    }
+
+    .btn-options:hover {
+        border-color: #00B0FF !important;
+        box-shadow: 0 0 22px rgba(0, 176, 255, 0.7) !important;
+    }
+</style>
+
+@code {
+    private bool _showLaunchModal = false;
+    private OutpostDestination _selectedDestination = OutpostDestination.Moon;
+    private int _crewCount = 4;
+    private int _minCards = 5;
+
+    private readonly DialogOptions _dialogOptions = new()
+    {
+        CloseOnEscapeKey = true,
+        BackdropClick = true,
+        MaxWidth = MaxWidth.Small
+    };
+
+    private bool IsPortuguese => GameService.CurrentSession.Locale.StartsWith("pt", StringComparison.OrdinalIgnoreCase);
+
+    protected override void OnInitialized()
+    {
+        _selectedDestination = GameService.CurrentSession.Destination;
+        _crewCount = GameService.CurrentSession.CrewCount;
+        _minCards = GameService.CurrentSession.MinimumCardsToBuildBase;
+    }
+
+    private void OpenPlayDialog()
+    {
+        _showLaunchModal = true;
+    }
+
+    private async Task LaunchCampaign()
+    {
+        _showLaunchModal = false;
+        await GameService.StartNewCampaignAsync(
+            _selectedDestination,
+            _crewCount,
+            _minCards,
+            GameService.CurrentSession.Locale);
+        Navigation.NavigateTo("/play");
+    }
+
+    private async Task StartBaseBuilderMode()
+    {
+        await GameService.StartNewCampaignAsync(
+            GameService.CurrentSession.Destination,
+            GameService.CurrentSession.CrewCount,
+            GameService.CurrentSession.MinimumCardsToBuildBase,
+            GameService.CurrentSession.Locale);
+        GameService.CurrentSession.Phase = TurnPhase.BuildPhase;
+        Navigation.NavigateTo("/play");
+    }
+}

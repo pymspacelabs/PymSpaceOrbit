@@ -5,7 +5,7 @@ using PymSpaceOrbit.Shared.Models.ML;
 
 namespace PymSpaceOrbit.Shared.Concrete.ML;
 
-public sealed class PymSpaceOrbitMlModelService : IPymSpaceOrbitMlModelService
+public sealed class PymSpaceOrbitMlModelService : IPymSpaceOrbitMlModelService, IPymGameOrbitMlModelService, IBioShipMlModelService
 {
     private readonly HttpClient _httpClient;
     private QuadFastTreeArtifact? _ensemble;
@@ -14,6 +14,7 @@ public sealed class PymSpaceOrbitMlModelService : IPymSpaceOrbitMlModelService
     public string ModelStatusDescription { get; private set; } = "Surrogate Biophysical Engine (36 features)";
     public string LatestDonkiSolarFlareClass { get; private set; } = "M1.4";
     public float SolarWeatherRadiationMultiplier { get; private set; } = 1.15f;
+    public bool LiveNasaApiSyncEnabled { get; set; } = true;
 
     public PymSpaceOrbitMlModelService(HttpClient httpClient)
     {

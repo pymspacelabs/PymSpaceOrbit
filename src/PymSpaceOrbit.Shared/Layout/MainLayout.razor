@@ -1,23 +1,158 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
+@namespace PymSpaceOrbit.Shared.Layout
+@using MudBlazor
+@using PymSpaceOrbit.Shared.Abstractions.Game
+@inject IGameService GameService
+@inject NavigationManager Navigation
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+<MudThemeProvider Theme="_spaceTheme" @bind-IsDarkMode="_isDarkMode" />
+<MudPopoverProvider />
+<MudDialogProvider FullWidth="true" MaxWidth="MaxWidth.Medium" CloseButton="true" />
+<MudSnackbarProvider />
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
+<MudLayout Class="pym-space-root">
+    <MudAppBar Elevation="1" Dense="true" Class="pym-space-appbar">
+        <MudTooltip Text="PymGameOrbit">
+            <MudIconButton Icon="@Icons.Material.Filled.RocketLaunch" Color="Color.Primary" Edge="Edge.Start" Href="/" />
+        </MudTooltip>
+        <MudText Typo="Typo.h6" Class="ml-2 font-weight-bold" Style="color: #00E5FF; letter-spacing: 1.5px; font-size: 14px;">
+            PYMGAMEORBIT
+        </MudText>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+        <MudSpacer />
+
+        <MudButton Variant="Variant.Text" Href="/" StartIcon="@Icons.Material.Filled.Home" Color="Color.Inherit" Size="Size.Small" Class="mx-1 appbar-nav-btn">
+            @(IsPortuguese ? "Início" : "Home")
+        </MudButton>
+
+        <MudButton Variant="Variant.Text" Href="/play" StartIcon="@Icons.Material.Filled.SportsEsports" Color="Color.Inherit" Size="Size.Small" Class="mx-1 appbar-nav-btn">
+            @(IsPortuguese ? "Jogar" : "Play")
+        </MudButton>
+
+        <MudButton Variant="Variant.Text" Href="/info" StartIcon="@Icons.Material.Filled.CollectionsBookmark" Color="Color.Inherit" Size="Size.Small" Class="mx-1 appbar-nav-btn">
+            @(IsPortuguese ? "Card Sets" : "Cards")
+        </MudButton>
+
+        <MudButton Variant="Variant.Text" Href="/options" StartIcon="@Icons.Material.Filled.Tune" Color="Color.Inherit" Size="Size.Small" Class="mx-1 appbar-nav-btn">
+            @(IsPortuguese ? "Opções" : "Options")
+        </MudButton>
+
+        <MudDivider Vertical="true" FlexItem="true" Class="my-2 mx-2" Style="border-color: rgba(0, 229, 255, 0.3);" />
+
+        <!-- Locale Toggle -->
+        <MudButton Variant="Variant.Outlined" Size="Size.Small" OnClick="ToggleLocale"
+                   Style="color: #FFD700; border-color: rgba(255, 215, 0, 0.5); font-weight: bold; min-width: 65px; height: 28px; padding: 0 8px;">
+            @(IsPortuguese ? "🇧🇷 PT" : "🇺🇸 EN")
+        </MudButton>
+
+        <!-- Dark/Light Theme Toggle -->
+        <MudTooltip Text="@(_isDarkMode ? "Tema Claro / Light" : "Tema Escuro / Dark")">
+            <MudIconButton Icon="@(_isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)"
+                           Color="Color.Warning"
+                           Size="Size.Small"
+                           OnClick="ToggleTheme"
+                           Class="ml-1" />
+        </MudTooltip>
+    </MudAppBar>
+
+    <MudMainContent Class="pym-space-main-content">
+        @Body
+    </MudMainContent>
+</MudLayout>
 
 <div id="blazor-error-ui" data-nosnippet>
     An unhandled error has occurred.
     <a href="." class="reload">Reload</a>
     <span class="dismiss">🗙</span>
 </div>
+
+<style>
+    .pym-space-root {
+        background-color: #060911;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .pym-space-appbar {
+        background: rgba(10, 14, 26, 0.94) !important;
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(0, 229, 255, 0.3);
+        z-index: 100;
+    }
+
+    .pym-space-main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding-top: 48px !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        padding-bottom: 0 !important;
+        background: #060911;
+        overflow-x: hidden;
+    }
+
+    @@media (max-width: 768px) {
+        .appbar-nav-btn {
+            display: none !important;
+        }
+    }
+</style>
+
+@code {
+    private bool _isDarkMode = true;
+
+    private bool IsPortuguese => GameService.CurrentSession.Locale.StartsWith("pt", StringComparison.OrdinalIgnoreCase);
+
+    private readonly MudTheme _spaceTheme = new()
+    {
+        PaletteDark = new PaletteDark()
+        {
+            Primary = "#00E5FF",           // Electric Cyan
+            Secondary = "#FFD700",         // Orbit Gold
+            Tertiary = "#00E676",          // Bio Emerald
+            Background = "#060911",        // Deep Space Obsidian
+            Surface = "#0E1424",           // Space Navy
+            AppbarBackground = "#0A0E1A",
+            DrawerBackground = "#060911",
+            TextPrimary = "#F0F6FC",
+            TextSecondary = "#8B949E",
+            ActionDefault = "#00E5FF",
+            LinesDefault = "rgba(0, 229, 255, 0.2)",
+            TableLines = "rgba(0, 229, 255, 0.15)",
+            Success = "#00E676",
+            Warning = "#FFB300",
+            Error = "#FF5252",
+            Info = "#00B0FF"
+        },
+        PaletteLight = new PaletteLight()
+        {
+            Primary = "#0097A7",
+            Secondary = "#FFA000",
+            Tertiary = "#2E7D32",
+            Background = "#F0F4F8",
+            Surface = "#FFFFFF",
+            AppbarBackground = "#1A233A",
+            TextPrimary = "#1E293B",
+            TextSecondary = "#475569"
+        },
+        Typography = new Typography()
+        {
+            Default = new DefaultTypography()
+            {
+                FontFamily = new[] { "Roboto", "Segoe UI", "sans-serif" }
+            }
+        }
+    };
+
+    private void ToggleLocale()
+    {
+        GameService.CurrentSession.Locale = IsPortuguese ? "en-US" : "pt-BR";
+    }
+
+    private void ToggleTheme()
+    {
+        _isDarkMode = !_isDarkMode;
+    }
+}

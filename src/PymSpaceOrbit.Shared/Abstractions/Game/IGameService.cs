@@ -3,9 +3,9 @@ using PymSpaceOrbit.Shared.Models.Game;
 namespace PymSpaceOrbit.Shared.Abstractions.Game;
 
 /// <summary>
-/// Turn-based Bio-Ship & Outpost Card Game Service contract in PymSpaceOrbit.Shared.Abstractions.Game.
-/// Players build their unified Bio-Ship/Outpost base (minimum 5 cards) and receive initial ML parameter resources,
-/// then play cards each turn and resolve educational space-exploration choices powered by IPymSpaceOrbitMlModelService.
+/// Turn-based PymGameOrbit Space Exploration & Outpost Card Game Service contract in PymSpaceOrbit.Shared.Abstractions.Game.
+/// Players build their unified PymGameOrbit spacecraft & outpost base (minimum 5 cards) and receive initial ML parameter resources,
+/// then play cards each turn and resolve educational space-exploration choices powered by IPymGameOrbitMlModelService.
 /// </summary>
 public interface IGameService
 {

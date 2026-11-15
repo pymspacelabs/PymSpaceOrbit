@@ -2,6 +2,7 @@ using PymSpaceOrbit.Shared.Abstractions.Game;
 using PymSpaceOrbit.Shared.Abstractions.ML;
 using PymSpaceOrbit.Shared.Models.Game;
 using PymSpaceOrbit.Shared.Models.ML;
+using PymSpaceOrbit.Shared.Services;
 
 namespace PymSpaceOrbit.Shared.Concrete.Game;
 
@@ -41,7 +42,8 @@ public sealed class GameService : IGameService
         var initialResources = _mlModelService.CreateInitialResourceSlice(destination, safeCrew);
         var initialPrediction = _mlModelService.EvaluateState(initialResources, destination);
 
-        var unifiedDeck = BuildUnifiedShipAndBaseDeck()
+        var catalogCards = PymSpaceOrbitCatalogLoader.AllCards;
+        var unifiedDeck = (catalogCards.Count > 0 ? catalogCards : BuildUnifiedShipAndBaseDeck())
             .Where(c => c.TargetAffinity is null || c.TargetAffinity == destination)
             .OrderBy(_ => _rng.Next())
             .ToList();
@@ -74,8 +76,8 @@ public sealed class GameService : IGameService
 
         CurrentSession.MissionJournalLogs.Add(
             locale.StartsWith("pt", StringComparison.OrdinalIgnoreCase)
-                ? $"[Turno 1] Missão iniciada rumo a {destination}! Escolha pelo menos {minCards} cartas da mão para construir sua Nave-Bioma e Base."
-                : $"[Turn 1] Mission started to {destination}! Play at least {minCards} cards from your hand to build your Bio-Ship and Outpost Base.");
+                ? $"[Turno 1] Missão iniciada rumo a {destination}! Escolha pelo menos {minCards} cartas da mão para construir sua nave e base PymGameOrbit."
+                : $"[Turn 1] Mission started to {destination}! Play at least {minCards} cards from your hand to build your PymGameOrbit ship and base.");
 
         return CurrentSession;
     }
@@ -130,8 +132,8 @@ public sealed class GameService : IGameService
         {
             int missing = CurrentSession.MinimumCardsToBuildBase - CurrentSession.EquippedShipAndBaseCards.Count;
             validationMessage = isPt
-                ? $"Você precisa equipar mais {missing} carta(s) (mínimo de {CurrentSession.MinimumCardsToBuildBase}) para concluir a construção da Nave-Bioma/Base!"
-                : $"You must equip {missing} more card(s) (minimum {CurrentSession.MinimumCardsToBuildBase}) to finish building the Bio-Ship/Outpost Base!";
+                ? $"Você precisa equipar mais {missing} carta(s) (mínimo de {CurrentSession.MinimumCardsToBuildBase}) para concluir a construção da base PymGameOrbit!"
+                : $"You must equip {missing} more card(s) (minimum {CurrentSession.MinimumCardsToBuildBase}) to finish building the PymGameOrbit base!";
             return false;
         }
 
@@ -140,8 +142,8 @@ public sealed class GameService : IGameService
         CurrentSession.PendingExplorationEvent = DrawTurnExplorationEvent();
 
         validationMessage = isPt
-            ? $"Nave-Bioma e Base construídas com {CurrentSession.EquippedShipAndBaseCards.Count} cartas! Primeiro desafio espacial sorteado."
-            : $"Bio-Ship and Outpost Base built with {CurrentSession.EquippedShipAndBaseCards.Count} cards! First space exploration challenge drawn.";
+            ? $"Nave e base PymGameOrbit construídas com {CurrentSession.EquippedShipAndBaseCards.Count} cartas! Primeiro desafio espacial sorteado."
+            : $"PymGameOrbit ship and base built with {CurrentSession.EquippedShipAndBaseCards.Count} cards! First space exploration challenge drawn.";
 
         CurrentSession.MissionJournalLogs.Add(validationMessage);
         return true;
@@ -245,7 +247,11 @@ public sealed class GameService : IGameService
             nextEvent);
     }
 
-    public IReadOnlyList<GameCardModel> GetAllUnifiedDeckCards() => BuildUnifiedShipAndBaseDeck();
+    public IReadOnlyList<GameCardModel> GetAllUnifiedDeckCards()
+    {
+        var cards = PymSpaceOrbitCatalogLoader.AllCards;
+        return cards.Count > 0 ? cards : BuildUnifiedShipAndBaseDeck();
+    }
 
     public IReadOnlyList<TurnExplorationEvent> GetAllExplorationEvents() => BuildExplorationEventsCatalog();
 
@@ -294,8 +300,8 @@ public sealed class GameService : IGameService
             MissionEndingOutcome.SuccessNominalReturn => (
                 $"VICTORY! Safe Rate-Limit Return & Earth Touchdown ({s.Destination})",
                 $"VITÓRIA! Retorno pelo Safe Rate-Limit e Pouso Seguro na Terra ({s.Destination})",
-                $"Your Bio-Ship & Outpost Base completed all 9 mission stages with {pred.CrewHealthSurvivalProb * 100f:F1}% crew health, {pred.SystemReliabilityIndex * 100f:F1}% hardware reliability, and {s.ScienceDiscoveryPoints} Science Discovery Points!",
-                $"Sua Nave-Bioma e Base concluíram todos os 9 estágios da missão com {pred.CrewHealthSurvivalProb * 100f:F1}% de saúde da tripulação, {pred.SystemReliabilityIndex * 100f:F1}% de confiabilidade e {s.ScienceDiscoveryPoints} Pontos de Descoberta Científica!"
+                $"Your PymGameOrbit spacecraft & outpost completed all 9 mission stages with {pred.CrewHealthSurvivalProb * 100f:F1}% crew health, {pred.SystemReliabilityIndex * 100f:F1}% hardware reliability, and {s.ScienceDiscoveryPoints} Science Discovery Points!",
+                $"Sua nave e base PymGameOrbit concluíram todos os 9 estágios da missão com {pred.CrewHealthSurvivalProb * 100f:F1}% de saúde da tripulação, {pred.SystemReliabilityIndex * 100f:F1}% de confiabilidade e {s.ScienceDiscoveryPoints} Pontos de Descoberta Científica!"
             ),
             MissionEndingOutcome.GameOverEclssAndSuitCollapse => (
                 $"GAME OVER #1 — ECLSS Water Loop & xEMU Spacesuit Collapse at {s.Destination}",
@@ -970,8 +976,8 @@ public sealed class GameService : IGameService
                     "Protegeu os ossos e músculos dos astronautas para os 180 dias de retorno e pouso na Terra!",
                     "Centrifuge + WRS", -4500f, 1200f, 6.0f, -0.12f, 4.0f, 100f, 320f, 30f, -0.05f, 40),
                 new("MARS-08-C", "Execute Hohmann Minimum-Energy Return Burn (-1,800 W)", "Executar Queima de Retorno de Energia Mínima Hohmann (-1.800 W)",
-                    "Precision navigation by JPL Horizons brought the Bio-Ship safely onto the Earth return corridor!",
-                    "A navegação de precisão pelas efemérides JPL Horizons colocou a Nave-Bioma na rota segura para a Terra!",
+                    "Precision navigation by JPL Horizons brought the PymGameOrbit spacecraft safely onto the Earth return corridor!",
+                    "A navegação de precisão pelas efemérides JPL Horizons colocou a nave PymGameOrbit na rota segura para a Terra!",
                     "Hohmann Transfer", -1800f, 500f, 2.0f, 0f, 0f, 60f, 80f, 0f, -0.02f, 35)
             ])
     ];

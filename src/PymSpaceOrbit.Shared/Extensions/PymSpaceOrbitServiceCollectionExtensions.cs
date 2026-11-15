@@ -14,8 +14,12 @@ public static class PymSpaceOrbitServiceCollectionExtensions
     /// </summary>
     public static IServiceCollection AddPymSpaceOrbitGameServices(this IServiceCollection services)
     {
-        services.AddScoped<IPymSpaceOrbitMlModelService, PymSpaceOrbitMlModelService>();
+        services.AddScoped<PymSpaceOrbitMlModelService>();
+        services.AddScoped<IPymSpaceOrbitMlModelService>(sp => sp.GetRequiredService<PymSpaceOrbitMlModelService>());
+        services.AddScoped<IPymGameOrbitMlModelService>(sp => sp.GetRequiredService<PymSpaceOrbitMlModelService>());
+        services.AddScoped<IBioShipMlModelService>(sp => sp.GetRequiredService<PymSpaceOrbitMlModelService>());
         services.AddScoped<IGameService, GameService>();
+        services.AddScoped<PymSpaceOrbit.Shared.Services.NasaCardImageResolver>();
         return services;
     }
 }

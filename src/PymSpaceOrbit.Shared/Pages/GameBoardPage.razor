@@ -1,0 +1,1158 @@
+@page "/play"
+@namespace PymSpaceOrbit.Shared.Pages
+@using PymSpaceOrbit.Shared.Abstractions.Game
+@using PymSpaceOrbit.Shared.Abstractions.ML
+@using PymSpaceOrbit.Shared.Components.Cards
+@using PymSpaceOrbit.Shared.Models.Game
+@using PymSpaceOrbit.Shared.Models.ML
+@inject IGameService GameService
+@inject IPymGameOrbitMlModelService MlModelService
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<PageTitle>Pym Space Orbit — @(IsPortuguese ? "Tabuleiro de Missão" : "Mission Game Board")</PageTitle>
+
+<div class="game-screen-wrapper">
+    <div class="game-screen-canvas">
+        <!-- Background Graphic dynamically selected by Turn Phase -->
+        <img src="@CurrentBoardBackground"
+             alt="Pym Space Orbit Game Board"
+             class="game-bg-img" />
+
+        <!-- 4 Top Real-Time Resource Meters (ML.NET Surrogate Biophysical Engine) -->
+        <div class="game-top-meters-row">
+            <!-- Meter 1: Energia / Power -->
+            <div class="game-meter-box meter-power">
+                <div class="meter-header">
+                    <MudIcon Icon="@Icons.Material.Filled.Bolt" Size="Size.Small" Style="color: #FFD700;" Class="mr-1" />
+                    <span>@(IsPortuguese ? "ENERGIA / POWER" : "POWER / BATTERY")</span>
+                </div>
+                <div class="meter-body">
+                    <span class="meter-main-val">@Session.Resources.ElectricalPowerKw.ToString("F1") kWe</span>
+                    <span class="meter-sub-val" style="color: @(Session.Resources.OutpostWattBudgetDelta >= 0 ? "#00E676" : "#FF5252");">
+                        Saldo: @Session.Resources.OutpostWattBudgetDelta.ToString("+#,##0;-#,##0;0") W
+                    </span>
+                </div>
+            </div>
+
+            <!-- Meter 2: Oxigênio & Água (ECLSS) -->
+            <div class="game-meter-box meter-eclss">
+                <div class="meter-header">
+                    <MudIcon Icon="@Icons.Material.Filled.WaterDrop" Size="Size.Small" Style="color: #00E5FF;" Class="mr-1" />
+                    <span>@(IsPortuguese ? "OXIGÊNIO & ÁGUA" : "O2 & WATER LOOP")</span>
+                </div>
+                <div class="meter-body">
+                    <span class="meter-main-val">O2: @Session.Resources.OutpostOxygenLitersPerDayDelta.ToString("+#,##0;-#,##0;0") L/d</span>
+                    <span class="meter-sub-val">
+                        H2O: @Session.Resources.PotableWaterReserveLiters.ToString("F0") L | WPA: @((Session.Resources.WaterRecoveryEfficiency * 100f).ToString("F1"))%
+                    </span>
+                </div>
+            </div>
+
+            <!-- Meter 3: Blindagem & Trajes -->
+            <div class="game-meter-box meter-shield">
+                <div class="meter-header">
+                    <MudIcon Icon="@Icons.Material.Filled.Shield" Size="Size.Small" Style="color: #00E676;" Class="mr-1" />
+                    <span>@(IsPortuguese ? "BLINDAGEM & TRAJES" : "SHIELDING & SUITS")</span>
+                </div>
+                <div class="meter-body">
+                    <span class="meter-main-val">
+                        @((Session.Resources.RadShieldingGcm2 + Session.Resources.OutpostShieldingGcm2Delta).ToString("F0")) g/cm²
+                    </span>
+                    <span class="meter-sub-val">
+                        xEMU: @Session.Resources.EvaSuitDurabilityPct.ToString("F0")% | Rad: @Session.Resources.EffectiveRadiationIndex.ToString("F2")x
+                    </span>
+                </div>
+            </div>
+
+            <!-- Meter 4: Predição Quad-Ensemble ML.NET -->
+            <div class="game-meter-box meter-ml">
+                <div class="meter-header">
+                    <MudIcon Icon="@Icons.Material.Filled.Psychology" Size="Size.Small" Style="color: #FFB300;" Class="mr-1" />
+                    <span>@(IsPortuguese ? "QUAD-ENSEMBLE ML.NET" : "ML.NET SURROGATE")</span>
+                </div>
+                <div class="meter-body">
+                    <span class="meter-main-val" style="color: #FFD700;">
+                        Saúde: @((Session.LatestMlPrediction.CrewHealthSurvivalProb * 100f).ToString("F0"))% | Conf: @((Session.LatestMlPrediction.SystemReliabilityIndex * 100f).ToString("F0"))%
+                    </span>
+                    <span class="meter-sub-val">
+                        CH4: @((Session.LatestMlPrediction.FuelYieldRate * 100f).ToString("F0"))% | Estadia: @Session.LatestMlPrediction.MaxExplorationStayDays.ToString("F0") d
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        @if (Session.Phase == TurnPhase.BuildPhase)
+        {
+            <!-- ======================================================== -->
+            <!-- FASE 1: CONSTRUÇÃO INICIAL DA BASE / NAVE-BIOMA           -->
+            <!-- ======================================================== -->
+
+            <!-- Central-Top Status & Instruction Banner -->
+            <div class="build-top-banner">
+                <div class="build-banner-title">
+                    <MudIcon Icon="@Icons.Material.Filled.PrecisionManufacturing" Color="Color.Primary" Class="mr-2" />
+                    <span>@(IsPortuguese ? "FASE 1: CONSTRUÇÃO DA NAVE & BASE PYMGAMEORBIT" : "PHASE 1: PYMGAMEORBIT SHIP & OUTPOST BASE ASSEMBLY")</span>
+                </div>
+                <div class="build-banner-subtitle">
+                    @(IsPortuguese
+                        ? $"Equipe no mínimo {Session.MinimumCardsToBuildBase} cartas da sua mão para fundar a base em {Session.Destination} (Equipadas: {Session.EquippedShipAndBaseCards.Count}/{Session.MinimumCardsToBuildBase})!"
+                        : $"Equip at least {Session.MinimumCardsToBuildBase} cards from hand to establish outpost at {Session.Destination} (Equipped: {Session.EquippedShipAndBaseCards.Count}/{Session.MinimumCardsToBuildBase})!")
+                </div>
+            </div>
+
+            <!-- 5 Vertical Center Slots (2:3) for Equipped Base/Ship Cards -->
+            <div class="build-center-slots">
+                @for (int i = 0; i < 5; i++)
+                {
+                    int slotIndex = i;
+                    var card = slotIndex < Session.EquippedShipAndBaseCards.Count
+                        ? Session.EquippedShipAndBaseCards[slotIndex]
+                        : null;
+
+                    <div class="board-card-slot">
+                        @if (card is not null)
+                        {
+                            <PymGameOrbitCard Card="@card" Locale="@Session.Locale" />
+                        }
+                        else
+                        {
+                            <div class="empty-slot-placeholder">
+                                <MudIcon Icon="@Icons.Material.Filled.AddCircleOutline" Size="Size.Medium" Style="color: rgba(0, 229, 255, 0.4);" />
+                                <span>Slot @(slotIndex + 1)</span>
+                                <span class="slot-hint">@(IsPortuguese ? "Equipar da Mão" : "Equip from Hand")</span>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Hand Tray (Bottom 5 Slots) to Choose Cards to Equip -->
+            <div class="build-hand-tray">
+                <div class="tray-title-row">
+                    <span class="tray-title">
+                        @(IsPortuguese ? $"Mão do Astronauta ({Session.PlayerHand.Count} cartas disponíveis — clique para equipar):"
+                                       : $"Player Hand ({Session.PlayerHand.Count} cards available — click to equip):")
+                    </span>
+                </div>
+                <div class="tray-cards-row">
+                    @foreach (var handCard in Session.PlayerHand.Take(5))
+                    {
+                        <div class="tray-card-wrapper" @onclick="@(() => EquipCard(handCard))">
+                            <PymGameOrbitCard Card="@handCard" Locale="@Session.Locale" />
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Right Action Buttons: Confirm Base Construction & Reset Assembly -->
+            <div class="build-right-actions">
+                <MudButton Variant="Variant.Filled"
+                           Class="board-action-btn btn-confirm-build"
+                           OnClick="ConfirmBaseConstruction"
+                           StartIcon="@Icons.Material.Filled.RocketLaunch"
+                           Size="Size.Large">
+                    @(IsPortuguese ? "CONFIRMAR BASE" : "CONFIRM BASE")
+                </MudButton>
+
+                <MudButton Variant="Variant.Filled"
+                           Class="board-action-btn btn-reset-build"
+                           OnClick="ResetAssembly"
+                           StartIcon="@Icons.Material.Filled.RestartAlt"
+                           Size="Size.Medium">
+                    @(IsPortuguese ? "REINICIAR MONTAGEM" : "RESET ASSEMBLY")
+                </MudButton>
+            </div>
+        }
+        else
+        {
+            <!-- ======================================================== -->
+            <!-- FASES 2 & 3: TABULEIRO COMPLETO COM DECISÕES & DECKS     -->
+            <!-- ======================================================== -->
+
+            <!-- Left Side: Draw Pile & Discard Pile -->
+            <div class="board-left-decks">
+                <!-- Draw Pile -->
+                <div class="deck-pile-box" title="@(IsPortuguese ? "Pilha de Compra" : "Draw Pile")">
+                    <img src="@PymGameOrbitAssets.CardBack" alt="Draw Pile" class="pile-img" />
+                    <div class="pile-badge">
+                        <MudIcon Icon="@Icons.Material.Filled.Layers" Size="Size.Small" Class="mr-1" />
+                        <span>@Session.DrawPile.Count</span>
+                    </div>
+                    <span class="pile-label">@(IsPortuguese ? "COMPRA" : "DRAW")</span>
+                </div>
+
+                <!-- Discard Pile -->
+                <div class="deck-pile-box" title="@(IsPortuguese ? "Pilha de Descarte" : "Discard Pile")">
+                    <div class="discard-box-inner">
+                        <MudIcon Icon="@Icons.Material.Filled.DeleteSweep" Size="Size.Medium" Style="color: rgba(255, 255, 255, 0.4);" />
+                        <span class="pile-number">@Session.DiscardPile.Count</span>
+                    </div>
+                    <span class="pile-label">@(IsPortuguese ? "DESCARTE" : "DISCARD")</span>
+                </div>
+            </div>
+
+            <!-- Center-Top: 3 Horizontal Bars for the Turn's Dilemma & Choices -->
+            <div class="board-center-dilemma-section">
+                @if (Session.PendingExplorationEvent is not null)
+                {
+                    <div class="dilemma-header-card">
+                        <div class="d-flex align-center justify-space-between">
+                            <span class="dilemma-title">
+                                🌌 [Turno @Session.CurrentTurn/@Session.MaxCampaignTurns] @(IsPortuguese ? Session.PendingExplorationEvent.TitlePtBr : Session.PendingExplorationEvent.TitleEn)
+                            </span>
+                            <MudChip T="string" Size="Size.Small" Color="Color.Secondary" Variant="Variant.Filled" Style="font-size: 10px;">
+                                @(IsPortuguese ? $"Dia {Session.CurrentMissionDay:F0} de Missão" : $"Mission Day {Session.CurrentMissionDay:F0}")
+                            </MudChip>
+                        </div>
+                        <p class="dilemma-story">
+                            @(IsPortuguese ? Session.PendingExplorationEvent.StoryPromptPtBr : Session.PendingExplorationEvent.StoryPromptEn)
+                        </p>
+                    </div>
+
+                    <!-- 3 Horizontal Choice Bars -->
+                    <div class="dilemma-choices-stack">
+                        @foreach (var choice in Session.PendingExplorationEvent.Choices.Take(3))
+                        {
+                            <div class="choice-bar-btn" @onclick="@(() => MakeExplorationDecision(choice.OptionId))">
+                                <div class="choice-bar-content">
+                                    <div class="choice-label-row">
+                                        <MudIcon Icon="@Icons.Material.Filled.Navigation" Size="Size.Small" Class="mr-2" Style="color: #00E5FF;" />
+                                        <span class="choice-title">@(IsPortuguese ? choice.LabelPtBr : choice.LabelEn)</span>
+                                    </div>
+                                    <div class="choice-impacts-row">
+                                        <span class="impact-chip" style="color: @(choice.WattCostDelta <= 0 ? "#00E676" : "#FF5252");">
+                                            ⚡ @choice.WattCostDelta.ToString("+#,##0;-#,##0;0") W
+                                        </span>
+                                        <span class="impact-chip" style="color: @(choice.OxygenLitersDelta >= 0 ? "#00E676" : "#FF5252");">
+                                            💧 @choice.OxygenLitersDelta.ToString("+#,##0;-#,##0;0") L O2
+                                        </span>
+                                        <span class="impact-chip" style="color: #00E5FF;">
+                                            🛡️ @choice.ShieldingGcm2Delta.ToString("+#,##0;-#,##0;0") g/cm²
+                                        </span>
+                                        <span class="impact-chip" style="color: @(choice.RadiationDoseSpike <= 0 ? "#00E676" : "#FFB300");">
+                                            ☢️ @choice.RadiationDoseSpike.ToString("+#.##;-#.##;0") Rad
+                                        </span>
+                                        <span class="impact-chip" style="color: @(choice.SuitWearPctDelta >= 0 ? "#00E676" : "#FF5252");">
+                                            🧑‍🚀 @choice.SuitWearPctDelta.ToString("+#;-#;0")% Traje
+                                        </span>
+                                        <span class="impact-chip" style="color: #FFD700; font-weight: bold;">
+                                            🔬 +@choice.ScienceDiscoveryPointsBonus PTS
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Center: 5 Illuminated Slots for Active Equipped Cards on the Base -->
+            <div class="board-equipped-center">
+                <div class="equipped-header-label">
+                    @(IsPortuguese ? "Nave PymGameOrbit & Módulos Ativos:" : "Active PymGameOrbit Ship & Outpost Modules:")
+                </div>
+                <div class="equipped-slots-row">
+                    @for (int i = 0; i < 5; i++)
+                    {
+                        int slotIdx = i;
+                        var eqCard = slotIdx < Session.EquippedShipAndBaseCards.Count
+                            ? Session.EquippedShipAndBaseCards[slotIdx]
+                            : null;
+
+                        <div class="equipped-slot-item">
+                            @if (eqCard is not null)
+                            {
+                                <PymGameOrbitCard Card="@eqCard" Locale="@Session.Locale" />
+                            }
+                            else
+                            {
+                                <div class="empty-slot-placeholder-small">
+                                    <span>Slot @(slotIdx + 1)</span>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Bottom Tray: 5 Slots for Player's Hand -->
+            <div class="board-hand-bottom">
+                <div class="hand-header-label">
+                    <span>@(IsPortuguese ? $"Mão do Jogador ({Session.PlayerHand.Count} cartas — clique para jogar):"
+                                          : $"Player Hand ({Session.PlayerHand.Count} cards — click to play):")</span>
+                    <span style="color: #8B949E; font-size: 11px;">
+                        @(IsPortuguese ? $"Cartas jogadas neste turno: {Session.CardsPlayedThisTurn}/{Session.MaxCardsPlayedPerTurn}"
+                                       : $"Cards played this turn: {Session.CardsPlayedThisTurn}/{Session.MaxCardsPlayedPerTurn}")
+                    </span>
+                </div>
+                <div class="hand-slots-row">
+                    @foreach (var cardInHand in Session.PlayerHand.Take(5))
+                    {
+                        <div class="hand-card-item" @onclick="@(() => PlayCard(cardInHand))">
+                            <PymGameOrbitCard Card="@cardInHand" Locale="@Session.Locale" />
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Right Action Buttons -->
+            <div class="board-turn-actions">
+                <MudButton Variant="Variant.Filled"
+                           Class="board-action-btn btn-journal"
+                           OnClick="OpenJournalModal"
+                           StartIcon="@Icons.Material.Filled.HistoryEdu"
+                           Size="Size.Medium">
+                    @(IsPortuguese ? "DIÁRIO DE BORDO" : "MISSION LOG")
+                </MudButton>
+
+                <MudButton Variant="Variant.Filled"
+                           Class="board-action-btn btn-new-event"
+                           OnClick="DrawNewDilemma"
+                           StartIcon="@Icons.Material.Filled.Casino"
+                           Size="Size.Medium">
+                    @(IsPortuguese ? "NOVO EVENTO" : "DRAW EVENT")
+                </MudButton>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Modal / Overlay dos 4 Desfechos da Missão (Fase 4: MissionEnded) -->
+<MudDialog @bind-Visible="_showEndingModal" Options="_endingDialogOptions">
+    <TitleContent>
+        <div class="d-flex align-center">
+            @if (Session.Outcome == MissionEndingOutcome.SuccessNominalReturn)
+            {
+                <MudIcon Icon="@Icons.Material.Filled.EmojiEvents" Color="Color.Secondary" Size="Size.Large" Class="mr-2" />
+                <MudText Typo="Typo.h5" Style="color: #FFD700; font-weight: 800;">
+                    @(IsPortuguese ? "MISSÃO CONCLUÍDA COM SUCESSO!" : "MISSION ACCOMPLISHED — NOMINAL RETURN!")
+                </MudText>
+            }
+            else if (Session.Outcome == MissionEndingOutcome.GameOverDonkiSolarStormRadiation)
+            {
+                <MudIcon Icon="@Icons.Material.Filled.WbTwilight" Color="Color.Warning" Size="Size.Large" Class="mr-2" />
+                <MudText Typo="Typo.h5" Style="color: #FFB300; font-weight: 800;">
+                    @(IsPortuguese ? "GAME OVER: TEMPESTADE SOLAR NASA DONKI!" : "GAME OVER: NASA DONKI SOLAR STORM!")
+                </MudText>
+            }
+            else if (Session.Outcome == MissionEndingOutcome.GameOverEclssAndSuitCollapse)
+            {
+                <MudIcon Icon="@Icons.Material.Filled.Warning" Color="Color.Error" Size="Size.Large" Class="mr-2" />
+                <MudText Typo="Typo.h5" Style="color: #FF5252; font-weight: 800;">
+                    @(IsPortuguese ? "GAME OVER: COLAPSO ECLSS E DESGASTE DE TRAJES!" : "GAME OVER: ECLSS & SPACESUIT COLLAPSE!")
+                </MudText>
+            }
+            else
+            {
+                <MudIcon Icon="@Icons.Material.Filled.Air" Color="Color.Error" Size="Size.Large" Class="mr-2" />
+                <MudText Typo="Typo.h5" Style="color: #FF5252; font-weight: 800;">
+                    @(IsPortuguese ? "GAME OVER: ACIDOSE CO2 E ESGOTAMENTO VITAL!" : "GAME OVER: CDRA CO2 ACIDODIS & STARVATION!")
+                </MudText>
+            }
+        </div>
+    </TitleContent>
+    <DialogContent>
+        <div class="ending-modal-body">
+            <!-- Narrative description -->
+            <p class="ending-narrative-text">
+                @_latestOutcomeNarrative
+            </p>
+
+            <!-- Final Telemetry Dashboard -->
+            <div class="ending-telemetry-grid">
+                <div class="ending-stat-box">
+                    <span class="stat-lbl">@(IsPortuguese ? "Pontos Científicos:" : "Science Discovery:")</span>
+                    <span class="stat-num" style="color: #FFD700;">@Session.ScienceDiscoveryPoints PTS</span>
+                </div>
+                <div class="ending-stat-box">
+                    <span class="stat-lbl">@(IsPortuguese ? "Saúde Tripulação:" : "Crew Health ML:")</span>
+                    <span class="stat-num" style="color: #00E676;">@((Session.LatestMlPrediction.CrewHealthSurvivalProb * 100f).ToString("F1"))%</span>
+                </div>
+                <div class="ending-stat-box">
+                    <span class="stat-lbl">@(IsPortuguese ? "Confiabilidade:" : "Hardware Reliability:")</span>
+                    <span class="stat-num" style="color: #00E5FF;">@((Session.LatestMlPrediction.SystemReliabilityIndex * 100f).ToString("F1"))%</span>
+                </div>
+                <div class="ending-stat-box">
+                    <span class="stat-lbl">@(IsPortuguese ? "Dias de Estadia:" : "Max Stay Days:")</span>
+                    <span class="stat-num" style="color: #FFB300;">@Session.LatestMlPrediction.MaxExplorationStayDays.ToString("F0") d</span>
+                </div>
+            </div>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Outlined" Color="Color.Default" OnClick="@(() => Navigation.NavigateTo("/"))">
+            @(IsPortuguese ? "MENU PRINCIPAL" : "MAIN MENU")
+        </MudButton>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   OnClick="RestartGame"
+                   StartIcon="@Icons.Material.Filled.Replay"
+                   Style="font-weight: bold; background: linear-gradient(90deg, #00E5FF, #0097A7); color: #000;">
+            @(IsPortuguese ? "JOGAR NOVAMENTE" : "PLAY AGAIN")
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+<!-- Modal do Diário de Bordo / Mission Log -->
+<MudDialog @bind-Visible="_showJournalModal" Options="_journalDialogOptions">
+    <TitleContent>
+        <div class="d-flex align-center">
+            <MudIcon Icon="@Icons.Material.Filled.MenuBook" Color="Color.Primary" Class="mr-2" />
+            <MudText Typo="Typo.h6" Style="color: #00E5FF; font-weight: bold;">
+                @(IsPortuguese ? "DIÁRIO DE BORDO DA MISSÃO" : "MISSION TELEMETRY JOURNAL")
+            </MudText>
+        </div>
+    </TitleContent>
+    <DialogContent>
+        <div style="max-height: 50vh; overflow-y: auto;">
+            @if (Session.MissionJournalLogs.Count == 0)
+            {
+                <MudText Typo="Typo.body2" Style="color: #8B949E;">
+                    @(IsPortuguese ? "Nenhum registro ainda." : "No entries logged yet.")
+                </MudText>
+            }
+            else
+            {
+                <MudTimeline TimelineOrientation="TimelineOrientation.Vertical" TimelinePosition="TimelinePosition.Start">
+                    @foreach (var log in Enumerable.Reverse(Session.MissionJournalLogs))
+                    {
+                        <MudTimelineItem Color="Color.Info" Size="Size.Small">
+                            <MudText Typo="Typo.body2" Style="color: #F0F6FC;">@log</MudText>
+                        </MudTimelineItem>
+                    }
+                </MudTimeline>
+            }
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="@(() => _showJournalModal = false)">
+            @(IsPortuguese ? "Fechar" : "Close")
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+<style>
+    .game-screen-wrapper {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #060911;
+        padding: 8px;
+        box-sizing: border-box;
+        min-height: calc(100vh - 48px);
+    }
+
+    .game-screen-canvas {
+        position: relative;
+        width: 100%;
+        max-width: 1440px;
+        aspect-ratio: 16 / 9;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.85), 0 0 30px rgba(0, 229, 255, 0.15);
+        border: 1px solid rgba(0, 229, 255, 0.25);
+        background-color: #050811;
+    }
+
+    .game-bg-img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    /* 4 Top Resource Meters */
+    .game-top-meters-row {
+        position: absolute;
+        top: 2.5%;
+        left: 2%;
+        width: 96%;
+        height: 9.5%;
+        z-index: 3;
+        display: flex;
+        gap: 1.2%;
+    }
+
+    .game-meter-box {
+        flex: 1;
+        height: 100%;
+        background: rgba(10, 18, 36, 0.7);
+        border: 1px solid rgba(0, 229, 255, 0.35);
+        border-radius: 6px;
+        backdrop-filter: blur(6px);
+        padding: 3px 8px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .meter-header {
+        display: flex;
+        align-items: center;
+        font-weight: 700;
+        font-size: clamp(8px, 0.8vw, 11px);
+        letter-spacing: 0.5px;
+        color: #F0F6FC;
+        text-shadow: 0 1px 2px #000;
+    }
+
+    .meter-body {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        line-height: 1.1;
+    }
+
+    .meter-main-val {
+        font-weight: 800;
+        font-size: clamp(9px, 0.95vw, 13px);
+        color: #FFFFFF;
+        text-shadow: 0 0 6px rgba(0, 229, 255, 0.6);
+    }
+
+    .meter-sub-val {
+        font-size: clamp(7.5px, 0.8vw, 10.5px);
+        color: #8B949E;
+        font-weight: 600;
+    }
+
+    /* FASE 1: Build Phase Elements */
+    .build-top-banner {
+        position: absolute;
+        top: 13.5%;
+        left: 8%;
+        width: 70%;
+        height: 8.5%;
+        z-index: 3;
+        background: rgba(10, 20, 40, 0.75);
+        border: 1px solid rgba(0, 229, 255, 0.4);
+        border-radius: 8px;
+        backdrop-filter: blur(6px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2px 10px;
+    }
+
+    .build-banner-title {
+        display: flex;
+        align-items: center;
+        font-weight: 800;
+        font-size: clamp(10px, 1.1vw, 15px);
+        color: #00E5FF;
+        letter-spacing: 1px;
+    }
+
+    .build-banner-subtitle {
+        font-size: clamp(8.5px, 0.9vw, 12px);
+        color: #FFD700;
+        font-weight: 600;
+    }
+
+    .build-center-slots {
+        position: absolute;
+        top: 23.5%;
+        left: 8%;
+        width: 70%;
+        height: 44%;
+        z-index: 3;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 12px;
+        align-items: center;
+    }
+
+    .board-card-slot {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+    }
+
+    .empty-slot-placeholder {
+        width: 100%;
+        aspect-ratio: 2 / 3;
+        border: 2px dashed rgba(0, 229, 255, 0.45);
+        border-radius: 8px;
+        background: rgba(10, 20, 40, 0.45);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #00E5FF;
+        font-weight: 700;
+        font-size: clamp(9px, 0.9vw, 12px);
+        gap: 4px;
+        transition: all 0.2s ease;
+    }
+
+    .empty-slot-placeholder:hover {
+        border-color: #00E5FF;
+        background: rgba(0, 229, 255, 0.15);
+    }
+
+    .slot-hint {
+        font-size: clamp(7.5px, 0.75vw, 10px);
+        color: #8B949E;
+    }
+
+    .build-hand-tray {
+        position: absolute;
+        top: 69%;
+        left: 8%;
+        width: 70%;
+        height: 28%;
+        z-index: 3;
+        background: rgba(8, 14, 28, 0.85);
+        border: 1px solid rgba(0, 229, 255, 0.3);
+        border-radius: 8px;
+        backdrop-filter: blur(6px);
+        padding: 4px 10px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .tray-title-row {
+        height: 20%;
+        display: flex;
+        align-items: center;
+    }
+
+    .tray-title {
+        font-size: clamp(9px, 0.9vw, 12px);
+        color: #00E676;
+        font-weight: 700;
+    }
+
+    .tray-cards-row {
+        height: 80%;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+        align-items: center;
+    }
+
+    .tray-card-wrapper {
+        cursor: pointer;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .build-right-actions {
+        position: absolute;
+        top: 32%;
+        left: 80%;
+        width: 17%;
+        height: 44%;
+        z-index: 3;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        gap: 12px;
+    }
+
+    .board-action-btn {
+        width: 100%;
+        height: 45%;
+        border-radius: 8px !important;
+        font-weight: 800 !important;
+        letter-spacing: 1.5px !important;
+        font-size: clamp(10px, 1.1vw, 14px) !important;
+        text-transform: uppercase !important;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6) !important;
+    }
+
+    .btn-confirm-build {
+        background: linear-gradient(135deg, rgba(0, 230, 118, 0.8), rgba(0, 151, 167, 0.9)) !important;
+        border: 1.5px solid #00E676 !important;
+        color: #FFFFFF !important;
+    }
+
+    .btn-confirm-build:hover {
+        box-shadow: 0 0 20px rgba(0, 230, 118, 0.8) !important;
+        transform: scale(1.03);
+    }
+
+    .btn-reset-build {
+        background: rgba(16, 24, 44, 0.7) !important;
+        border: 1px solid rgba(255, 179, 0, 0.6) !important;
+        color: #FFD700 !important;
+    }
+
+    .btn-reset-build:hover {
+        background: rgba(255, 179, 0, 0.2) !important;
+        transform: scale(1.03);
+    }
+
+    /* FASES 2 & 3: Board with Decks Elements */
+    .board-left-decks {
+        position: absolute;
+        top: 14%;
+        left: 1.5%;
+        width: 11%;
+        height: 82%;
+        z-index: 3;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .deck-pile-box {
+        flex: 1;
+        max-height: 48%;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(0, 229, 255, 0.35);
+        border-radius: 8px;
+        overflow: hidden;
+        background: rgba(8, 14, 28, 0.75);
+    }
+
+    .pile-img {
+        width: 100%;
+        height: 100%;
+        object-fit: fill;
+        opacity: 0.85;
+    }
+
+    .pile-badge {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        background: rgba(0, 229, 255, 0.85);
+        color: #000;
+        font-weight: 800;
+        font-size: 11px;
+        padding: 2px 6px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+    }
+
+    .discard-box-inner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+    }
+
+    .pile-number {
+        font-size: clamp(14px, 1.8vw, 24px);
+        font-weight: 900;
+        color: #8B949E;
+    }
+
+    .pile-label {
+        position: absolute;
+        bottom: 4px;
+        font-weight: 700;
+        font-size: 9px;
+        color: #FFD700;
+        text-shadow: 0 1px 2px #000;
+        letter-spacing: 1px;
+    }
+
+    /* Center Dilemma & 3 Choice Bars */
+    .board-center-dilemma-section {
+        position: absolute;
+        top: 13.5%;
+        left: 14%;
+        width: 68%;
+        height: 33%;
+        z-index: 3;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .dilemma-header-card {
+        background: rgba(10, 18, 36, 0.75);
+        border: 1px solid rgba(0, 229, 255, 0.4);
+        border-radius: 6px;
+        padding: 4px 10px;
+        backdrop-filter: blur(6px);
+    }
+
+    .dilemma-title {
+        font-weight: 800;
+        font-size: clamp(10px, 1.05vw, 14px);
+        color: #00E5FF;
+    }
+
+    .dilemma-story {
+        margin: 2px 0 0 0;
+        font-size: clamp(8px, 0.85vw, 11px);
+        color: #E0F7FA;
+        line-height: 1.25;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .dilemma-choices-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        height: 68%;
+        justify-content: space-between;
+    }
+
+    .choice-bar-btn {
+        flex: 1;
+        background: rgba(12, 22, 44, 0.8);
+        border: 1px solid rgba(0, 229, 255, 0.4);
+        border-radius: 6px;
+        padding: 2px 10px;
+        cursor: pointer;
+        transition: all 0.18s ease;
+        display: flex;
+        align-items: center;
+        backdrop-filter: blur(6px);
+    }
+
+    .choice-bar-btn:hover {
+        background: rgba(0, 229, 255, 0.25);
+        border-color: #00E5FF;
+        transform: scale(1.01);
+        box-shadow: 0 0 14px rgba(0, 229, 255, 0.5);
+    }
+
+    .choice-bar-content {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .choice-label-row {
+        display: flex;
+        align-items: center;
+        flex: 0 0 45%;
+    }
+
+    .choice-title {
+        font-weight: 700;
+        font-size: clamp(9px, 0.95vw, 12px);
+        color: #FFFFFF;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .choice-impacts-row {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        flex: 0 0 53%;
+        justify-content: flex-end;
+    }
+
+    .impact-chip {
+        font-size: clamp(7.5px, 0.8vw, 10px);
+        font-weight: 600;
+        background: rgba(4, 8, 16, 0.6);
+        padding: 1px 4px;
+        border-radius: 4px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        white-space: nowrap;
+    }
+
+    /* 5 Equipped Center Slots */
+    .board-equipped-center {
+        position: absolute;
+        top: 48%;
+        left: 14%;
+        width: 68%;
+        height: 24%;
+        z-index: 3;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .equipped-header-label {
+        font-size: 10px;
+        color: #FFD700;
+        font-weight: 700;
+        margin-bottom: 2px;
+    }
+
+    .equipped-slots-row {
+        flex: 1;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+        align-items: center;
+    }
+
+    .equipped-slot-item {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .empty-slot-placeholder-small {
+        width: 100%;
+        aspect-ratio: 2 / 3;
+        border: 1.5px dashed rgba(0, 229, 255, 0.3);
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 9px;
+        color: rgba(0, 229, 255, 0.4);
+    }
+
+    /* Bottom Player Hand */
+    .board-hand-bottom {
+        position: absolute;
+        top: 73.5%;
+        left: 14%;
+        width: 68%;
+        height: 24%;
+        z-index: 3;
+        display: flex;
+        flex-direction: column;
+        background: rgba(6, 12, 24, 0.8);
+        border: 1px solid rgba(0, 229, 255, 0.25);
+        border-radius: 8px;
+        padding: 2px 8px;
+    }
+
+    .hand-header-label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 10px;
+        color: #00E676;
+        font-weight: 700;
+    }
+
+    .hand-slots-row {
+        flex: 1;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+        align-items: center;
+    }
+
+    .hand-card-item {
+        height: 100%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Right Turn Actions */
+    .board-turn-actions {
+        position: absolute;
+        top: 25%;
+        left: 83.5%;
+        width: 15%;
+        height: 50%;
+        z-index: 3;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        gap: 12px;
+    }
+
+    .btn-journal {
+        background: rgba(14, 24, 46, 0.8) !important;
+        border: 1px solid rgba(0, 229, 255, 0.5) !important;
+        color: #00E5FF !important;
+    }
+
+    .btn-journal:hover {
+        background: rgba(0, 229, 255, 0.25) !important;
+        box-shadow: 0 0 16px rgba(0, 229, 255, 0.6) !important;
+    }
+
+    .btn-new-event {
+        background: rgba(14, 24, 46, 0.8) !important;
+        border: 1px solid rgba(255, 215, 0, 0.5) !important;
+        color: #FFD700 !important;
+    }
+
+    .btn-new-event:hover {
+        background: rgba(255, 215, 0, 0.25) !important;
+        box-shadow: 0 0 16px rgba(255, 215, 0, 0.6) !important;
+    }
+
+    /* Ending Modal Styles */
+    .ending-modal-body {
+        padding: 6px;
+    }
+
+    .ending-narrative-text {
+        font-size: 15px;
+        line-height: 1.6;
+        color: #F0F6FC;
+        margin-bottom: 16px;
+    }
+
+    .ending-telemetry-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .ending-stat-box {
+        background: rgba(10, 20, 38, 0.8);
+        border: 1px solid rgba(0, 229, 255, 0.25);
+        border-radius: 6px;
+        padding: 8px 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .stat-lbl {
+        color: #8B949E;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .stat-num {
+        font-size: 15px;
+        font-weight: 800;
+    }
+</style>
+
+@code {
+    private bool _showEndingModal = false;
+    private bool _showJournalModal = false;
+    private string _latestOutcomeNarrative = string.Empty;
+
+    private readonly DialogOptions _endingDialogOptions = new() { MaxWidth = MaxWidth.Medium, CloseButton = false };
+    private readonly DialogOptions _journalDialogOptions = new() { MaxWidth = MaxWidth.Small, CloseButton = true };
+
+    private GameSessionState Session => GameService.CurrentSession;
+    private bool IsPortuguese => Session.Locale.StartsWith("pt", StringComparison.OrdinalIgnoreCase);
+
+    private string CurrentBoardBackground => Session.Phase == TurnPhase.BuildPhase
+        ? PymGameOrbitAssets.ScreenGameplayBoard
+        : PymGameOrbitAssets.ScreenGameplayBoardWithDecks;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Session.EquippedShipAndBaseCards.Count == 0 && Session.PlayerHand.Count == 0)
+        {
+            await GameService.StartNewCampaignAsync(
+                Session.Destination,
+                Session.CrewCount,
+                Session.MinimumCardsToBuildBase,
+                Session.Locale);
+        }
+
+        if (Session.Phase != TurnPhase.BuildPhase && Session.PendingExplorationEvent is null)
+        {
+            GameService.DrawTurnExplorationEvent();
+        }
+    }
+
+    private void EquipCard(GameCardModel card)
+    {
+        if (GameService.PlayCardFromHand(card.CardId, out var msg))
+        {
+            Snackbar.Add(msg, Severity.Success, c => { c.ShowCloseIcon = false; c.VisibleStateDuration = 1800; });
+        }
+        else
+        {
+            Snackbar.Add(msg, Severity.Warning, c => { c.ShowCloseIcon = true; });
+        }
+    }
+
+    private void PlayCard(GameCardModel card)
+    {
+        if (GameService.PlayCardFromHand(card.CardId, out var msg))
+        {
+            Snackbar.Add(msg, Severity.Success, c => { c.ShowCloseIcon = false; c.VisibleStateDuration = 1800; });
+        }
+        else
+        {
+            Snackbar.Add(msg, Severity.Warning, c => { c.ShowCloseIcon = true; });
+        }
+    }
+
+    private void ConfirmBaseConstruction()
+    {
+        if (GameService.CompleteInitialBaseConstruction(out var msg))
+        {
+            Snackbar.Add(msg, Severity.Success, c => { c.ShowCloseIcon = true; c.VisibleStateDuration = 3000; });
+        }
+        else
+        {
+            Snackbar.Add(msg, Severity.Error, c => { c.ShowCloseIcon = true; });
+        }
+    }
+
+    private void ResetAssembly()
+    {
+        // Return equipped cards to hand
+        foreach (var c in Session.EquippedShipAndBaseCards.ToList())
+        {
+            Session.PlayerHand.Add(c);
+        }
+        Session.EquippedShipAndBaseCards.Clear();
+        Session.CardsPlayedThisTurn = 0;
+        Snackbar.Add(IsPortuguese ? "Montagem reiniciada. Cartas retornadas à mão." : "Assembly reset. Cards returned to hand.", Severity.Info);
+    }
+
+    private void MakeExplorationDecision(string optionId)
+    {
+        var result = GameService.ResolveExplorationDecisionAndAdvanceTurn(optionId);
+
+        string outcomeMsg = IsPortuguese ? result.OutcomeSummaryPtBr : result.OutcomeSummaryEn;
+        string lesson = IsPortuguese ? result.ScienceLessonLearnedPtBr : result.ScienceLessonLearnedEn;
+
+        if (result.Outcome != MissionEndingOutcome.InProgress)
+        {
+            _latestOutcomeNarrative = $"{outcomeMsg}\n\n📚 {lesson}";
+            _showEndingModal = true;
+        }
+        else
+        {
+            Snackbar.Add(outcomeMsg, Severity.Info, c => { c.VisibleStateDuration = 3500; });
+        }
+    }
+
+    private void DrawNewDilemma()
+    {
+        GameService.DrawTurnExplorationEvent();
+        Snackbar.Add(IsPortuguese ? "Novo evento espacial sorteado!" : "New space exploration challenge drawn!", Severity.Normal);
+    }
+
+    private void OpenJournalModal()
+    {
+        _showJournalModal = true;
+    }
+
+    private async Task RestartGame()
+    {
+        _showEndingModal = false;
+        await GameService.StartNewCampaignAsync(
+            Session.Destination,
+            Session.CrewCount,
+            Session.MinimumCardsToBuildBase,
+            Session.Locale);
+    }
+}

@@ -1,0 +1,627 @@
+@page "/info"
+@namespace PymSpaceOrbit.Shared.Pages
+@using PymSpaceOrbit.Shared.Abstractions.Game
+@using PymSpaceOrbit.Shared.Components.Cards
+@using PymSpaceOrbit.Shared.Models.Game
+@inject IGameService GameService
+@inject NavigationManager Navigation
+@inject IDialogService DialogService
+
+<PageTitle>Pym Space Orbit — @(IsPortuguese ? "Galeria de Card Sets & Sobre" : "Card Sets Gallery & About")</PageTitle>
+
+<div class="info-screen-wrapper">
+    <div class="info-screen-canvas">
+        <!-- 16:9 Background Graphic from Shared Project -->
+        <img src="@PymGameOrbitAssets.ScreenInfoCardSets" alt="Pym Space Orbit Card Sets Gallery" class="info-bg-img" />
+
+        <!-- Top Navigation Bar Placeholders -->
+        <div class="info-top-bar">
+            <!-- Slot Superior Esquerdo: VOLTAR / BACK -->
+            <MudButton Variant="Variant.Filled"
+                       Class="info-back-btn"
+                       OnClick="@(() => Navigation.NavigateTo("/"))"
+                       StartIcon="@Icons.Material.Filled.ArrowBack"
+                       Size="Size.Medium">
+                @(IsPortuguese ? "VOLTAR" : "BACK")
+            </MudButton>
+
+            <!-- 5 Abas Retangulares para Filtrar os 5 Sets -->
+            <div class="info-tabs-row">
+                <MudButton Variant="@(_activeTab == 0 ? Variant.Filled : Variant.Outlined)"
+                           Class="@($"info-deck-tab {(_activeTab == 0 ? "active-tab" : "")}")"
+                           OnClick="@(() => SelectTab(0))"
+                           StartIcon="@Icons.Material.Filled.Rocket">
+                    @(IsPortuguese ? "1. Ship Build" : "1. Ship Build")
+                </MudButton>
+
+                <MudButton Variant="@(_activeTab == 1 ? Variant.Filled : Variant.Outlined)"
+                           Class="@($"info-deck-tab {(_activeTab == 1 ? "active-tab" : "")}")"
+                           OnClick="@(() => SelectTab(1))"
+                           StartIcon="@Icons.Material.Filled.WaterDrop">
+                    @(IsPortuguese ? "2. ECLSS Loop" : "2. ECLSS Loop")
+                </MudButton>
+
+                <MudButton Variant="@(_activeTab == 2 ? Variant.Filled : Variant.Outlined)"
+                           Class="@($"info-deck-tab {(_activeTab == 2 ? "active-tab" : "")}")"
+                           OnClick="@(() => SelectTab(2))"
+                           StartIcon="@Icons.Material.Filled.Public">
+                    @(IsPortuguese ? "3. Ambientes" : "3. Environment")
+                </MudButton>
+
+                <MudButton Variant="@(_activeTab == 3 ? Variant.Filled : Variant.Outlined)"
+                           Class="@($"info-deck-tab {(_activeTab == 3 ? "active-tab" : "")}")"
+                           OnClick="@(() => SelectTab(3))"
+                           StartIcon="@Icons.Material.Filled.Architecture">
+                    @(IsPortuguese ? "4. Decisões Base" : "4. Architecture")
+                </MudButton>
+
+                <MudButton Variant="@(_activeTab == 4 ? Variant.Filled : Variant.Outlined)"
+                           Class="@($"info-deck-tab {(_activeTab == 4 ? "active-tab" : "")}")"
+                           OnClick="@(() => SelectTab(4))"
+                           StartIcon="@Icons.Material.Filled.WbTwilight">
+                    @(IsPortuguese ? "5. Clima DONKI" : "5. Space Weather")
+                </MudButton>
+            </div>
+        </div>
+
+        <!-- Left 2x4 Grid (Up to 8 Cards + Pagination for 10/12 sets) -->
+        <div class="info-left-panel">
+            <div class="info-cards-grid">
+                @foreach (var card in CurrentPageCards)
+                {
+                    <div class="info-grid-card-item">
+                        <PymGameOrbitCard Card="@card"
+                                         Locale="@Locale"
+                                         IsSelected="@(card.CardId == _selectedCard?.CardId)"
+                                         OnCardClicked="SelectCard" />
+                    </div>
+                }
+            </div>
+
+            <!-- Paginação para Sets de 10 ou 12 Cartas -->
+            @if (TotalPages > 1)
+            {
+                <div class="info-pagination-row">
+                    <MudIconButton Icon="@Icons.Material.Filled.ChevronLeft"
+                                   Size="Size.Small"
+                                   Color="Color.Primary"
+                                   Disabled="@(_currentPage <= 1)"
+                                   OnClick="@(() => _currentPage--)" />
+                    <span class="info-pagination-label">
+                        @(IsPortuguese ? $"Página {_currentPage} de {TotalPages}" : $"Page {_currentPage} of {TotalPages}")
+                        (@(_filteredCards.Count) @(IsPortuguese ? "cartas no set" : "cards in set"))
+                    </span>
+                    <MudIconButton Icon="@Icons.Material.Filled.ChevronRight"
+                                   Size="Size.Small"
+                                   Color="Color.Primary"
+                                   Disabled="@(_currentPage >= TotalPages)"
+                                   OnClick="@(() => _currentPage++)" />
+                </div>
+            }
+        </div>
+
+        <!-- Right Inspection Panel: Card Zoom + Kid Summary + Trade-Offs + Technical Glossary -->
+        <div class="info-right-panel">
+            @if (_selectedCard is not null)
+            {
+                <div class="inspector-scroll-content">
+                    <!-- Zoomed Card Component with Live NASA API Photo -->
+                    <div class="inspector-card-preview">
+                        <PymGameOrbitCard Card="@_selectedCard"
+                                         Locale="@Locale"
+                                         CustomStyle="width: 175px; margin: 0 auto;"
+                                         OnTermClicked="OpenTermDialog" />
+                    </div>
+
+                    <!-- Kid Educational Summary (7–12 years) -->
+                    <div class="inspector-section-box">
+                        <div class="inspector-box-header" style="color: #FFD700;">
+                            <MudIcon Icon="@Icons.Material.Filled.School" Size="Size.Small" Class="mr-1" />
+                            <span>@(IsPortuguese ? "Resumo Educativo (7–12 anos)" : "Kid-Friendly Space Science (Ages 7–12)")</span>
+                        </div>
+                        <p class="inspector-kid-text">
+                            @(IsPortuguese ? (string.IsNullOrWhiteSpace(_selectedCard.KidSummaryPtBr) ? _selectedCard.KidSummaryEn : _selectedCard.KidSummaryPtBr)
+                                           : _selectedCard.KidSummaryEn)
+                        </p>
+                    </div>
+
+                    <!-- Trade-offs: Watts, O2, Shielding, Delay -->
+                    <div class="inspector-section-box">
+                        <div class="inspector-box-header" style="color: #00E5FF;">
+                            <MudIcon Icon="@Icons.Material.Filled.Balance" Size="Size.Small" Class="mr-1" />
+                            <span>@(IsPortuguese ? "Trade-Offs Biofísicos & Recursos" : "Biophysical Trade-Offs & Resources")</span>
+                        </div>
+                        <div class="inspector-metrics-grid">
+                            <div class="metric-pill">
+                                <span class="metric-name">⚡ Watts:</span>
+                                <span class="metric-val" style="color: @(_selectedCard.WattBudgetDelta >= 0 ? "#00E676" : "#FF5252");">
+                                    @_selectedCard.WattBudgetDelta.ToString("+#,##0;-#,##0;0") W
+                                </span>
+                            </div>
+                            <div class="metric-pill">
+                                <span class="metric-name">💧 Oxigênio:</span>
+                                <span class="metric-val" style="color: @(_selectedCard.OxygenLitersPerDayDelta >= 0 ? "#00E676" : "#FF5252");">
+                                    @_selectedCard.OxygenLitersPerDayDelta.ToString("+#,##0;-#,##0;0") L/d
+                                </span>
+                            </div>
+                            <div class="metric-pill">
+                                <span class="metric-name">🛡️ Blindagem:</span>
+                                <span class="metric-val" style="color: #00E5FF;">
+                                    @_selectedCard.ShieldingGcm2Delta.ToString("+#,##0.0;-#,##0.0;0") g/cm²
+                                </span>
+                            </div>
+                            <div class="metric-pill">
+                                <span class="metric-name">⏱️ Atraso Comms:</span>
+                                <span class="metric-val" style="color: @(_selectedCard.CommDelaySecDelta <= 0 ? "#00E676" : "#FFB300");">
+                                    @_selectedCard.CommDelaySecDelta.ToString("+#,##0;-#,##0;0") s
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Technical Glossary Terms for this Card -->
+                    @if (_selectedCard.TechnicalGlossary is not null && _selectedCard.TechnicalGlossary.Count > 0)
+                    {
+                        <div class="inspector-section-box">
+                            <div class="inspector-box-header" style="color: #00E676;">
+                                <MudIcon Icon="@Icons.Material.Filled.MenuBook" Size="Size.Small" Class="mr-1" />
+                                <span>@(IsPortuguese ? "Glossário Técnico do Card" : "Card Technical Glossary")</span>
+                            </div>
+                            <div class="inspector-glossary-list">
+                                @foreach (var term in _selectedCard.TechnicalGlossary.Values)
+                                {
+                                    <div class="glossary-item-card" @onclick="@(() => OpenTermDialog(term))">
+                                        <div class="d-flex align-center justify-space-between mb-1">
+                                            <span class="glossary-term-badge">@term.Term</span>
+                                            <span class="glossary-friendly-name">@(IsPortuguese ? term.KidFriendlyLabelPtBr : term.KidFriendlyLabelEn)</span>
+                                        </div>
+                                        <p class="glossary-explanation">
+                                            @(IsPortuguese ? term.ExplanationPtBr : term.ExplanationEn)
+                                        </p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Botão para Abrir o Modal com o Glossário Geral (ABOUT.md) -->
+                    <div class="mt-3 mb-2 text-center">
+                        <MudButton Variant="Variant.Outlined"
+                                   Color="Color.Secondary"
+                                   StartIcon="@Icons.Material.Filled.LibraryBooks"
+                                   OnClick="OpenGeneralGlossaryModal"
+                                   Style="border-color: #FFD700; color: #FFD700; font-weight: bold; font-size: 11px;">
+                            @(IsPortuguese ? "VER GLOSSÁRIO GERAL COMPLETO (ABOUT.MD)" : "VIEW FULL AEROSPACE GLOSSARY (ABOUT.MD)")
+                        </MudButton>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal com o Glossário Geral Completo (ABOUT.md) -->
+<MudDialog @bind-Visible="_showGlossaryModal" Options="_glossaryDialogOptions">
+    <TitleContent>
+        <div class="d-flex align-center">
+            <MudIcon Icon="@Icons.Material.Filled.MenuBook" Color="Color.Secondary" Class="mr-2" />
+            <MudText Typo="Typo.h6" Style="color: #FFD700; font-weight: bold;">
+                @(IsPortuguese ? "GLOSSÁRIO GERAL AEROESPACIAL & CLIMA ESPACIAL" : "FULL AEROSPACE & SPACE WEATHER GLOSSARY")
+            </MudText>
+        </div>
+    </TitleContent>
+    <DialogContent>
+        <div style="max-height: 60vh; overflow-y: auto; padding-right: 8px;">
+            <MudText Typo="Typo.subtitle1" Class="font-weight-bold mb-2" Style="color: #00E5FF;">
+                1. Casco, Energia e Estrutura (Ship Build)
+            </MudText>
+            <MudText Typo="Typo.body2" Class="mb-3" Style="color: #E0F7FA;">
+                • <strong>BNNT</strong>: Nanotubos de Nitreto de Boro Hidrogenados com alta densidade de paragem de radiação cósmica galáctica (GCR).<br />
+                • <strong>KRUSTY</strong>: Mini-reator nuclear de fissão de 10-40 kWe desenvolvido pela NASA Glenn imune a tempestades de poeira.<br />
+                • <strong>iROSA</strong>: Asas solares ultraleves desdobráveis para fornecimento de até 220 kWe.<br />
+                • <strong>EDS</strong>: Escudo eletrodinâmico que repele poeira abrasiva de regolito através de campos elétricos multifásicos.<br />
+                • <strong>xEMU</strong>: Traje espacial de nova geração da NASA Artemis com maior mobilidade e interfaces SuitPort.
+            </MudText>
+
+            <MudText Typo="Typo.subtitle1" Class="font-weight-bold mb-2" Style="color: #00E676;">
+                2. Suporte de Vida em Circuito Fechado (Marshall ECLSS)
+            </MudText>
+            <MudText Typo="Typo.body2" Class="mb-3" Style="color: #E0F7FA;">
+                • <strong>WPA / UPA</strong>: Reator catalítico e destilação a vácuo para reciclagem de 98,5% das águas residuais.<br />
+                • <strong>BPA</strong>: Processador de salmoura por membrana aquecida elevando a recuperação para até 99,2%.<br />
+                • <strong>OGA</strong>: Eletrólise de água por membrana PEM gerando oxigênio puro respirável e hidrogênio.<br />
+                • <strong>CDRA</strong>: Removedor térmico com 4 leitos de zeólita 5A para adsorção de CO2 expirado.<br />
+                • <strong>Sabatier / Bosch</strong>: Reatores termoquímicos que convertem CO2 e H2 em água e combustível metano (CH4).<br />
+                • <strong>PBR</strong>: Fotobiorreator com microalgas Chlorella e Spirulina para fixação biológica de carbono e alimentos.
+            </MudText>
+
+            <MudText Typo="Typo.subtitle1" Class="font-weight-bold mb-2" Style="color: #FFB300;">
+                3. Habitats e Decisões Arquiteturais na Lua e Marte
+            </MudText>
+            <MudText Typo="Typo.body2" Class="mb-3" Style="color: #E0F7FA;">
+                • <strong>Sinterização de Regolito</strong>: Impressão 3D de abóbadas de solo lunar com sobrecarga de 45 g/cm².<br />
+                • <strong>Tubos de Lava em Arsia Mons</strong>: Cavernas vulcânicas naturais em Marte com proteção superior a 68 g/cm².<br />
+                • <strong>MOXIE</strong>: Eletrólise de óxido sólido a 800°C produzindo oxigênio direto da atmosfera marciana de CO2.
+            </MudText>
+
+            <MudText Typo="Typo.subtitle1" Class="font-weight-bold mb-2" Style="color: #FF5252;">
+                4. Clima Espacial & Eventos NASA DONKI
+            </MudText>
+            <MudText Typo="Typo.body2" Class="mb-3" Style="color: #E0F7FA;">
+                • <strong>NASA DONKI</strong>: Telemetria heliosférica em tempo real de erupções solares e tempestades de radiação.<br />
+                • <strong>Flares Classe X</strong>: Erupções solares de alta potência que provocam blackouts e tempestades de prótons.<br />
+                • <strong>CME & Decréscimo de Forbush</strong>: Ejeções de plasma coronal que modulam a radiação ambiente.
+            </MudText>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => _showGlossaryModal = false)">
+            @(IsPortuguese ? "Fechar Glossário" : "Close Glossary")
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+<!-- Modal de Detalhe de Termo Técnico Específico -->
+<MudDialog @bind-Visible="_showTermModal" Options="_termDialogOptions">
+    <TitleContent>
+        <div class="d-flex align-center">
+            <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Info" Class="mr-2" />
+            <MudText Typo="Typo.h6" Style="color: #00E5FF; font-weight: bold;">
+                @_activeTerm?.Term — @(IsPortuguese ? _activeTerm?.KidFriendlyLabelPtBr : _activeTerm?.KidFriendlyLabelEn)
+            </MudText>
+        </div>
+    </TitleContent>
+    <DialogContent>
+        <MudText Typo="Typo.body1" Style="color: #F0F6FC; line-height: 1.6;">
+            @(IsPortuguese ? _activeTerm?.ExplanationPtBr : _activeTerm?.ExplanationEn)
+        </MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="@(() => _showTermModal = false)">
+            @(IsPortuguese ? "Entendi" : "Got it")
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+<style>
+    .info-screen-wrapper {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #060911;
+        padding: 12px;
+        box-sizing: border-box;
+        min-height: calc(100vh - 48px);
+    }
+
+    .info-screen-canvas {
+        position: relative;
+        width: 100%;
+        max-width: 1440px;
+        aspect-ratio: 16 / 9;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.85), 0 0 30px rgba(0, 229, 255, 0.15);
+        border: 1px solid rgba(0, 229, 255, 0.25);
+        background-color: #050811;
+    }
+
+    .info-bg-img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    /* Top Navigation Bar: Back button + 5 Deck Tabs */
+    .info-top-bar {
+        position: absolute;
+        top: 3.5%;
+        left: 2%;
+        width: 96%;
+        height: 8.5%;
+        z-index: 3;
+        display: flex;
+        align-items: center;
+        gap: 1.5%;
+    }
+
+    .info-back-btn {
+        flex: 0 0 10%;
+        height: 100%;
+        background: rgba(10, 18, 36, 0.7) !important;
+        border: 1.5px solid rgba(255, 179, 0, 0.6) !important;
+        color: #FFD700 !important;
+        font-weight: 800 !important;
+        letter-spacing: 1px !important;
+        font-size: clamp(9px, 1.0vw, 13px) !important;
+        border-radius: 6px !important;
+    }
+
+    .info-back-btn:hover {
+        background: rgba(255, 179, 0, 0.25) !important;
+        border-color: #FFD700 !important;
+        box-shadow: 0 0 14px rgba(255, 215, 0, 0.6) !important;
+    }
+
+    .info-tabs-row {
+        flex: 1;
+        height: 100%;
+        display: flex;
+        gap: 1%;
+    }
+
+    .info-deck-tab {
+        flex: 1;
+        height: 100%;
+        background: rgba(10, 18, 36, 0.6) !important;
+        border: 1px solid rgba(0, 229, 255, 0.35) !important;
+        border-radius: 6px !important;
+        color: #F0F6FC !important;
+        font-weight: 700 !important;
+        font-size: clamp(8px, 0.9vw, 12px) !important;
+        letter-spacing: 0.5px !important;
+        transition: all 0.2s ease !important;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    .info-deck-tab:hover {
+        background: rgba(0, 229, 255, 0.2) !important;
+        border-color: #00E5FF !important;
+    }
+
+    .active-tab {
+        background: rgba(0, 229, 255, 0.35) !important;
+        border: 1.5px solid #00E5FF !important;
+        color: #00E5FF !important;
+        box-shadow: 0 0 16px rgba(0, 229, 255, 0.5) !important;
+    }
+
+    /* Left 2x4 Grid */
+    .info-left-panel {
+        position: absolute;
+        top: 14.5%;
+        left: 2%;
+        width: 58%;
+        height: 82%;
+        z-index: 3;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .info-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: 8px;
+        width: 100%;
+        height: 90%;
+    }
+
+    .info-grid-card-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+    }
+
+    .info-pagination-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        height: 8%;
+        background: rgba(10, 18, 36, 0.6);
+        border: 1px solid rgba(0, 229, 255, 0.25);
+        border-radius: 6px;
+    }
+
+    .info-pagination-label {
+        font-size: clamp(9px, 0.9vw, 12px);
+        color: #8B949E;
+        font-weight: 600;
+    }
+
+    /* Right Inspection Panel */
+    .info-right-panel {
+        position: absolute;
+        top: 14.5%;
+        left: 62%;
+        width: 36%;
+        height: 82%;
+        z-index: 3;
+        background: rgba(8, 14, 28, 0.85);
+        border: 1.5px solid rgba(0, 229, 255, 0.35);
+        border-radius: 10px;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+        overflow: hidden;
+    }
+
+    .inspector-scroll-content {
+        width: 100%;
+        height: 100%;
+        overflow-y: auto;
+        padding: 10px 14px;
+        box-sizing: border-box;
+    }
+
+    .inspector-card-preview {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+
+    .inspector-section-box {
+        background: rgba(14, 24, 46, 0.75);
+        border: 1px solid rgba(0, 229, 255, 0.25);
+        border-radius: 8px;
+        padding: 8px 10px;
+        margin-bottom: 8px;
+    }
+
+    .inspector-box-header {
+        display: flex;
+        align-items: center;
+        font-weight: 700;
+        font-size: clamp(10px, 1.0vw, 13px);
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+    }
+
+    .inspector-kid-text {
+        margin: 0;
+        font-size: clamp(9.5px, 0.95vw, 12.5px);
+        color: #F0F6FC;
+        line-height: 1.45;
+    }
+
+    .inspector-metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+    }
+
+    .metric-pill {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(6, 12, 24, 0.7);
+        border: 1px solid rgba(0, 229, 255, 0.2);
+        border-radius: 4px;
+        padding: 4px 6px;
+        font-size: clamp(9px, 0.9vw, 11px);
+    }
+
+    .metric-name {
+        color: #8B949E;
+        font-weight: 600;
+    }
+
+    .metric-val {
+        font-weight: 700;
+    }
+
+    .inspector-glossary-list {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .glossary-item-card {
+        background: rgba(6, 12, 24, 0.6);
+        border: 1px solid rgba(0, 229, 255, 0.2);
+        border-radius: 6px;
+        padding: 6px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+
+    .glossary-item-card:hover {
+        background: rgba(0, 229, 255, 0.15);
+        border-color: #00E5FF;
+    }
+
+    .glossary-term-badge {
+        display: inline-block;
+        padding: 1px 6px;
+        font-size: 9px;
+        font-weight: 700;
+        background: rgba(0, 229, 255, 0.25);
+        color: #00E5FF;
+        border-radius: 4px;
+        border: 1px solid rgba(0, 229, 255, 0.5);
+    }
+
+    .glossary-friendly-name {
+        font-size: 10px;
+        font-weight: 600;
+        color: #FFD700;
+    }
+
+    .glossary-explanation {
+        margin: 2px 0 0 0;
+        font-size: 9.5px;
+        color: #E0F7FA;
+        line-height: 1.35;
+    }
+</style>
+
+@code {
+    private int _activeTab = 0;
+    private int _currentPage = 1;
+    private const int PageSize = 8;
+
+    private List<GameCardModel> _allCards = new();
+    private List<GameCardModel> _filteredCards = new();
+    private GameCardModel? _selectedCard;
+
+    private bool _showGlossaryModal = false;
+    private bool _showTermModal = false;
+    private TechnicalTermNote? _activeTerm;
+
+    private readonly DialogOptions _glossaryDialogOptions = new() { MaxWidth = MaxWidth.Medium, CloseButton = true };
+    private readonly DialogOptions _termDialogOptions = new() { MaxWidth = MaxWidth.Small, CloseButton = true };
+
+    private string Locale => GameService.CurrentSession.Locale;
+    private bool IsPortuguese => Locale.StartsWith("pt", StringComparison.OrdinalIgnoreCase);
+
+    private int TotalPages => Math.Max(1, (int)Math.Ceiling(_filteredCards.Count / (double)PageSize));
+
+    private IEnumerable<GameCardModel> CurrentPageCards =>
+        _filteredCards.Skip((_currentPage - 1) * PageSize).Take(PageSize);
+
+    protected override void OnInitialized()
+    {
+        _allCards = GameService.GetAllUnifiedDeckCards().ToList();
+        SelectTab(0);
+    }
+
+    private void SelectTab(int tabIndex)
+    {
+        _activeTab = tabIndex;
+        _currentPage = 1;
+
+        _filteredCards = _activeTab switch
+        {
+            0 => _allCards.Where(c => c.CardId.StartsWith("BLD", StringComparison.OrdinalIgnoreCase) ||
+                                      c.Category is CardSlotCategory.ShipAndBaseHull or CardSlotCategory.PowerAndThermal).ToList(),
+            1 => _allCards.Where(c => c.CardId.StartsWith("ECL", StringComparison.OrdinalIgnoreCase) ||
+                                      c.Category == CardSlotCategory.MarshallEclssLoop).ToList(),
+            2 => _allCards.Where(c => c.CardId.StartsWith("ENV", StringComparison.OrdinalIgnoreCase) ||
+                                      c.Category == CardSlotCategory.EnvironmentAndSuits).ToList(),
+            3 => _allCards.Where(c => c.CardId.StartsWith("ARC", StringComparison.OrdinalIgnoreCase) ||
+                                      c.Category == CardSlotCategory.OutpostArchitecture).ToList(),
+            4 => _allCards.Where(c => c.CardId.StartsWith("SWX", StringComparison.OrdinalIgnoreCase) ||
+                                      c.Category == CardSlotCategory.DonkiSpaceWeatherCounter).ToList(),
+            _ => _allCards
+        };
+
+        _selectedCard = _filteredCards.FirstOrDefault();
+    }
+
+    private void SelectCard(GameCardModel card)
+    {
+        _selectedCard = card;
+    }
+
+    private void OpenTermDialog(TechnicalTermNote term)
+    {
+        _activeTerm = term;
+        _showTermModal = true;
+    }
+
+    private void OpenGeneralGlossaryModal()
+    {
+        _showGlossaryModal = true;
+    }
+}

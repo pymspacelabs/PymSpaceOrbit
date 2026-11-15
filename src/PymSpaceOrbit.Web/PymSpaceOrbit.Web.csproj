@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MudBlazor" Version="9.12.0" />
     <ProjectReference Include="..\PymSpaceOrbit.Shared\PymSpaceOrbit.Shared.csproj" />
   </ItemGroup>
 
