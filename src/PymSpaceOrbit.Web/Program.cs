@@ -22,6 +22,7 @@ builder.Services.AddPymSpaceOrbitGameServices();
 builder.Services.AddMudServices();
 // Add device-specific services used by the PymSpaceOrbit.Shared project
 builder.Services.AddSingleton<IFormFactor, FormFactor>();
+builder.Services.AddScoped<IAudioService, AudioService>();
 
 var app = builder.Build();
 

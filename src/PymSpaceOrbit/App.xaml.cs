@@ -1,16 +1,27 @@
-﻿#if WINDOWS
+#if WINDOWS
 using Microsoft.UI.Windowing;
 #endif
+using PymSpaceOrbit.Shared.Abstractions.Game;
+using PymSpaceOrbit.Shared.Models.Game;
 
 namespace PymSpaceOrbit;
 
 public partial class App : Application
 {
     private readonly MainPage page;
-    public App(MainPage page)
+    private readonly IAudioService _audioService;
+
+    public App(MainPage page, IAudioService audioService)
     {
         InitializeComponent();
         this.page = page;
+        _audioService = audioService;
+    }
+
+    protected override void OnStart()
+    {
+        base.OnStart();
+        _ = _audioService.PlayMusicAsync(BackgroundMusic.MainMenu, loop: true);
     }
 
     protected override Window CreateWindow(IActivationState? activationState)

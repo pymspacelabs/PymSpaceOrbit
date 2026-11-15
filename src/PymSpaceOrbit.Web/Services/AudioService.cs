@@ -4,7 +4,7 @@ using PymSpaceOrbit.Shared.Abstractions.Game;
 using PymSpaceOrbit.Shared.Constants;
 using PymSpaceOrbit.Shared.Models.Game;
 
-namespace PymSpaceOrbit.Shared.Concrete.Game;
+namespace PymSpaceOrbit.Web.Services;
 
 public sealed class AudioService : IAudioService
 {

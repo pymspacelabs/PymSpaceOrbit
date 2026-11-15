@@ -7,41 +7,25 @@ using PymSpaceOrbit.Shared.Concrete.Game;
 using PymSpaceOrbit.Shared.Concrete.ML;
 using PymSpaceOrbit.Shared.Extensions;
 using MudBlazor.Services;
+using Plugin.Maui.Audio;
 namespace PymSpaceOrbit;
 
 public static class MauiProgram
 {
     public static MauiApp CreateMauiApp()
     {
-#if WINDOWS
-        Environment.SetEnvironmentVariable(
-            "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS",
-            "--autoplay-policy=no-user-gesture-required");
-#endif
-
         var builder = MauiApp.CreateBuilder();
         builder
             .UseMauiApp<App>()
+            .AddAudio()
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
             });
 
-#if ANDROID
-        Microsoft.AspNetCore.Components.WebView.Maui.BlazorWebViewHandler.BlazorWebViewMapper.AppendToMapping(
-            "EnableAudioAutoplay",
-            static (handler, _) =>
-            {
-                if (handler.PlatformView?.Settings is not null)
-                {
-                    handler.PlatformView.Settings.MediaPlaybackRequiresUserGesture = false;
-                    handler.PlatformView.Settings.DomStorageEnabled = true;
-                }
-            });
-#endif
-
         // Add device-specific services used by the PymSpaceOrbit.Shared project
         builder.Services.AddSingleton<IFormFactor, FormFactor>();
+        builder.Services.AddSingleton<IAudioService, AudioService>();
 
         builder.Services.AddMauiBlazorWebView();
 
