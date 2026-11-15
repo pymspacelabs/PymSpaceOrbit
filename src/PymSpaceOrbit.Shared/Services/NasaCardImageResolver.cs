@@ -6,7 +6,7 @@ namespace PymSpaceOrbit.Shared.Services;
 
 /// <summary>
 /// Lightweight in-memory cached NASA Image API resolver that queries images-api.nasa.gov
-/// and falls back immediately to NasaImageAssetUrl.
+/// and falls back immediately to verified NasaImageAssetUrl without breaking card rendering.
 /// </summary>
 public sealed class NasaCardImageResolver
 {
@@ -37,6 +37,15 @@ public sealed class NasaCardImageResolver
             return cachedUrl;
         }
 
+        // If we already have a verified images-assets.nasa.gov URL in the catalog, prefer it immediately
+        // and only hit the search API when fallback is empty.
+        if (!string.IsNullOrWhiteSpace(fallback) &&
+            fallback.StartsWith("https://images-assets.nasa.gov/image/", StringComparison.OrdinalIgnoreCase))
+        {
+            _cache[nasaImageApiUrl] = fallback;
+            return fallback;
+        }
+
         try
         {
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
@@ -52,17 +61,23 @@ public sealed class NasaCardImageResolver
                     collection.TryGetProperty("items", out var items) &&
                     items.GetArrayLength() > 0)
                 {
-                    var firstItem = items[0];
-                    if (firstItem.TryGetProperty("links", out var links) && links.GetArrayLength() > 0)
+                    foreach (var item in items.EnumerateArray())
                     {
-                        var firstLink = links[0];
-                        if (firstLink.TryGetProperty("href", out var hrefProp))
+                        if (!item.TryGetProperty("links", out var links) || links.GetArrayLength() == 0)
+                            continue;
+
+                        foreach (var link in links.EnumerateArray())
                         {
-                            var resolved = hrefProp.GetString();
-                            if (!string.IsNullOrWhiteSpace(resolved))
+                            if (link.TryGetProperty("href", out var hrefProp))
                             {
-                                _cache[nasaImageApiUrl] = resolved;
-                                return resolved;
+                                var resolved = hrefProp.GetString();
+                                if (!string.IsNullOrWhiteSpace(resolved) &&
+                                    (resolved.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
+                                     resolved.EndsWith(".png", StringComparison.OrdinalIgnoreCase)))
+                                {
+                                    _cache[nasaImageApiUrl] = resolved;
+                                    return resolved;
+                                }
                             }
                         }
                     }

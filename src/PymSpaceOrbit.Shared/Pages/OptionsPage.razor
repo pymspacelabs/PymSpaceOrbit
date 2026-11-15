@@ -11,30 +11,36 @@
 <PageTitle>Pym Space Orbit — @(IsPortuguese ? "Opções" : "Options")</PageTitle>
 
 <div class="options-screen-wrapper">
-    <div class="options-screen-canvas">
-        <!-- 16:9 Background Graphic from Shared Project -->
-        <img src="@PymGameOrbitAssets.ScreenOptions" alt="Pym Space Orbit Options Screen" class="options-bg-img" />
+    <!-- Pure CSS Sci-Fi HUD Console (Faithful CSS transformation of ui_screen_options.jpg) -->
+    <div class="hud-options-canvas">
+        <!-- Metallic Brushed-Steel Outer Bezel & Corner Tech Accents -->
+        <div class="hud-bezel-top"></div>
+        <div class="hud-bezel-bottom"></div>
+        <div class="hud-bezel-left"></div>
+        <div class="hud-bezel-right"></div>
 
-        <!-- Top Title Bar Placeholder -->
-        <div class="options-top-title">
-            <h1 class="options-title-text">
-                @(IsPortuguese ? "CONFIGURAÇÕES DA MISSÃO & TELEMETRIA" : "MISSION SETTINGS & TELEMETRY")
-            </h1>
-            <p class="options-subtitle-text">
-                @(IsPortuguese ? "Parâmetros Biofísicos ML.NET, Conexões NASA e Preferências"
-                               : "ML.NET Biophysical Parameters, NASA Connectivity & Preferences")
-            </p>
+        <!-- Top Chamfered Metallic Title Plaque -->
+        <div class="hud-options-top-plaque">
+            <div class="hud-plaque-inner">
+                <h1 class="options-title-text">
+                    @(IsPortuguese ? "OPÇÕES DA MISSÃO" : "MISSION OPTIONS")
+                </h1>
+                <p class="options-subtitle-text">
+                    @(IsPortuguese ? "Parâmetros Biofísicos ML.NET, Telemetria NASA & Idioma"
+                                   : "ML.NET Biophysical Parameters, NASA Telemetry & Language")
+                </p>
+            </div>
         </div>
 
-        <!-- 4 Central Horizontal Rows -->
-        <div class="options-rows-container">
+        <!-- Central Dark-Glass Console Container with 4 Horizontal Rows -->
+        <div class="hud-options-central-panel">
             <!-- Row 1: Idioma / Language -->
-            <div class="options-row">
-                <div class="options-row-label">
+            <div class="hud-options-row">
+                <div class="hud-options-label-box">
                     <MudIcon Icon="@Icons.Material.Filled.Translate" Size="Size.Small" Color="Color.Primary" Class="mr-2" />
-                    <span>@(IsPortuguese ? "Idioma da Missão / Language:" : "Mission Language / Idioma:")</span>
+                    <span>@(IsPortuguese ? "Idioma da Missão / Language" : "Mission Language / Idioma")</span>
                 </div>
-                <div class="options-row-control">
+                <div class="hud-options-control-box">
                     <MudSelect T="string" @bind-Value="_selectedLocale"
                                Variant="Variant.Outlined"
                                Margin="Margin.Dense"
@@ -46,67 +52,75 @@
                 </div>
             </div>
 
-            <!-- Row 2: Destino Padrão & Tamanho da Tripulação -->
-            <div class="options-row">
-                <div class="options-row-label">
+            <!-- Row 2: Tamanho da Tripulação / Crew Count -->
+            <div class="hud-options-row">
+                <div class="hud-options-label-box">
                     <MudIcon Icon="@Icons.Material.Filled.Groups" Size="Size.Small" Color="Color.Tertiary" Class="mr-2" />
-                    <span>@(IsPortuguese ? "Tripulação da Nave (Crew Size):" : "Outpost Crew Count (1-16):")</span>
-                    <MudChip T="string" Size="Size.Small" Color="Color.Tertiary" Variant="Variant.Filled" Class="ml-2">
-                        @_crewCount @(IsPortuguese ? "astronautas" : "astronauts")
-                    </MudChip>
+                    <span>@(IsPortuguese ? "Tripulação da Nave (1–16)" : "Outpost Crew Size (1–16)")</span>
                 </div>
-                <div class="options-row-control">
-                    <MudSlider T="int" Min="1" Max="16" @bind-Value="_crewCount" Color="Color.Tertiary" ValueLabel="true" />
-                </div>
-            </div>
-
-            <!-- Row 3: Mínimo de Cartas para Construir a Base -->
-            <div class="options-row">
-                <div class="options-row-label">
-                    <MudIcon Icon="@Icons.Material.Filled.DashboardCustomize" Size="Size.Small" Color="Color.Secondary" Class="mr-2" />
-                    <span>@(IsPortuguese ? "Min. Cartas Construção da Base:" : "Min. Base Build Cards (3-8):")</span>
-                    <MudChip T="string" Size="Size.Small" Color="Color.Secondary" Variant="Variant.Filled" Class="ml-2">
-                        @_minBaseCards @(IsPortuguese ? "cartas" : "cards")
-                    </MudChip>
-                </div>
-                <div class="options-row-control">
-                    <MudSlider T="int" Min="3" Max="8" @bind-Value="_minBaseCards" Color="Color.Secondary" ValueLabel="true" />
+                <div class="hud-options-control-box">
+                    <div class="slider-control-inner">
+                        <MudSlider T="int" Min="1" Max="16" @bind-Value="_crewCount" Color="Color.Tertiary" Class="mr-3" />
+                        <span class="hud-value-readout readout-emerald">
+                            @_crewCount @(IsPortuguese ? "astronautas" : "crew")
+                        </span>
+                    </div>
                 </div>
             </div>
 
-            <!-- Row 4: Sincronização Ao Vivo NASA DONKI & Imagens API -->
-            <div class="options-row">
-                <div class="options-row-label">
+            <!-- Row 3: Sincronização Ao Vivo NASA DONKI & Imagens API -->
+            <div class="hud-options-row">
+                <div class="hud-options-label-box">
                     <MudIcon Icon="@Icons.Material.Filled.CloudSync" Size="Size.Small" Color="Color.Info" Class="mr-2" />
-                    <span>@(IsPortuguese ? "Sincronização Ao Vivo NASA API:" : "Live NASA DONKI & Image Sync:")</span>
+                    <span>@(IsPortuguese ? "Sincronização Ao Vivo NASA API" : "Live NASA DONKI & Image Sync")</span>
                 </div>
-                <div class="options-row-control">
-                    <MudSwitch T="bool" @bind-Value="_liveNasaSync"
-                               Color="Color.Info"
-                               Label="@(_liveNasaSync ? (IsPortuguese ? "Ativado (images-api.nasa.gov)" : "Enabled (images-api.nasa.gov)") : (IsPortuguese ? "Desativado (Cache Estático)" : "Disabled (Static Cache)"))" />
+                <div class="hud-options-control-box">
+                    <div class="switch-control-inner">
+                        <MudSwitch T="bool" @bind-Value="_liveNasaSync"
+                                   Color="Color.Info"
+                                   Label="@(_liveNasaSync ? (IsPortuguese ? "ATIVO (NASA API)" : "ONLINE (NASA API)") : (IsPortuguese ? "OFFLINE (CACHE)" : "OFFLINE (CACHE)"))" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 4: Mínimo de Cartas para Construir a Base -->
+            <div class="hud-options-row">
+                <div class="hud-options-label-box">
+                    <MudIcon Icon="@Icons.Material.Filled.DashboardCustomize" Size="Size.Small" Color="Color.Secondary" Class="mr-2" />
+                    <span>@(IsPortuguese ? "Mín. Cartas Construção Base" : "Min. Base Build Cards (3–8)")</span>
+                </div>
+                <div class="hud-options-control-box">
+                    <div class="slider-control-inner">
+                        <MudSlider T="int" Min="3" Max="8" @bind-Value="_minBaseCards" Color="Color.Secondary" Class="mr-3" />
+                        <span class="hud-value-readout readout-gold">
+                            @_minBaseCards @(IsPortuguese ? "cartas" : "cards")
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- 2 Bottom Buttons Side by Side: VOLTAR & SALVAR -->
-        <div class="options-bottom-actions">
-            <!-- VOLTAR / BACK -->
-            <MudButton Variant="Variant.Filled"
-                       Class="options-action-btn btn-back"
-                       OnClick="@(() => Navigation.NavigateTo("/"))"
-                       StartIcon="@Icons.Material.Filled.ArrowBack"
-                       Size="Size.Large">
-                @(IsPortuguese ? "VOLTAR" : "BACK")
-            </MudButton>
+        <!-- 2 Bottom Chamfered Plaques Side by Side: VOLTAR (Cyan) & SALVAR (Gold) -->
+        <div class="hud-options-bottom-actions">
+            <div class="hud-bottom-plaque plaque-cyan">
+                <MudButton Variant="Variant.Text"
+                           Class="hud-plaque-btn btn-cyan-text"
+                           OnClick="@(() => Navigation.NavigateTo("/"))"
+                           StartIcon="@Icons.Material.Filled.ArrowBack"
+                           Size="Size.Large">
+                    @(IsPortuguese ? "VOLTAR" : "BACK")
+                </MudButton>
+            </div>
 
-            <!-- SALVAR / SAVE -->
-            <MudButton Variant="Variant.Filled"
-                       Class="options-action-btn btn-save"
-                       OnClick="SaveOptions"
-                       StartIcon="@Icons.Material.Filled.CheckCircle"
-                       Size="Size.Large">
-                @(IsPortuguese ? "SALVAR" : "SAVE")
-            </MudButton>
+            <div class="hud-bottom-plaque plaque-gold">
+                <MudButton Variant="Variant.Text"
+                           Class="hud-plaque-btn btn-gold-text"
+                           OnClick="SaveOptions"
+                           StartIcon="@Icons.Material.Filled.CheckCircle"
+                           Size="Size.Large">
+                    @(IsPortuguese ? "SALVAR" : "SAVE")
+                </MudButton>
+            </div>
         </div>
     </div>
 </div>
@@ -123,171 +137,283 @@
         min-height: calc(100vh - 48px);
     }
 
-    .options-screen-canvas {
+    /* Faithful CSS reproduction of ui_screen_options.jpg */
+    .hud-options-canvas {
         position: relative;
         width: 100%;
         max-width: 1440px;
         aspect-ratio: 16 / 9;
         border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.85), 0 0 30px rgba(0, 229, 255, 0.15);
-        border: 1px solid rgba(0, 229, 255, 0.25);
-        background-color: #050811;
+        background:
+            radial-gradient(ellipse at 50% 48%, rgba(22, 68, 86, 0.55) 0%, rgba(7, 20, 38, 0.92) 60%, #030914 100%);
+        box-shadow:
+            0 12px 44px rgba(0, 0, 0, 0.9),
+            inset 0 0 60px rgba(0, 229, 255, 0.08),
+            0 0 28px rgba(0, 229, 255, 0.16);
+        border: 3px solid #6E8296;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        padding: 2.5% 6%;
+        box-sizing: border-box;
     }
 
-    .options-bg-img {
+    /* Outer Brushed Steel Bezel Accents */
+    .hud-bezel-top {
         position: absolute;
         top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+        left: 18%;
+        width: 64%;
+        height: 16px;
+        background: linear-gradient(180deg, #9EB1C2 0%, #5B6E82 100%);
+        clip-path: polygon(0 0, 100% 0, 96% 100%, 4% 100%);
+        border-bottom: 2px solid #00E676;
+        box-shadow: 0 2px 12px rgba(0, 230, 118, 0.5);
         pointer-events: none;
-        z-index: 1;
     }
 
-    /* Top Title Bar */
-    .options-top-title {
+    .hud-bezel-bottom {
         position: absolute;
-        top: 8.5%;
-        left: 14%;
-        width: 72%;
-        height: 14%;
+        bottom: 0;
+        left: 20%;
+        width: 60%;
+        height: 12px;
+        background: linear-gradient(0deg, #9EB1C2 0%, #5B6E82 100%);
+        clip-path: polygon(3% 0, 97% 0, 100% 100%, 0 100%);
+        border-top: 2px solid #00E5FF;
+        pointer-events: none;
+    }
+
+    .hud-bezel-left, .hud-bezel-right {
+        position: absolute;
+        top: 28%;
+        width: 14px;
+        height: 44%;
+        background: linear-gradient(90deg, #8EA2B5, #4B5D70);
+        border-top: 2px solid #FFD700;
+        border-bottom: 2px solid #FFD700;
+        box-shadow: 0 0 14px rgba(0, 230, 118, 0.4);
+        pointer-events: none;
+    }
+
+    .hud-bezel-left {
+        left: 0;
+        clip-path: polygon(0 0, 100% 8%, 100% 92%, 0 100%);
+        border-right: 2px solid #00E676;
+    }
+
+    .hud-bezel-right {
+        right: 0;
+        clip-path: polygon(0 8%, 100% 0, 100% 100%, 0 92%);
+        border-left: 2px solid #00E676;
+    }
+
+    /* Top Chamfered Metallic Title Plaque */
+    .hud-options-top-plaque {
+        position: relative;
+        width: 44%;
+        height: 15%;
+        padding: 3px;
+        background: linear-gradient(135deg, #FFD700 0%, #4E657A 25%, #00E676 50%, #4E657A 75%, #FFD700 100%);
+        clip-path: polygon(16px 0, calc(100% - 16px) 0, 100% 16px, 100% calc(100% - 16px), calc(100% - 16px) 100%, 16px 100%, 0 calc(100% - 16px), 0 16px);
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 230, 118, 0.25);
         z-index: 2;
+    }
+
+    .hud-plaque-inner {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(180deg, #132A3E 0%, #0B1B2B 100%);
+        clip-path: polygon(14px 0, calc(100% - 14px) 0, 100% 14px, 100% calc(100% - 14px), calc(100% - 14px) 100%, 14px 100%, 0 calc(100% - 14px), 0 14px);
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         text-align: center;
-        pointer-events: none;
+        padding: 0 16px;
+        box-sizing: border-box;
     }
 
     .options-title-text {
         margin: 0;
-        padding: 0;
         font-family: 'Roboto', 'Segoe UI', sans-serif;
-        font-weight: 800;
-        font-size: clamp(16px, 2.4vw, 32px);
+        font-weight: 900;
+        font-size: clamp(14px, 2.0vw, 26px);
         letter-spacing: 3px;
-        color: #FFFFFF;
-        text-shadow: 0 0 12px rgba(0, 229, 255, 0.75), 0 2px 4px rgba(0, 0, 0, 0.9);
         text-transform: uppercase;
-        background: linear-gradient(180deg, #FFFFFF 30%, #00E5FF 90%);
+        background: linear-gradient(180deg, #FFFFFF 25%, #00E5FF 95%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
 
     .options-subtitle-text {
         margin: 2px 0 0 0;
-        padding: 0;
-        font-size: clamp(9px, 1.1vw, 14px);
-        letter-spacing: 1.2px;
+        font-size: clamp(8.5px, 0.95vw, 12.5px);
+        letter-spacing: 1px;
         color: #FFD700;
-        text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+        font-weight: 600;
     }
 
-    /* 4 Central Horizontal Rows */
-    .options-rows-container {
-        position: absolute;
-        top: 28.5%;
-        left: 13%;
-        width: 74%;
-        height: 48%;
-        z-index: 3;
+    /* Central Dark-Glass Console Panel with 4 Horizontal Rows */
+    .hud-options-central-panel {
+        width: 76%;
+        height: 58%;
+        background: linear-gradient(180deg, rgba(16, 36, 54, 0.85) 0%, rgba(10, 22, 36, 0.92) 100%);
+        border: 2px solid rgba(98, 132, 160, 0.65);
+        border-radius: 12px;
+        box-shadow:
+            0 12px 32px rgba(0, 0, 0, 0.8),
+            inset 0 1px 16px rgba(0, 229, 255, 0.12);
+        padding: 2% 2.5%;
+        box-sizing: border-box;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        gap: 2.8%;
+        z-index: 2;
     }
 
-    .options-row {
+    .hud-options-row {
         flex: 1;
-        max-height: 22%;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        background: rgba(10, 18, 36, 0.65);
-        border: 1px solid rgba(0, 229, 255, 0.35);
+        background: linear-gradient(90deg, rgba(20, 40, 60, 0.9) 0%, rgba(28, 56, 76, 0.75) 50%, rgba(18, 36, 54, 0.9) 100%);
+        border: 1.5px solid rgba(110, 145, 175, 0.45);
         border-radius: 8px;
-        padding: 0 16px;
-        margin-bottom: 8px;
-        backdrop-filter: blur(6px);
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+        padding: 0 1.8%;
+        box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.55);
+        gap: 3%;
     }
 
-    .options-row-label {
-        flex: 0 0 45%;
+    /* Recessed Left Label Box reproducing ui_screen_options.jpg */
+    .hud-options-label-box {
+        flex: 0 0 42%;
+        height: 68%;
+        background: rgba(12, 24, 38, 0.85);
+        border: 1.5px solid rgba(120, 155, 185, 0.5);
+        border-radius: 6px;
+        padding: 0 14px;
         display: flex;
         align-items: center;
         font-weight: 700;
-        font-size: clamp(10px, 1.1vw, 15px);
+        font-size: clamp(10px, 1.05vw, 14.5px);
         color: #F0F6FC;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+        letter-spacing: 0.4px;
+        box-sizing: border-box;
     }
 
-    .options-row-control {
-        flex: 0 0 50%;
+    /* Recessed Right Control Slot reproducing ui_screen_options.jpg */
+    .hud-options-control-box {
+        flex: 0 0 48%;
+        height: 68%;
+        background: rgba(10, 20, 34, 0.88);
+        border: 1.5px solid rgba(0, 229, 255, 0.38);
+        border-radius: 6px;
+        padding: 0 14px;
         display: flex;
         align-items: center;
         justify-content: flex-end;
+        box-sizing: border-box;
     }
 
     .options-input {
         width: 100%;
-        max-width: 280px;
     }
 
-    /* 2 Bottom Buttons Side by Side */
-    .options-bottom-actions {
-        position: absolute;
-        top: 80.5%;
-        left: 20%;
-        width: 60%;
-        height: 11%;
-        z-index: 3;
+    .slider-control-inner {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .switch-control-inner {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+    }
+
+    .hud-value-readout {
+        flex-shrink: 0;
+        min-width: 105px;
+        text-align: center;
+        padding: 3px 10px;
+        border-radius: 5px;
+        font-size: clamp(9.5px, 0.95vw, 12.5px);
+        font-weight: 800;
+        letter-spacing: 0.5px;
+    }
+
+    .readout-emerald {
+        background: rgba(0, 230, 118, 0.16);
+        border: 1px solid #00E676;
+        color: #00E676;
+    }
+
+    .readout-gold {
+        background: rgba(255, 215, 0, 0.16);
+        border: 1px solid #FFD700;
+        color: #FFD700;
+    }
+
+    /* 2 Bottom Chamfered Plaques: Left Cyan, Right Gold */
+    .hud-options-bottom-actions {
+        width: 50%;
+        height: 12%;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 8%;
+        gap: 7%;
+        z-index: 2;
     }
 
-    .options-action-btn {
+    .hud-bottom-plaque {
         flex: 1;
         height: 100%;
-        background: rgba(8, 16, 32, 0.6) !important;
-        backdrop-filter: blur(8px);
-        border-radius: 8px !important;
-        font-family: 'Roboto', 'Segoe UI', sans-serif;
-        font-weight: 800 !important;
-        letter-spacing: 2px !important;
+        padding: 2.5px;
+        clip-path: polygon(12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px), 0 12px);
+        transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .hud-bottom-plaque:hover {
+        transform: scale(1.04);
+        filter: brightness(1.18);
+    }
+
+    .plaque-cyan {
+        background: linear-gradient(135deg, #00E5FF 0%, #3E607A 50%, #00E5FF 100%);
+        box-shadow: 0 0 22px rgba(0, 229, 255, 0.45);
+    }
+
+    .plaque-gold {
+        background: linear-gradient(135deg, #FFD700 0%, #6E5B26 50%, #FFD700 100%);
+        box-shadow: 0 0 22px rgba(255, 215, 0, 0.45);
+    }
+
+    .hud-plaque-btn {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(180deg, #10283B 0%, #091724 100%) !important;
+        clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px);
+        border-radius: 0 !important;
+        font-weight: 900 !important;
+        letter-spacing: 2.5px !important;
         font-size: clamp(11px, 1.25vw, 16px) !important;
-        text-transform: uppercase !important;
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
-        transition: all 0.22s ease !important;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5) !important;
     }
 
-    .btn-back {
-        border: 1.5px solid rgba(255, 179, 0, 0.5) !important;
+    .btn-cyan-text {
+        color: #00E5FF !important;
+        text-shadow: 0 0 10px rgba(0, 229, 255, 0.7);
+    }
+
+    .btn-gold-text {
         color: #FFD700 !important;
-    }
-
-    .btn-back:hover {
-        background: rgba(255, 179, 0, 0.25) !important;
-        border-color: #FFD700 !important;
-        transform: scale(1.03);
-        box-shadow: 0 0 20px rgba(255, 215, 0, 0.7) !important;
-    }
-
-    .btn-save {
-        border: 1.5px solid rgba(0, 230, 118, 0.6) !important;
-        color: #00E676 !important;
-    }
-
-    .btn-save:hover {
-        background: rgba(0, 230, 118, 0.25) !important;
-        border-color: #00E676 !important;
-        transform: scale(1.03);
-        box-shadow: 0 0 20px rgba(0, 230, 118, 0.7) !important;
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
     }
 </style>
 

@@ -9,24 +9,29 @@
 
     <!-- Background Template / Back Layer -->
     <img src="@GetTemplateBackground()"
-         alt="Card Template"
+         alt=""
          class="pymgameorbit-card-template-img" />
 
     @if (!IsFaceDown && Card is not null)
     {
         <!-- Central 90° Rectangular Window for NASA Official Photo -->
         <div class="pymgameorbit-card-nasa-window">
-            @if (!string.IsNullOrWhiteSpace(_currentPhotoUrl))
+            @if (!_photoFailed && !string.IsNullOrWhiteSpace(_currentPhotoUrl))
             {
                 <img src="@_currentPhotoUrl"
-                     alt="@CardName"
+                     alt=""
                      class="pymgameorbit-card-photo"
-                     loading="lazy" />
+                     loading="lazy"
+                     referrerpolicy="no-referrer"
+                     @onerror="HandleImageError" />
             }
             else
             {
-                <div class="pymgameorbit-card-photo-placeholder">
-                    <MudIcon Icon="@Icons.Material.Filled.PhotoCamera" Size="Size.Small" Style="color: rgba(255,255,255,0.4);" />
+                <!-- Holographic NASA Telemetry Fallback (Never displays broken alt text) -->
+                <div class="pymgameorbit-card-photo-placeholder @GetCategoryThemeClass()">
+                    <MudIcon Icon="@GetCategoryIcon()" Size="Size.Medium" Class="hologram-icon" />
+                    <span class="hologram-badge">@Card.CardId</span>
+                    <span class="hologram-sub">NASA TELEMETRY</span>
                 </div>
             }
         </div>
@@ -67,12 +72,12 @@
         position: relative;
         aspect-ratio: 2 / 3;
         width: 100%;
-        max-width: 280px;
+        max-width: 260px;
         border-radius: 10px;
         overflow: hidden;
         user-select: none;
         cursor: pointer;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
         transition: transform 0.22s ease, box-shadow 0.22s ease;
         background-color: #060911;
         display: inline-block;
@@ -80,14 +85,14 @@
     }
 
     .pymgameorbit-card-container:hover {
-        transform: translateY(-5px) scale(1.02);
-        box-shadow: 0 8px 22px rgba(0, 229, 255, 0.45);
+        transform: translateY(-4px) scale(1.025);
+        box-shadow: 0 8px 22px rgba(0, 229, 255, 0.5);
         z-index: 10;
     }
 
     .pymgameorbit-card-selected {
-        outline: 3px solid #00E5FF;
-        box-shadow: 0 0 20px rgba(0, 229, 255, 0.75);
+        outline: 2.5px solid #00E5FF;
+        box-shadow: 0 0 20px rgba(0, 229, 255, 0.8);
     }
 
     .pymgameorbit-card-template-img {
@@ -101,16 +106,17 @@
         pointer-events: none;
     }
 
+    /* Aligned with the 2:3 deck templates central window */
     .pymgameorbit-card-nasa-window {
         position: absolute;
-        top: 18.5%;
-        left: 13.5%;
-        width: 73%;
-        height: 47.5%;
+        top: 19.2%;
+        left: 13.8%;
+        width: 72.4%;
+        height: 46.2%;
         overflow: hidden;
         z-index: 2;
-        border-radius: 4px;
-        background-color: #020408;
+        border-radius: 3px;
+        background-color: #040812;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -130,19 +136,47 @@
 
     .pymgameorbit-card-photo-placeholder {
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
         width: 100%;
         height: 100%;
-        background: linear-gradient(135deg, #0d1b2a, #1b263b);
+        background: radial-gradient(circle at 50% 40%, rgba(0, 229, 255, 0.22), rgba(6, 12, 26, 0.95));
+        gap: 3px;
+        padding: 4px;
+        text-align: center;
     }
 
+    .hologram-icon {
+        color: #00E5FF;
+        filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.7));
+    }
+
+    .hologram-badge {
+        font-size: clamp(8px, 0.9vw, 11px);
+        font-weight: 800;
+        color: #FFFFFF;
+        letter-spacing: 1px;
+        background: rgba(0, 229, 255, 0.2);
+        border: 1px solid rgba(0, 229, 255, 0.45);
+        padding: 1px 6px;
+        border-radius: 4px;
+    }
+
+    .hologram-sub {
+        font-size: 7px;
+        color: #8B949E;
+        letter-spacing: 1.2px;
+        font-weight: 700;
+    }
+
+    /* Aligned with the top header bar inside all 5 deck templates */
     .pymgameorbit-card-top-banner {
         position: absolute;
-        top: 6.5%;
-        left: 10%;
-        width: 80%;
-        height: 8.5%;
+        top: 6.2%;
+        left: 10.5%;
+        width: 76%;
+        height: 7.4%;
         z-index: 3;
         display: flex;
         align-items: center;
@@ -156,33 +190,34 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        font-weight: 700;
-        font-size: clamp(8px, 1.1vw, 12px);
+        font-weight: 800;
+        font-size: clamp(7.5px, 0.95vw, 11.5px);
         color: #FFFFFF;
         text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95), 0 0 8px rgba(0, 229, 255, 0.5);
-        letter-spacing: 0.3px;
+        letter-spacing: 0.25px;
     }
 
+    /* Aligned with the lower specification box inside all 5 deck templates */
     .pymgameorbit-card-bottom-panel {
         position: absolute;
-        top: 69%;
-        left: 9%;
-        width: 82%;
-        height: 24%;
+        top: 69.5%;
+        left: 10.5%;
+        width: 79%;
+        height: 21.5%;
         z-index: 3;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        justify-content: space-evenly;
         align-items: center;
-        padding: 3px 4px;
+        padding: 2px 4px;
         box-sizing: border-box;
     }
 
     .pymgameorbit-card-attributes-text {
         width: 100%;
-        font-size: clamp(7.5px, 0.95vw, 11px);
+        font-size: clamp(7px, 0.85vw, 10.5px);
         color: #E0F7FA;
-        font-weight: 600;
+        font-weight: 700;
         text-align: center;
         text-shadow: 0 1px 2px #000000;
         line-height: 1.15;
@@ -198,18 +233,18 @@
         justify-content: center;
         align-items: center;
         width: 100%;
-        max-height: 52%;
+        max-height: 54%;
         overflow: hidden;
     }
 
     .pymgameorbit-card-glossary-chip {
         display: inline-block;
         padding: 1px 5px;
-        font-size: clamp(6.5px, 0.8vw, 9px);
-        font-weight: 600;
-        background: rgba(0, 229, 255, 0.2);
+        font-size: clamp(6px, 0.75vw, 8.5px);
+        font-weight: 700;
+        background: rgba(0, 229, 255, 0.22);
         color: #00E5FF;
-        border: 1px solid rgba(0, 229, 255, 0.45);
+        border: 1px solid rgba(0, 229, 255, 0.5);
         border-radius: 4px;
         cursor: pointer;
         transition: all 0.15s ease;
@@ -238,6 +273,8 @@
 
     private string _currentPhotoUrl = string.Empty;
     private string? _loadedCardId;
+    private bool _photoFailed;
+    private bool _triedFallbackVariant;
 
     private bool IsPortuguese => Locale.StartsWith("pt", StringComparison.OrdinalIgnoreCase);
 
@@ -258,12 +295,15 @@
         if (Card is null || IsFaceDown)
         {
             _currentPhotoUrl = string.Empty;
+            _photoFailed = false;
             return;
         }
 
         if (_loadedCardId != Card.CardId)
         {
             _loadedCardId = Card.CardId;
+            _photoFailed = false;
+            _triedFallbackVariant = false;
             _currentPhotoUrl = Card.NasaImageAssetUrl;
 
             if (!string.IsNullOrWhiteSpace(Card.NasaImageApiUrl))
@@ -275,6 +315,48 @@
                 }
             }
         }
+    }
+
+    private void HandleImageError()
+    {
+        if (!_triedFallbackVariant && !string.IsNullOrWhiteSpace(_currentPhotoUrl))
+        {
+            _triedFallbackVariant = true;
+            if (_currentPhotoUrl.Contains("~medium.jpg", StringComparison.OrdinalIgnoreCase))
+            {
+                _currentPhotoUrl = _currentPhotoUrl.Replace("~medium.jpg", "~thumb.jpg", StringComparison.OrdinalIgnoreCase);
+                return;
+            }
+            if (_currentPhotoUrl.Contains("~large.jpg", StringComparison.OrdinalIgnoreCase))
+            {
+                _currentPhotoUrl = _currentPhotoUrl.Replace("~large.jpg", "~thumb.jpg", StringComparison.OrdinalIgnoreCase);
+                return;
+            }
+        }
+
+        _photoFailed = true;
+    }
+
+    private string GetCategoryIcon()
+    {
+        if (Card is null) return Icons.Material.Filled.RocketLaunch;
+        string id = Card.CardId;
+        if (id.StartsWith("ECL", StringComparison.OrdinalIgnoreCase)) return Icons.Material.Filled.WaterDrop;
+        if (id.StartsWith("ENV", StringComparison.OrdinalIgnoreCase)) return Icons.Material.Filled.Public;
+        if (id.StartsWith("ARC", StringComparison.OrdinalIgnoreCase)) return Icons.Material.Filled.Architecture;
+        if (id.StartsWith("SWX", StringComparison.OrdinalIgnoreCase)) return Icons.Material.Filled.WbTwilight;
+        return Icons.Material.Filled.Rocket;
+    }
+
+    private string GetCategoryThemeClass()
+    {
+        if (Card is null) return "theme-bld";
+        string id = Card.CardId;
+        if (id.StartsWith("ECL", StringComparison.OrdinalIgnoreCase)) return "theme-ecl";
+        if (id.StartsWith("ENV", StringComparison.OrdinalIgnoreCase)) return "theme-env";
+        if (id.StartsWith("ARC", StringComparison.OrdinalIgnoreCase)) return "theme-arc";
+        if (id.StartsWith("SWX", StringComparison.OrdinalIgnoreCase)) return "theme-swx";
+        return "theme-bld";
     }
 
     private string GetTemplateBackground()

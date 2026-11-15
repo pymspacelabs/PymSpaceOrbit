@@ -14,306 +14,373 @@
 <PageTitle>Pym Space Orbit — @(IsPortuguese ? "Tabuleiro de Missão" : "Mission Game Board")</PageTitle>
 
 <div class="game-screen-wrapper">
-    <div class="game-screen-canvas">
-        <!-- Background Graphic dynamically selected by Turn Phase -->
-        <img src="@CurrentBoardBackground"
-             alt="Pym Space Orbit Game Board"
-             class="game-bg-img" />
+    <!-- Pure CSS Sci-Fi Cockpit Board (Faithful CSS reproduction of ui_screen_gameplay_board.jpg & ui_screen_gameplay_board_with_decks.jpg) -->
+    <div class="hud-board-canvas @(Session.Phase == TurnPhase.BuildPhase ? "mode-build-phase" : "mode-turn-phase")">
 
-        <!-- 4 Top Real-Time Resource Meters (ML.NET Surrogate Biophysical Engine) -->
-        <div class="game-top-meters-row">
-            <!-- Meter 1: Energia / Power -->
-            <div class="game-meter-box meter-power">
-                <div class="meter-header">
-                    <MudIcon Icon="@Icons.Material.Filled.Bolt" Size="Size.Small" Style="color: #FFD700;" Class="mr-1" />
-                    <span>@(IsPortuguese ? "ENERGIA / POWER" : "POWER / BATTERY")</span>
-                </div>
-                <div class="meter-body">
-                    <span class="meter-main-val">@Session.Resources.ElectricalPowerKw.ToString("F1") kWe</span>
-                    <span class="meter-sub-val" style="color: @(Session.Resources.OutpostWattBudgetDelta >= 0 ? "#00E676" : "#FF5252");">
-                        Saldo: @Session.Resources.OutpostWattBudgetDelta.ToString("+#,##0;-#,##0;0") W
-                    </span>
+        <!-- Outer Cockpit Metallic Corner & Edge Accents -->
+        <div class="cockpit-corner-tl"></div>
+        <div class="cockpit-corner-tr"></div>
+        <div class="cockpit-rail-left"></div>
+        <div class="cockpit-rail-right"></div>
+
+        <!-- 4 Top Chamfered Resource Meters with Live Telemetry Bars -->
+        <div class="hud-top-meters-bay">
+            <!-- Meter 1: Energia / Power (Cyan Frame) -->
+            <div class="hud-meter-frame meter-frame-cyan">
+                <div class="hud-meter-inner">
+                    <div class="meter-header">
+                        <MudIcon Icon="@Icons.Material.Filled.Bolt" Size="Size.Small" Style="color: #00E5FF;" Class="mr-1" />
+                        <span>@(IsPortuguese ? "ENERGIA / POWER" : "POWER / BATTERY")</span>
+                    </div>
+                    <div class="meter-body">
+                        <span class="meter-main-val">@Session.Resources.ElectricalPowerKw.ToString("F1") kWe</span>
+                        <span class="meter-sub-val" style="color: @(Session.Resources.OutpostWattBudgetDelta >= 0 ? "#00E676" : "#FF5252");">
+                            @Session.Resources.OutpostWattBudgetDelta.ToString("+#,##0;-#,##0;0") W
+                        </span>
+                    </div>
+                    <div class="hud-meter-track">
+                        <div class="hud-meter-fill fill-cyan" style="width: @(Math.Clamp(Session.Resources.ElectricalPowerKw / 2.5f, 15f, 100f).ToString("F0", System.Globalization.CultureInfo.InvariantCulture))%;"></div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Meter 2: Oxigênio & Água (ECLSS) -->
-            <div class="game-meter-box meter-eclss">
-                <div class="meter-header">
-                    <MudIcon Icon="@Icons.Material.Filled.WaterDrop" Size="Size.Small" Style="color: #00E5FF;" Class="mr-1" />
-                    <span>@(IsPortuguese ? "OXIGÊNIO & ÁGUA" : "O2 & WATER LOOP")</span>
-                </div>
-                <div class="meter-body">
-                    <span class="meter-main-val">O2: @Session.Resources.OutpostOxygenLitersPerDayDelta.ToString("+#,##0;-#,##0;0") L/d</span>
-                    <span class="meter-sub-val">
-                        H2O: @Session.Resources.PotableWaterReserveLiters.ToString("F0") L | WPA: @((Session.Resources.WaterRecoveryEfficiency * 100f).ToString("F1"))%
-                    </span>
-                </div>
-            </div>
-
-            <!-- Meter 3: Blindagem & Trajes -->
-            <div class="game-meter-box meter-shield">
-                <div class="meter-header">
-                    <MudIcon Icon="@Icons.Material.Filled.Shield" Size="Size.Small" Style="color: #00E676;" Class="mr-1" />
-                    <span>@(IsPortuguese ? "BLINDAGEM & TRAJES" : "SHIELDING & SUITS")</span>
-                </div>
-                <div class="meter-body">
-                    <span class="meter-main-val">
-                        @((Session.Resources.RadShieldingGcm2 + Session.Resources.OutpostShieldingGcm2Delta).ToString("F0")) g/cm²
-                    </span>
-                    <span class="meter-sub-val">
-                        xEMU: @Session.Resources.EvaSuitDurabilityPct.ToString("F0")% | Rad: @Session.Resources.EffectiveRadiationIndex.ToString("F2")x
-                    </span>
+            <!-- Meter 2: Oxigênio & Água ECLSS (Emerald/Teal Frame) -->
+            <div class="hud-meter-frame meter-frame-emerald">
+                <div class="hud-meter-inner">
+                    <div class="meter-header">
+                        <MudIcon Icon="@Icons.Material.Filled.WaterDrop" Size="Size.Small" Style="color: #00E676;" Class="mr-1" />
+                        <span>@(IsPortuguese ? "OXIGÊNIO & ÁGUA" : "O2 & WATER LOOP")</span>
+                    </div>
+                    <div class="meter-body">
+                        <span class="meter-main-val">O2: @Session.Resources.OutpostOxygenLitersPerDayDelta.ToString("+#,##0;-#,##0;0") L/d</span>
+                        <span class="meter-sub-val">
+                            H2O: @Session.Resources.PotableWaterReserveLiters.ToString("F0")L | WPA: @((Session.Resources.WaterRecoveryEfficiency * 100f).ToString("F0"))%
+                        </span>
+                    </div>
+                    <div class="hud-meter-track">
+                        <div class="hud-meter-fill fill-emerald" style="width: @(Math.Clamp(Session.Resources.WaterRecoveryEfficiency * 100f, 20f, 100f).ToString("F0", System.Globalization.CultureInfo.InvariantCulture))%;"></div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Meter 4: Predição Quad-Ensemble ML.NET -->
-            <div class="game-meter-box meter-ml">
-                <div class="meter-header">
-                    <MudIcon Icon="@Icons.Material.Filled.Psychology" Size="Size.Small" Style="color: #FFB300;" Class="mr-1" />
-                    <span>@(IsPortuguese ? "QUAD-ENSEMBLE ML.NET" : "ML.NET SURROGATE")</span>
+            <!-- Meter 3: Blindagem & Trajes (Gold/Emerald Frame) -->
+            <div class="hud-meter-frame meter-frame-gold">
+                <div class="hud-meter-inner">
+                    <div class="meter-header">
+                        <MudIcon Icon="@Icons.Material.Filled.Shield" Size="Size.Small" Style="color: #FFD700;" Class="mr-1" />
+                        <span>@(IsPortuguese ? "BLINDAGEM & TRAJES" : "SHIELDING & SUITS")</span>
+                    </div>
+                    <div class="meter-body">
+                        <span class="meter-main-val">
+                            @((Session.Resources.RadShieldingGcm2 + Session.Resources.OutpostShieldingGcm2Delta).ToString("F0")) g/cm²
+                        </span>
+                        <span class="meter-sub-val">
+                            xEMU: @Session.Resources.EvaSuitDurabilityPct.ToString("F0")% | Rad: @Session.Resources.EffectiveRadiationIndex.ToString("F2")x
+                        </span>
+                    </div>
+                    <div class="hud-meter-track">
+                        <div class="hud-meter-fill fill-gold" style="width: @(Math.Clamp(Session.Resources.EvaSuitDurabilityPct, 10f, 100f).ToString("F0", System.Globalization.CultureInfo.InvariantCulture))%;"></div>
+                    </div>
                 </div>
-                <div class="meter-body">
-                    <span class="meter-main-val" style="color: #FFD700;">
-                        Saúde: @((Session.LatestMlPrediction.CrewHealthSurvivalProb * 100f).ToString("F0"))% | Conf: @((Session.LatestMlPrediction.SystemReliabilityIndex * 100f).ToString("F0"))%
-                    </span>
-                    <span class="meter-sub-val">
-                        CH4: @((Session.LatestMlPrediction.FuelYieldRate * 100f).ToString("F0"))% | Estadia: @Session.LatestMlPrediction.MaxExplorationStayDays.ToString("F0") d
-                    </span>
+            </div>
+
+            <!-- Meter 4: Predição Quad-Ensemble ML.NET (Teal/Cyan Frame) -->
+            <div class="hud-meter-frame meter-frame-teal">
+                <div class="hud-meter-inner">
+                    <div class="meter-header">
+                        <MudIcon Icon="@Icons.Material.Filled.Psychology" Size="Size.Small" Style="color: #00E5FF;" Class="mr-1" />
+                        <span>@(IsPortuguese ? "QUAD-ENSEMBLE ML.NET" : "ML.NET SURROGATE")</span>
+                    </div>
+                    <div class="meter-body">
+                        <span class="meter-main-val" style="color: #FFD700;">
+                            @(IsPortuguese ? "Saúde" : "Health"): @((Session.LatestMlPrediction.CrewHealthSurvivalProb * 100f).ToString("F0"))%
+                        </span>
+                        <span class="meter-sub-val">
+                            CH4: @((Session.LatestMlPrediction.FuelYieldRate * 100f).ToString("F0"))% | @Session.LatestMlPrediction.MaxExplorationStayDays.ToString("F0")d
+                        </span>
+                    </div>
+                    <div class="hud-meter-track">
+                        <div class="hud-meter-fill fill-teal" style="width: @(Math.Clamp(Session.LatestMlPrediction.CrewHealthSurvivalProb * 100f, 15f, 100f).ToString("F0", System.Globalization.CultureInfo.InvariantCulture))%;"></div>
+                    </div>
                 </div>
             </div>
         </div>
 
         @if (Session.Phase == TurnPhase.BuildPhase)
         {
-            <!-- ======================================================== -->
-            <!-- FASE 1: CONSTRUÇÃO INICIAL DA BASE / NAVE-BIOMA           -->
-            <!-- ======================================================== -->
-
-            <!-- Central-Top Status & Instruction Banner -->
-            <div class="build-top-banner">
-                <div class="build-banner-title">
-                    <MudIcon Icon="@Icons.Material.Filled.PrecisionManufacturing" Color="Color.Primary" Class="mr-2" />
-                    <span>@(IsPortuguese ? "FASE 1: CONSTRUÇÃO DA NAVE & BASE PYMGAMEORBIT" : "PHASE 1: PYMGAMEORBIT SHIP & OUTPOST BASE ASSEMBLY")</span>
+            <!-- ========================================================================= -->
+            <!-- FASE 1: CONSTRUÇÃO INICIAL DA BASE (CSS Reproduction of gameplay_board)   -->
+            <!-- ========================================================================= -->
+            <div class="hud-build-body">
+                <!-- Center-Top Chamfered Status & Instruction Plaque -->
+                <div class="hud-build-top-plaque">
+                    <div class="hud-build-plaque-inner">
+                        <div class="build-banner-title">
+                            <MudIcon Icon="@Icons.Material.Filled.PrecisionManufacturing" Color="Color.Primary" Size="Size.Small" Class="mr-2" />
+                            <span>@(IsPortuguese ? "FASE 1: CONSTRUÇÃO DA NAVE & BASE PYMGAMEORBIT" : "PHASE 1: PYMGAMEORBIT SHIP & OUTPOST BASE ASSEMBLY")</span>
+                        </div>
+                        <div class="build-banner-subtitle">
+                            @(IsPortuguese
+                                ? $"Equipe no mínimo {Session.MinimumCardsToBuildBase} cartas da sua mão para fundar a base em {Session.Destination} (Equipadas: {Session.EquippedShipAndBaseCards.Count}/{Session.MinimumCardsToBuildBase})"
+                                : $"Equip at least {Session.MinimumCardsToBuildBase} cards from hand to establish outpost at {Session.Destination} (Equipped: {Session.EquippedShipAndBaseCards.Count}/{Session.MinimumCardsToBuildBase})")
+                        </div>
+                    </div>
                 </div>
-                <div class="build-banner-subtitle">
-                    @(IsPortuguese
-                        ? $"Equipe no mínimo {Session.MinimumCardsToBuildBase} cartas da sua mão para fundar a base em {Session.Destination} (Equipadas: {Session.EquippedShipAndBaseCards.Count}/{Session.MinimumCardsToBuildBase})!"
-                        : $"Equip at least {Session.MinimumCardsToBuildBase} cards from hand to establish outpost at {Session.Destination} (Equipped: {Session.EquippedShipAndBaseCards.Count}/{Session.MinimumCardsToBuildBase})!")
-                </div>
-            </div>
 
-            <!-- 5 Vertical Center Slots (2:3) for Equipped Base/Ship Cards -->
-            <div class="build-center-slots">
-                @for (int i = 0; i < 5; i++)
-                {
-                    int slotIndex = i;
-                    var card = slotIndex < Session.EquippedShipAndBaseCards.Count
-                        ? Session.EquippedShipAndBaseCards[slotIndex]
-                        : null;
+                <!-- Middle Row: 5 Metallic Platform Card Slots + 2 Right Chamfered Action Plaques -->
+                <div class="hud-build-middle-row">
+                    <!-- Metallic Platform Holding 5 Illuminated 2:3 Card Slots -->
+                    <div class="hud-build-platform-5">
+                        @for (int i = 0; i < 5; i++)
+                        {
+                            int slotIndex = i;
+                            var card = slotIndex < Session.EquippedShipAndBaseCards.Count
+                                ? Session.EquippedShipAndBaseCards[slotIndex]
+                                : null;
+                            string slotTheme = slotIndex < 2 ? "slot-neon-cyan" : (slotIndex < 4 ? "slot-neon-emerald" : "slot-neon-gold");
 
-                    <div class="board-card-slot">
-                        @if (card is not null)
-                        {
-                            <PymGameOrbitCard Card="@card" Locale="@Session.Locale" />
-                        }
-                        else
-                        {
-                            <div class="empty-slot-placeholder">
-                                <MudIcon Icon="@Icons.Material.Filled.AddCircleOutline" Size="Size.Medium" Style="color: rgba(0, 229, 255, 0.4);" />
-                                <span>Slot @(slotIndex + 1)</span>
-                                <span class="slot-hint">@(IsPortuguese ? "Equipar da Mão" : "Equip from Hand")</span>
+                            <div class="hud-equipped-slot @slotTheme">
+                                @if (card is not null)
+                                {
+                                    <PymGameOrbitCard Card="@card"
+                                                     Locale="@Session.Locale"
+                                                     CustomStyle="height: 100%; width: auto; max-width: 100%;" />
+                                }
+                                else
+                                {
+                                    <div class="empty-slot-placeholder">
+                                        <MudIcon Icon="@Icons.Material.Filled.AddCircleOutline" Size="Size.Small" Style="color: rgba(0, 229, 255, 0.5);" />
+                                        <span>SLOT @(slotIndex + 1)</span>
+                                        <span class="slot-hint">@(IsPortuguese ? "Equipar da Mão" : "Equip from Hand")</span>
+                                    </div>
+                                }
                             </div>
                         }
                     </div>
-                }
-            </div>
 
-            <!-- Hand Tray (Bottom 5 Slots) to Choose Cards to Equip -->
-            <div class="build-hand-tray">
-                <div class="tray-title-row">
-                    <span class="tray-title">
-                        @(IsPortuguese ? $"Mão do Astronauta ({Session.PlayerHand.Count} cartas disponíveis — clique para equipar):"
-                                       : $"Player Hand ({Session.PlayerHand.Count} cards available — click to equip):")
-                    </span>
-                </div>
-                <div class="tray-cards-row">
-                    @foreach (var handCard in Session.PlayerHand.Take(5))
-                    {
-                        <div class="tray-card-wrapper" @onclick="@(() => EquipCard(handCard))">
-                            <PymGameOrbitCard Card="@handCard" Locale="@Session.Locale" />
+                    <!-- 2 Right Chamfered Action Plaques (Cyan Top + Gold Bottom) -->
+                    <div class="hud-build-right-actions">
+                        <div class="hud-action-plaque plaque-cyan">
+                            <MudButton Variant="Variant.Text"
+                                       Class="hud-action-plaque-btn text-cyan"
+                                       OnClick="ConfirmBaseConstruction"
+                                       StartIcon="@Icons.Material.Filled.RocketLaunch">
+                                @(IsPortuguese ? "CONFIRMAR BASE" : "CONFIRM BASE")
+                            </MudButton>
                         </div>
-                    }
+
+                        <div class="hud-action-plaque plaque-gold">
+                            <MudButton Variant="Variant.Text"
+                                       Class="hud-action-plaque-btn text-gold"
+                                       OnClick="ResetAssembly"
+                                       StartIcon="@Icons.Material.Filled.RestartAlt">
+                                @(IsPortuguese ? "REINICIAR" : "RESET BASE")
+                            </MudButton>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Right Action Buttons: Confirm Base Construction & Reset Assembly -->
-            <div class="build-right-actions">
-                <MudButton Variant="Variant.Filled"
-                           Class="board-action-btn btn-confirm-build"
-                           OnClick="ConfirmBaseConstruction"
-                           StartIcon="@Icons.Material.Filled.RocketLaunch"
-                           Size="Size.Large">
-                    @(IsPortuguese ? "CONFIRMAR BASE" : "CONFIRM BASE")
-                </MudButton>
-
-                <MudButton Variant="Variant.Filled"
-                           Class="board-action-btn btn-reset-build"
-                           OnClick="ResetAssembly"
-                           StartIcon="@Icons.Material.Filled.RestartAlt"
-                           Size="Size.Medium">
-                    @(IsPortuguese ? "REINICIAR MONTAGEM" : "RESET ASSEMBLY")
-                </MudButton>
+                <!-- Bottom Brushed-Steel Hand Dock (Choose Cards from Hand to Equip) -->
+                <div class="hud-hand-dock">
+                    <div class="hud-hand-dock-header">
+                        <span>
+                            @(IsPortuguese ? $"MÃO DO ASTRONAUTA ({Session.PlayerHand.Count} cartas disponíveis — clique em uma carta para equipar):"
+                                           : $"PLAYER HAND ({Session.PlayerHand.Count} cards available — click a card to equip):")
+                        </span>
+                    </div>
+                    <div class="hud-hand-slots-5">
+                        @for (int i = 0; i < 5; i++)
+                        {
+                            var handCard = i < Session.PlayerHand.Count ? Session.PlayerHand[i] : null;
+                            <div class="hud-hand-slot-bay" @onclick="@(() => { if (handCard is not null) EquipCard(handCard); })">
+                                @if (handCard is not null)
+                                {
+                                    <PymGameOrbitCard Card="@handCard"
+                                                     Locale="@Session.Locale"
+                                                     CustomStyle="height: 100%; width: auto; max-width: 100%;" />
+                                }
+                                else
+                                {
+                                    <div class="hand-bay-empty">
+                                        <span>@(IsPortuguese ? "VAZIO" : "EMPTY")</span>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
             </div>
         }
         else
         {
-            <!-- ======================================================== -->
-            <!-- FASES 2 & 3: TABULEIRO COMPLETO COM DECISÕES & DECKS     -->
-            <!-- ======================================================== -->
-
-            <!-- Left Side: Draw Pile & Discard Pile -->
-            <div class="board-left-decks">
-                <!-- Draw Pile -->
-                <div class="deck-pile-box" title="@(IsPortuguese ? "Pilha de Compra" : "Draw Pile")">
-                    <img src="@PymGameOrbitAssets.CardBack" alt="Draw Pile" class="pile-img" />
-                    <div class="pile-badge">
-                        <MudIcon Icon="@Icons.Material.Filled.Layers" Size="Size.Small" Class="mr-1" />
-                        <span>@Session.DrawPile.Count</span>
-                    </div>
-                    <span class="pile-label">@(IsPortuguese ? "COMPRA" : "DRAW")</span>
-                </div>
-
-                <!-- Discard Pile -->
-                <div class="deck-pile-box" title="@(IsPortuguese ? "Pilha de Descarte" : "Discard Pile")">
-                    <div class="discard-box-inner">
-                        <MudIcon Icon="@Icons.Material.Filled.DeleteSweep" Size="Size.Medium" Style="color: rgba(255, 255, 255, 0.4);" />
-                        <span class="pile-number">@Session.DiscardPile.Count</span>
-                    </div>
-                    <span class="pile-label">@(IsPortuguese ? "DESCARTE" : "DISCARD")</span>
-                </div>
-            </div>
-
-            <!-- Center-Top: 3 Horizontal Bars for the Turn's Dilemma & Choices -->
-            <div class="board-center-dilemma-section">
-                @if (Session.PendingExplorationEvent is not null)
-                {
-                    <div class="dilemma-header-card">
-                        <div class="d-flex align-center justify-space-between">
-                            <span class="dilemma-title">
-                                🌌 [Turno @Session.CurrentTurn/@Session.MaxCampaignTurns] @(IsPortuguese ? Session.PendingExplorationEvent.TitlePtBr : Session.PendingExplorationEvent.TitleEn)
-                            </span>
-                            <MudChip T="string" Size="Size.Small" Color="Color.Secondary" Variant="Variant.Filled" Style="font-size: 10px;">
-                                @(IsPortuguese ? $"Dia {Session.CurrentMissionDay:F0} de Missão" : $"Mission Day {Session.CurrentMissionDay:F0}")
-                            </MudChip>
+            <!-- ========================================================================= -->
+            <!-- FASES 2 & 3: TABULEIRO COMPLETO COM DECKS, ESCOLHAS & MÃO (CSS HUD)       -->
+            <!-- ========================================================================= -->
+            <div class="hud-turn-cockpit">
+                <!-- Left Column: Draw Pile (Stacked Rocket Back) & Discard Pile -->
+                <div class="hud-decks-column">
+                    <!-- Draw Pile Well -->
+                    <div class="hud-deck-well" title="@(IsPortuguese ? "Pilha de Compra" : "Draw Pile")">
+                        <div class="deck-stack-3d">
+                            <img src="@PymGameOrbitAssets.CardBack" alt="" class="pile-img" />
                         </div>
-                        <p class="dilemma-story">
-                            @(IsPortuguese ? Session.PendingExplorationEvent.StoryPromptPtBr : Session.PendingExplorationEvent.StoryPromptEn)
-                        </p>
+                        <div class="pile-badge">
+                            <MudIcon Icon="@Icons.Material.Filled.Layers" Size="Size.Small" Class="mr-1" />
+                            <span>@Session.DrawPile.Count</span>
+                        </div>
+                        <span class="pile-label">@(IsPortuguese ? "COMPRA" : "DRAW")</span>
                     </div>
 
-                    <!-- 3 Horizontal Choice Bars -->
-                    <div class="dilemma-choices-stack">
-                        @foreach (var choice in Session.PendingExplorationEvent.Choices.Take(3))
+                    <!-- Discard Pile Well -->
+                    <div class="hud-deck-well discard-well" title="@(IsPortuguese ? "Pilha de Descarte" : "Discard Pile")">
+                        <div class="discard-stack-outline">
+                            <MudIcon Icon="@Icons.Material.Filled.DeleteSweep" Size="Size.Medium" Style="color: rgba(0, 229, 255, 0.35);" />
+                            <span class="pile-number">@Session.DiscardPile.Count</span>
+                        </div>
+                        <span class="pile-label">@(IsPortuguese ? "DESCARTE" : "DISCARD")</span>
+                    </div>
+                </div>
+
+                <!-- Center Playfield: 3 Choice Bars + 5 Illuminated Equipped Slots + 5 Hand Slots -->
+                <div class="hud-center-playfield">
+                    <!-- Top Dilemma & 3 Metallic Choice Bars -->
+                    <div class="hud-dilemma-bay">
+                        @if (Session.PendingExplorationEvent is not null)
                         {
-                            <div class="choice-bar-btn" @onclick="@(() => MakeExplorationDecision(choice.OptionId))">
-                                <div class="choice-bar-content">
-                                    <div class="choice-label-row">
-                                        <MudIcon Icon="@Icons.Material.Filled.Navigation" Size="Size.Small" Class="mr-2" Style="color: #00E5FF;" />
-                                        <span class="choice-title">@(IsPortuguese ? choice.LabelPtBr : choice.LabelEn)</span>
+                            <div class="dilemma-header-strip">
+                                <span class="dilemma-title">
+                                    🌌 [Turno @Session.CurrentTurn/@Session.MaxCampaignTurns — Dia @Session.CurrentMissionDay.ToString("F0")] @(IsPortuguese ? Session.PendingExplorationEvent.TitlePtBr : Session.PendingExplorationEvent.TitleEn)
+                                </span>
+                                <span class="dilemma-story">
+                                    @(IsPortuguese ? Session.PendingExplorationEvent.StoryPromptPtBr : Session.PendingExplorationEvent.StoryPromptEn)
+                                </span>
+                            </div>
+
+                            <!-- 3 Horizontal Metallic Choice Bars with Green Side LEDs -->
+                            <div class="dilemma-choices-stack">
+                                @foreach (var choice in Session.PendingExplorationEvent.Choices.Take(3))
+                                {
+                                    <div class="hud-choice-bar" @onclick="@(() => MakeExplorationDecision(choice.OptionId))">
+                                        <div class="choice-cap-left"></div>
+                                        <div class="choice-bar-content">
+                                            <div class="choice-label-row">
+                                                <MudIcon Icon="@Icons.Material.Filled.Navigation" Size="Size.Small" Class="mr-1" Style="color: #00E5FF;" />
+                                                <span class="choice-title">@(IsPortuguese ? choice.LabelPtBr : choice.LabelEn)</span>
+                                            </div>
+                                            <div class="choice-impacts-row">
+                                                <span class="impact-chip" style="color: @(choice.WattCostDelta <= 0 ? "#00E676" : "#FF5252");">
+                                                    ⚡@choice.WattCostDelta.ToString("+#,##0;-#,##0;0")W
+                                                </span>
+                                                <span class="impact-chip" style="color: @(choice.OxygenLitersDelta >= 0 ? "#00E676" : "#FF5252");">
+                                                    💧@choice.OxygenLitersDelta.ToString("+#,##0;-#,##0;0")L
+                                                </span>
+                                                <span class="impact-chip" style="color: #00E5FF;">
+                                                    🛡️@choice.ShieldingGcm2Delta.ToString("+#,##0;-#,##0;0")g
+                                                </span>
+                                                <span class="impact-chip" style="color: @(choice.RadiationDoseSpike <= 0 ? "#00E676" : "#FFB300");">
+                                                    ☢️@choice.RadiationDoseSpike.ToString("+#.##;-#.##;0")
+                                                </span>
+                                                <span class="impact-chip" style="color: #FFD700; font-weight: 800;">
+                                                    🔬+@choice.ScienceDiscoveryPointsBonus
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="choice-cap-right"></div>
                                     </div>
-                                    <div class="choice-impacts-row">
-                                        <span class="impact-chip" style="color: @(choice.WattCostDelta <= 0 ? "#00E676" : "#FF5252");">
-                                            ⚡ @choice.WattCostDelta.ToString("+#,##0;-#,##0;0") W
-                                        </span>
-                                        <span class="impact-chip" style="color: @(choice.OxygenLitersDelta >= 0 ? "#00E676" : "#FF5252");">
-                                            💧 @choice.OxygenLitersDelta.ToString("+#,##0;-#,##0;0") L O2
-                                        </span>
-                                        <span class="impact-chip" style="color: #00E5FF;">
-                                            🛡️ @choice.ShieldingGcm2Delta.ToString("+#,##0;-#,##0;0") g/cm²
-                                        </span>
-                                        <span class="impact-chip" style="color: @(choice.RadiationDoseSpike <= 0 ? "#00E676" : "#FFB300");">
-                                            ☢️ @choice.RadiationDoseSpike.ToString("+#.##;-#.##;0") Rad
-                                        </span>
-                                        <span class="impact-chip" style="color: @(choice.SuitWearPctDelta >= 0 ? "#00E676" : "#FF5252");">
-                                            🧑‍🚀 @choice.SuitWearPctDelta.ToString("+#;-#;0")% Traje
-                                        </span>
-                                        <span class="impact-chip" style="color: #FFD700; font-weight: bold;">
-                                            🔬 +@choice.ScienceDiscoveryPointsBonus PTS
-                                        </span>
-                                    </div>
-                                </div>
+                                }
                             </div>
                         }
                     </div>
-                }
-            </div>
 
-            <!-- Center: 5 Illuminated Slots for Active Equipped Cards on the Base -->
-            <div class="board-equipped-center">
-                <div class="equipped-header-label">
-                    @(IsPortuguese ? "Nave PymGameOrbit & Módulos Ativos:" : "Active PymGameOrbit Ship & Outpost Modules:")
-                </div>
-                <div class="equipped-slots-row">
-                    @for (int i = 0; i < 5; i++)
-                    {
-                        int slotIdx = i;
-                        var eqCard = slotIdx < Session.EquippedShipAndBaseCards.Count
-                            ? Session.EquippedShipAndBaseCards[slotIdx]
-                            : null;
+                    <!-- Middle: 5 Illuminated Slots for Equipped Base Cards (Cyan, Emerald, Cyan, Emerald, Gold) -->
+                    <div class="hud-equipped-row-5">
+                        @for (int i = 0; i < 5; i++)
+                        {
+                            int slotIdx = i;
+                            var eqCard = slotIdx < Session.EquippedShipAndBaseCards.Count
+                                ? Session.EquippedShipAndBaseCards[slotIdx]
+                                : null;
+                            string neonClass = slotIdx switch
+                            {
+                                0 => "slot-neon-cyan",
+                                1 => "slot-neon-emerald",
+                                2 => "slot-neon-cyan",
+                                3 => "slot-neon-emerald",
+                                _ => "slot-neon-gold"
+                            };
 
-                        <div class="equipped-slot-item">
-                            @if (eqCard is not null)
+                            <div class="hud-equipped-slot @neonClass">
+                                @if (eqCard is not null)
+                                {
+                                    <PymGameOrbitCard Card="@eqCard"
+                                                     Locale="@Session.Locale"
+                                                     CustomStyle="height: 100%; width: auto; max-width: 100%;" />
+                                }
+                                else
+                                {
+                                    <div class="empty-slot-placeholder-small">
+                                        <span>SLOT @(slotIdx + 1)</span>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Bottom Brushed-Steel Hand Dock: 5 Slots for Player Hand -->
+                    <div class="hud-hand-dock">
+                        <div class="hud-hand-dock-header">
+                            <span>@(IsPortuguese ? $"MÃO DO JOGADOR ({Session.PlayerHand.Count} cartas — clique para jogar)"
+                                                 : $"PLAYER HAND ({Session.PlayerHand.Count} cards — click to play)")</span>
+                            <span style="color: #FFD700;">
+                                @(IsPortuguese ? $"Jogadas no turno: {Session.CardsPlayedThisTurn}/{Session.MaxCardsPlayedPerTurn}"
+                                               : $"Played this turn: {Session.CardsPlayedThisTurn}/{Session.MaxCardsPlayedPerTurn}")
+                            </span>
+                        </div>
+                        <div class="hud-hand-slots-5">
+                            @for (int i = 0; i < 5; i++)
                             {
-                                <PymGameOrbitCard Card="@eqCard" Locale="@Session.Locale" />
-                            }
-                            else
-                            {
-                                <div class="empty-slot-placeholder-small">
-                                    <span>Slot @(slotIdx + 1)</span>
+                                var cardInHand = i < Session.PlayerHand.Count ? Session.PlayerHand[i] : null;
+                                <div class="hud-hand-slot-bay" @onclick="@(() => { if (cardInHand is not null) PlayCard(cardInHand); })">
+                                    @if (cardInHand is not null)
+                                    {
+                                        <PymGameOrbitCard Card="@cardInHand"
+                                                         Locale="@Session.Locale"
+                                                         CustomStyle="height: 100%; width: auto; max-width: 100%;" />
+                                    }
+                                    else
+                                    {
+                                        <div class="hand-bay-empty">
+                                            <span>@(IsPortuguese ? "VAZIO" : "EMPTY")</span>
+                                        </div>
+                                    }
                                 </div>
                             }
                         </div>
-                    }
+                    </div>
                 </div>
-            </div>
 
-            <!-- Bottom Tray: 5 Slots for Player's Hand -->
-            <div class="board-hand-bottom">
-                <div class="hand-header-label">
-                    <span>@(IsPortuguese ? $"Mão do Jogador ({Session.PlayerHand.Count} cartas — clique para jogar):"
-                                          : $"Player Hand ({Session.PlayerHand.Count} cards — click to play):")</span>
-                    <span style="color: #8B949E; font-size: 11px;">
-                        @(IsPortuguese ? $"Cartas jogadas neste turno: {Session.CardsPlayedThisTurn}/{Session.MaxCardsPlayedPerTurn}"
-                                       : $"Cards played this turn: {Session.CardsPlayedThisTurn}/{Session.MaxCardsPlayedPerTurn}")
-                    </span>
-                </div>
-                <div class="hand-slots-row">
-                    @foreach (var cardInHand in Session.PlayerHand.Take(5))
-                    {
-                        <div class="hand-card-item" @onclick="@(() => PlayCard(cardInHand))">
-                            <PymGameOrbitCard Card="@cardInHand" Locale="@Session.Locale" />
+                <!-- Right Column: 2 Vertical Brushed-Steel Action Plaques -->
+                <div class="hud-right-plaques-column">
+                    <div class="hud-steel-plaque" @onclick="OpenJournalModal">
+                        <div class="steel-plaque-led-top"></div>
+                        <div class="steel-plaque-body">
+                            <MudIcon Icon="@Icons.Material.Filled.HistoryEdu" Size="Size.Large" Style="color: #00E5FF;" />
+                            <span class="steel-plaque-title">@(IsPortuguese ? "DIÁRIO DE BORDO" : "MISSION LOG")</span>
+                            <span class="steel-plaque-sub">@(IsPortuguese ? $"{Session.MissionJournalLogs.Count} registros" : $"{Session.MissionJournalLogs.Count} entries")</span>
                         </div>
-                    }
+                        <div class="steel-plaque-led-bottom"></div>
+                    </div>
+
+                    <div class="hud-steel-plaque" @onclick="DrawNewDilemma">
+                        <div class="steel-plaque-led-top"></div>
+                        <div class="steel-plaque-body">
+                            <MudIcon Icon="@Icons.Material.Filled.Casino" Size="Size.Large" Style="color: #FFD700;" />
+                            <span class="steel-plaque-title">@(IsPortuguese ? "NOVO EVENTO" : "DRAW EVENT")</span>
+                            <span class="steel-plaque-sub">@(IsPortuguese ? "Sortear Dilema" : "Next Dilemma")</span>
+                        </div>
+                        <div class="steel-plaque-led-bottom"></div>
+                    </div>
                 </div>
-            </div>
-
-            <!-- Right Action Buttons -->
-            <div class="board-turn-actions">
-                <MudButton Variant="Variant.Filled"
-                           Class="board-action-btn btn-journal"
-                           OnClick="OpenJournalModal"
-                           StartIcon="@Icons.Material.Filled.HistoryEdu"
-                           Size="Size.Medium">
-                    @(IsPortuguese ? "DIÁRIO DE BORDO" : "MISSION LOG")
-                </MudButton>
-
-                <MudButton Variant="Variant.Filled"
-                           Class="board-action-btn btn-new-event"
-                           OnClick="DrawNewDilemma"
-                           StartIcon="@Icons.Material.Filled.Casino"
-                           Size="Size.Medium">
-                    @(IsPortuguese ? "NOVO EVENTO" : "DRAW EVENT")
-                </MudButton>
             </div>
         }
     </div>
@@ -355,12 +422,10 @@
     </TitleContent>
     <DialogContent>
         <div class="ending-modal-body">
-            <!-- Narrative description -->
             <p class="ending-narrative-text">
                 @_latestOutcomeNarrative
             </p>
 
-            <!-- Final Telemetry Dashboard -->
             <div class="ending-telemetry-grid">
                 <div class="ending-stat-box">
                     <span class="stat-lbl">@(IsPortuguese ? "Pontos Científicos:" : "Science Discovery:")</span>
@@ -445,411 +510,478 @@
         min-height: calc(100vh - 48px);
     }
 
-    .game-screen-canvas {
+    /* Faithful CSS reproduction of ui_screen_gameplay_board.jpg & ui_screen_gameplay_board_with_decks.jpg */
+    .hud-board-canvas {
         position: relative;
         width: 100%;
         max-width: 1440px;
         aspect-ratio: 16 / 9;
         border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.85), 0 0 30px rgba(0, 229, 255, 0.15);
-        border: 1px solid rgba(0, 229, 255, 0.25);
-        background-color: #050811;
+        background:
+            radial-gradient(circle at 22% 62%, rgba(0, 180, 160, 0.14) 0%, transparent 45%),
+            radial-gradient(circle at 78% 28%, rgba(0, 160, 220, 0.14) 0%, transparent 45%),
+            linear-gradient(180deg, #060F20 0%, #091830 50%, #040B18 100%);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 229, 255, 0.15);
+        border: 3px solid #6D8094;
+        padding: 1.2% 2.2%;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
 
-    .game-bg-img {
+    /* Angled Metallic Corners & Side Rails */
+    .cockpit-corner-tl, .cockpit-corner-tr {
         position: absolute;
         top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+        width: 13%;
+        height: 11%;
+        background: linear-gradient(135deg, #9EB0C2 0%, #526478 100%);
         pointer-events: none;
         z-index: 1;
     }
 
-    /* 4 Top Resource Meters */
-    .game-top-meters-row {
-        position: absolute;
-        top: 2.5%;
-        left: 2%;
-        width: 96%;
-        height: 9.5%;
-        z-index: 3;
-        display: flex;
-        gap: 1.2%;
+    .cockpit-corner-tl {
+        left: 0;
+        clip-path: polygon(0 0, 100% 0, 65% 100%, 0 38%);
+        border-bottom: 2px solid #00E676;
     }
 
-    .game-meter-box {
-        flex: 1;
+    .cockpit-corner-tr {
+        right: 0;
+        clip-path: polygon(0 0, 100% 0, 100% 38%, 35% 100%);
+        border-bottom: 2px solid #00E676;
+    }
+
+    .cockpit-rail-left, .cockpit-rail-right {
+        position: absolute;
+        top: 22%;
+        width: 8px;
+        height: 56%;
+        background: linear-gradient(180deg, #526478, #A8BACB, #526478);
+        box-shadow: 0 0 12px rgba(0, 230, 118, 0.45);
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .cockpit-rail-left { left: 0; border-right: 1.5px solid #00E676; }
+    .cockpit-rail-right { right: 0; border-left: 1.5px solid #00E676; }
+
+    /* Top 4 Resource Meters Bay */
+    .hud-top-meters-bay {
+        width: 78%;
+        height: 11.5%;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.4%;
+        z-index: 3;
+    }
+
+    .hud-meter-frame {
+        padding: 2px;
+        border-radius: 7px;
+        display: flex;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.65);
+    }
+
+    .meter-frame-cyan { background: linear-gradient(180deg, #00E5FF, #3B607A); }
+    .meter-frame-emerald { background: linear-gradient(180deg, #00E676, #2E6454); }
+    .meter-frame-gold { background: linear-gradient(180deg, #FFD700, #756024); }
+    .meter-frame-teal { background: linear-gradient(180deg, #00BFA5, #2E5C6E); }
+
+    .hud-meter-inner {
+        width: 100%;
         height: 100%;
-        background: rgba(10, 18, 36, 0.7);
-        border: 1px solid rgba(0, 229, 255, 0.35);
-        border-radius: 6px;
-        backdrop-filter: blur(6px);
+        background: linear-gradient(180deg, #0E1F36 0%, #091424 100%);
+        border-radius: 5px;
         padding: 3px 8px;
+        box-sizing: border-box;
         display: flex;
         flex-direction: column;
-        justify-content: space-around;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        justify-content: space-between;
     }
 
     .meter-header {
         display: flex;
         align-items: center;
-        font-weight: 700;
-        font-size: clamp(8px, 0.8vw, 11px);
+        font-weight: 800;
+        font-size: clamp(7.5px, 0.78vw, 10.5px);
         letter-spacing: 0.5px;
-        color: #F0F6FC;
-        text-shadow: 0 1px 2px #000;
+        color: #E2ECF5;
     }
 
     .meter-body {
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        line-height: 1.1;
+        align-items: baseline;
     }
 
     .meter-main-val {
-        font-weight: 800;
-        font-size: clamp(9px, 0.95vw, 13px);
+        font-weight: 900;
+        font-size: clamp(9px, 0.92vw, 12.5px);
         color: #FFFFFF;
-        text-shadow: 0 0 6px rgba(0, 229, 255, 0.6);
     }
 
     .meter-sub-val {
-        font-size: clamp(7.5px, 0.8vw, 10.5px);
-        color: #8B949E;
-        font-weight: 600;
+        font-size: clamp(7px, 0.74vw, 9.5px);
+        color: #9FB1C4;
+        font-weight: 700;
     }
 
-    /* FASE 1: Build Phase Elements */
-    .build-top-banner {
-        position: absolute;
-        top: 13.5%;
-        left: 8%;
-        width: 70%;
-        height: 8.5%;
+    .hud-meter-track {
+        width: 100%;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 2px;
+        overflow: hidden;
+    }
+
+    .hud-meter-fill { height: 100%; border-radius: 2px; }
+    .fill-cyan { background: #00E5FF; box-shadow: 0 0 6px #00E5FF; }
+    .fill-emerald { background: #00E676; box-shadow: 0 0 6px #00E676; }
+    .fill-gold { background: #FFD700; box-shadow: 0 0 6px #FFD700; }
+    .fill-teal { background: #1DE9B6; box-shadow: 0 0 6px #1DE9B6; }
+
+    /* ========================================================================= */
+    /* FASE 1: BUILD PHASE LAYOUT                                                */
+    /* ========================================================================= */
+    .hud-build-body {
+        flex: 1;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding-top: 1%;
         z-index: 3;
-        background: rgba(10, 20, 40, 0.75);
-        border: 1px solid rgba(0, 229, 255, 0.4);
-        border-radius: 8px;
-        backdrop-filter: blur(6px);
+        min-height: 0;
+    }
+
+    .hud-build-top-plaque {
+        width: 58%;
+        height: 13%;
+        margin: 0 auto;
+        padding: 2.5px;
+        background: linear-gradient(90deg, #00E5FF 0%, #6D8299 25%, #6D8299 75%, #00E5FF 100%);
+        clip-path: polygon(12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px), 0 12px);
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.75);
+    }
+
+    .hud-build-plaque-inner {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(180deg, #17283E 0%, #0F1C2E 100%);
+        clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px);
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        padding: 2px 12px;
         text-align: center;
-        padding: 2px 10px;
     }
 
     .build-banner-title {
         display: flex;
         align-items: center;
-        font-weight: 800;
-        font-size: clamp(10px, 1.1vw, 15px);
+        font-weight: 900;
+        font-size: clamp(9.5px, 1.05vw, 14px);
         color: #00E5FF;
         letter-spacing: 1px;
     }
 
     .build-banner-subtitle {
-        font-size: clamp(8.5px, 0.9vw, 12px);
+        font-size: clamp(8px, 0.85vw, 11.5px);
         color: #FFD700;
-        font-weight: 600;
-    }
-
-    .build-center-slots {
-        position: absolute;
-        top: 23.5%;
-        left: 8%;
-        width: 70%;
-        height: 44%;
-        z-index: 3;
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 12px;
-        align-items: center;
-    }
-
-    .board-card-slot {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-    }
-
-    .empty-slot-placeholder {
-        width: 100%;
-        aspect-ratio: 2 / 3;
-        border: 2px dashed rgba(0, 229, 255, 0.45);
-        border-radius: 8px;
-        background: rgba(10, 20, 40, 0.45);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        color: #00E5FF;
-        font-weight: 700;
-        font-size: clamp(9px, 0.9vw, 12px);
-        gap: 4px;
-        transition: all 0.2s ease;
-    }
-
-    .empty-slot-placeholder:hover {
-        border-color: #00E5FF;
-        background: rgba(0, 229, 255, 0.15);
-    }
-
-    .slot-hint {
-        font-size: clamp(7.5px, 0.75vw, 10px);
-        color: #8B949E;
-    }
-
-    .build-hand-tray {
-        position: absolute;
-        top: 69%;
-        left: 8%;
-        width: 70%;
-        height: 28%;
-        z-index: 3;
-        background: rgba(8, 14, 28, 0.85);
-        border: 1px solid rgba(0, 229, 255, 0.3);
-        border-radius: 8px;
-        backdrop-filter: blur(6px);
-        padding: 4px 10px;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .tray-title-row {
-        height: 20%;
-        display: flex;
-        align-items: center;
-    }
-
-    .tray-title {
-        font-size: clamp(9px, 0.9vw, 12px);
-        color: #00E676;
         font-weight: 700;
     }
 
-    .tray-cards-row {
-        height: 80%;
+    .hud-build-middle-row {
+        width: 92%;
+        height: 50%;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 2.5%;
+    }
+
+    .hud-build-platform-5 {
+        flex: 1;
+        height: 100%;
+        background: linear-gradient(180deg, #2C394B 0%, #1F2A38 100%);
+        border: 2.5px solid #5D7187;
+        border-radius: 12px;
+        padding: 8px 14px;
+        box-sizing: border-box;
         display: grid;
         grid-template-columns: repeat(5, 1fr);
-        gap: 8px;
-        align-items: center;
-    }
-
-    .tray-card-wrapper {
-        cursor: pointer;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .build-right-actions {
-        position: absolute;
-        top: 32%;
-        left: 80%;
-        width: 17%;
-        height: 44%;
-        z-index: 3;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
         gap: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), inset 0 1px 10px rgba(0, 0, 0, 0.6);
     }
 
-    .board-action-btn {
-        width: 100%;
-        height: 45%;
-        border-radius: 8px !important;
-        font-weight: 800 !important;
-        letter-spacing: 1.5px !important;
-        font-size: clamp(10px, 1.1vw, 14px) !important;
-        text-transform: uppercase !important;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6) !important;
-    }
-
-    .btn-confirm-build {
-        background: linear-gradient(135deg, rgba(0, 230, 118, 0.8), rgba(0, 151, 167, 0.9)) !important;
-        border: 1.5px solid #00E676 !important;
-        color: #FFFFFF !important;
-    }
-
-    .btn-confirm-build:hover {
-        box-shadow: 0 0 20px rgba(0, 230, 118, 0.8) !important;
-        transform: scale(1.03);
-    }
-
-    .btn-reset-build {
-        background: rgba(16, 24, 44, 0.7) !important;
-        border: 1px solid rgba(255, 179, 0, 0.6) !important;
-        color: #FFD700 !important;
-    }
-
-    .btn-reset-build:hover {
-        background: rgba(255, 179, 0, 0.2) !important;
-        transform: scale(1.03);
-    }
-
-    /* FASES 2 & 3: Board with Decks Elements */
-    .board-left-decks {
-        position: absolute;
-        top: 14%;
-        left: 1.5%;
-        width: 11%;
+    .hud-build-right-actions {
+        flex: 0 0 18%;
         height: 82%;
-        z-index: 3;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        gap: 14px;
     }
 
-    .deck-pile-box {
+    .hud-action-plaque {
         flex: 1;
-        max-height: 48%;
+        padding: 2.5px;
+        clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px);
+        transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .hud-action-plaque:hover {
+        transform: scale(1.03);
+        filter: brightness(1.15);
+    }
+
+    .hud-action-plaque.plaque-cyan {
+        background: linear-gradient(135deg, #00E5FF, #4A6680, #00E5FF);
+        box-shadow: 0 0 16px rgba(0, 229, 255, 0.45);
+    }
+
+    .hud-action-plaque.plaque-gold {
+        background: linear-gradient(135deg, #FFD700, #7A6324, #FFD700);
+        box-shadow: 0 0 16px rgba(255, 215, 0, 0.45);
+    }
+
+    .hud-action-plaque-btn {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(180deg, #27374D 0%, #192536 100%) !important;
+        clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px);
+        border-radius: 0 !important;
+        font-weight: 900 !important;
+        font-size: clamp(9.5px, 1.0vw, 13px) !important;
+        letter-spacing: 1px !important;
+    }
+
+    .text-cyan { color: #00E5FF !important; }
+    .text-gold { color: #FFD700 !important; }
+
+    /* ========================================================================= */
+    /* FASES 2 & 3: TURN COCKPIT LAYOUT (Decks + Choices + Equipped + Hand)      */
+    /* ========================================================================= */
+    .hud-turn-cockpit {
+        flex: 1;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        gap: 1.8%;
+        padding-top: 0.8%;
+        z-index: 3;
+        min-height: 0;
+    }
+
+    /* Left Column: Draw & Discard Wells */
+    .hud-decks-column {
+        flex: 0 0 12.5%;
+        height: 94%;
+        align-self: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 4%;
+    }
+
+    .hud-deck-well {
+        flex: 1;
+        background: rgba(12, 24, 42, 0.8);
+        border: 2px solid #5C728A;
+        border-radius: 10px;
+        padding: 8px;
+        box-sizing: border-box;
         position: relative;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        border: 1px solid rgba(0, 229, 255, 0.35);
-        border-radius: 8px;
+        box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.75), 0 4px 12px rgba(0, 0, 0, 0.6);
         overflow: hidden;
-        background: rgba(8, 14, 28, 0.75);
+    }
+
+    .deck-stack-3d {
+        width: 90%;
+        height: 86%;
+        border-radius: 6px;
+        overflow: hidden;
+        box-shadow:
+            0 3px 0 #8A99AD,
+            0 6px 0 #4F5E70,
+            0 9px 0 #8A99AD,
+            0 12px 14px rgba(0, 0, 0, 0.85);
     }
 
     .pile-img {
         width: 100%;
         height: 100%;
         object-fit: fill;
-        opacity: 0.85;
+        display: block;
     }
 
     .pile-badge {
         position: absolute;
         top: 6px;
         right: 6px;
-        background: rgba(0, 229, 255, 0.85);
+        background: rgba(0, 229, 255, 0.92);
         color: #000;
-        font-weight: 800;
-        font-size: 11px;
-        padding: 2px 6px;
-        border-radius: 12px;
+        font-weight: 900;
+        font-size: 10.5px;
+        padding: 1px 6px;
+        border-radius: 10px;
         display: flex;
         align-items: center;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
     }
 
-    .discard-box-inner {
+    .discard-stack-outline {
+        width: 88%;
+        height: 82%;
+        border: 1.5px solid rgba(140, 170, 200, 0.35);
+        border-radius: 6px;
+        background: rgba(8, 18, 32, 0.6);
+        box-shadow: 0 3px 0 rgba(140, 170, 200, 0.2), 0 6px 0 rgba(140, 170, 200, 0.15);
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        width: 100%;
-        height: 100%;
     }
 
     .pile-number {
-        font-size: clamp(14px, 1.8vw, 24px);
+        font-size: clamp(14px, 1.6vw, 22px);
         font-weight: 900;
-        color: #8B949E;
+        color: #9FB1C4;
     }
 
     .pile-label {
-        position: absolute;
-        bottom: 4px;
-        font-weight: 700;
+        margin-top: 4px;
+        font-weight: 800;
         font-size: 9px;
         color: #FFD700;
-        text-shadow: 0 1px 2px #000;
         letter-spacing: 1px;
     }
 
-    /* Center Dilemma & 3 Choice Bars */
-    .board-center-dilemma-section {
-        position: absolute;
-        top: 13.5%;
-        left: 14%;
-        width: 68%;
-        height: 33%;
-        z-index: 3;
+    /* Center Column: 3 Choice Bars + 5 Equipped Slots + Bottom Hand Dock */
+    .hud-center-playfield {
+        flex: 1;
+        height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        gap: 1.2%;
+        min-width: 0;
     }
 
-    .dilemma-header-card {
-        background: rgba(10, 18, 36, 0.75);
-        border: 1px solid rgba(0, 229, 255, 0.4);
-        border-radius: 6px;
-        padding: 4px 10px;
-        backdrop-filter: blur(6px);
+    .hud-dilemma-bay {
+        height: 31%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 3px;
+    }
+
+    .dilemma-header-strip {
+        background: rgba(10, 22, 40, 0.88);
+        border: 1px solid rgba(0, 229, 255, 0.45);
+        border-radius: 5px;
+        padding: 2px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        overflow: hidden;
     }
 
     .dilemma-title {
-        font-weight: 800;
-        font-size: clamp(10px, 1.05vw, 14px);
+        font-weight: 900;
+        font-size: clamp(8.5px, 0.92vw, 12px);
         color: #00E5FF;
+        white-space: nowrap;
+        flex-shrink: 0;
     }
 
     .dilemma-story {
-        margin: 2px 0 0 0;
-        font-size: clamp(8px, 0.85vw, 11px);
+        font-size: clamp(8px, 0.82vw, 10.5px);
         color: #E0F7FA;
-        line-height: 1.25;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
     .dilemma-choices-stack {
+        flex: 1;
         display: flex;
         flex-direction: column;
-        gap: 4px;
-        height: 68%;
         justify-content: space-between;
+        gap: 3px;
     }
 
-    .choice-bar-btn {
+    /* Faithful CSS reproduction of the 3 horizontal choice bars in ui_screen_gameplay_board_with_decks.jpg */
+    .hud-choice-bar {
         flex: 1;
-        background: rgba(12, 22, 44, 0.8);
-        border: 1px solid rgba(0, 229, 255, 0.4);
+        display: flex;
+        align-items: stretch;
+        background: linear-gradient(90deg, #0E2238 0%, #132C47 50%, #0E2238 100%);
+        border: 1.5px solid #6E849B;
         border-radius: 6px;
-        padding: 2px 10px;
         cursor: pointer;
         transition: all 0.18s ease;
-        display: flex;
-        align-items: center;
-        backdrop-filter: blur(6px);
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
     }
 
-    .choice-bar-btn:hover {
-        background: rgba(0, 229, 255, 0.25);
+    .hud-choice-bar:hover {
         border-color: #00E5FF;
-        transform: scale(1.01);
-        box-shadow: 0 0 14px rgba(0, 229, 255, 0.5);
+        background: linear-gradient(90deg, rgba(0, 229, 255, 0.22) 0%, rgba(19, 44, 71, 0.95) 50%, rgba(0, 229, 255, 0.22) 100%);
+        box-shadow: 0 0 14px rgba(0, 229, 255, 0.55);
+        transform: scale(1.006);
+    }
+
+    .choice-cap-left, .choice-cap-right {
+        width: 10px;
+        background: linear-gradient(180deg, #A7B8C9 0%, #5D7084 100%);
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .choice-cap-left::after, .choice-cap-right::after {
+        content: "";
+        position: absolute;
+        top: 25%;
+        left: 3px;
+        width: 4px;
+        height: 50%;
+        background: #00E676;
+        box-shadow: 0 0 6px #00E676;
+        border-radius: 2px;
     }
 
     .choice-bar-content {
-        width: 100%;
+        flex: 1;
         display: flex;
         align-items: center;
         justify-content: space-between;
+        padding: 0 10px;
+        min-width: 0;
     }
 
     .choice-label-row {
         display: flex;
         align-items: center;
-        flex: 0 0 45%;
+        flex: 1;
+        min-width: 0;
+        margin-right: 8px;
     }
 
     .choice-title {
-        font-weight: 700;
-        font-size: clamp(9px, 0.95vw, 12px);
+        font-weight: 800;
+        font-size: clamp(8.5px, 0.9vw, 11.5px);
         color: #FFFFFF;
         white-space: nowrap;
         overflow: hidden;
@@ -858,143 +990,209 @@
 
     .choice-impacts-row {
         display: flex;
-        gap: 6px;
+        gap: 4px;
         align-items: center;
-        flex: 0 0 53%;
-        justify-content: flex-end;
+        flex-shrink: 0;
     }
 
     .impact-chip {
-        font-size: clamp(7.5px, 0.8vw, 10px);
-        font-weight: 600;
-        background: rgba(4, 8, 16, 0.6);
-        padding: 1px 4px;
+        font-size: clamp(7px, 0.76vw, 9.5px);
+        font-weight: 700;
+        background: rgba(4, 10, 20, 0.75);
+        padding: 1px 5px;
         border-radius: 4px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.12);
         white-space: nowrap;
     }
 
-    /* 5 Equipped Center Slots */
-    .board-equipped-center {
-        position: absolute;
-        top: 48%;
-        left: 14%;
-        width: 68%;
-        height: 24%;
-        z-index: 3;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .equipped-header-label {
-        font-size: 10px;
-        color: #FFD700;
-        font-weight: 700;
-        margin-bottom: 2px;
-    }
-
-    .equipped-slots-row {
-        flex: 1;
+    /* 5 Illuminated Equipped Card Slots */
+    .hud-equipped-row-5 {
+        height: 33%;
         display: grid;
         grid-template-columns: repeat(5, 1fr);
-        gap: 8px;
-        align-items: center;
+        gap: 10px;
+        padding: 2px 4px;
+        box-sizing: border-box;
     }
 
-    .equipped-slot-item {
+    .hud-equipped-slot {
         height: 100%;
+        border-radius: 8px;
+        background: rgba(8, 20, 36, 0.75);
         display: flex;
         align-items: center;
         justify-content: center;
+        padding: 3px;
+        box-sizing: border-box;
+        position: relative;
+        overflow: hidden;
     }
 
-    .empty-slot-placeholder-small {
+    .slot-neon-cyan {
+        border: 2px solid #00E5FF;
+        box-shadow: 0 0 12px rgba(0, 229, 255, 0.35), inset 0 0 10px rgba(0, 229, 255, 0.15);
+    }
+
+    .slot-neon-emerald {
+        border: 2px solid #00E676;
+        box-shadow: 0 0 12px rgba(0, 230, 118, 0.35), inset 0 0 10px rgba(0, 230, 118, 0.15);
+    }
+
+    .slot-neon-gold {
+        border: 2px solid #FFD700;
+        box-shadow: 0 0 12px rgba(255, 215, 0, 0.35), inset 0 0 10px rgba(255, 215, 0, 0.15);
+    }
+
+    .empty-slot-placeholder, .empty-slot-placeholder-small {
         width: 100%;
-        aspect-ratio: 2 / 3;
-        border: 1.5px dashed rgba(0, 229, 255, 0.3);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: rgba(0, 229, 255, 0.45);
+        font-weight: 800;
+        font-size: clamp(8px, 0.8vw, 10.5px);
+        gap: 2px;
+        text-align: center;
+    }
+
+    .slot-hint {
+        font-size: 8px;
+        color: #8B949E;
+    }
+
+    /* Bottom Brushed-Steel Hand Dock reproducing ui_screen_gameplay_board_with_decks.jpg */
+    .hud-hand-dock {
+        height: 33%;
+        background: linear-gradient(180deg, #273549 0%, #141E2D 100%);
+        border: 2.5px solid #8DA0B4;
+        border-radius: 10px 10px 6px 6px;
+        padding: 4px 12px 6px 12px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-shadow:
+            0 -4px 18px rgba(0, 0, 0, 0.75),
+            inset 0 0 0 1.5px rgba(0, 230, 118, 0.3);
+    }
+
+    .hud-hand-dock-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: clamp(8px, 0.82vw, 10.5px);
+        color: #00E676;
+        font-weight: 800;
+        letter-spacing: 0.4px;
+    }
+
+    .hud-hand-slots-5 {
+        flex: 1;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 10px;
+        min-height: 0;
+        padding-top: 2px;
+    }
+
+    .hud-hand-slot-bay {
+        height: 100%;
+        background: linear-gradient(180deg, rgba(8, 22, 36, 0.9) 0%, rgba(6, 36, 38, 0.65) 100%);
+        border: 1.5px solid rgba(0, 229, 255, 0.35);
+        border-bottom: 3px solid #8DA0B4;
         border-radius: 6px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 9px;
-        color: rgba(0, 229, 255, 0.4);
+        padding: 2px;
+        box-sizing: border-box;
+        cursor: pointer;
+        overflow: hidden;
+        transition: border-color 0.18s ease, transform 0.18s ease;
     }
 
-    /* Bottom Player Hand */
-    .board-hand-bottom {
-        position: absolute;
-        top: 73.5%;
-        left: 14%;
-        width: 68%;
-        height: 24%;
-        z-index: 3;
+    .hud-hand-slot-bay:hover {
+        border-color: #00E5FF;
+        box-shadow: 0 0 12px rgba(0, 229, 255, 0.5);
+    }
+
+    .hand-bay-empty {
+        font-size: 8.5px;
+        font-weight: 800;
+        color: rgba(140, 165, 190, 0.3);
+        letter-spacing: 1px;
+    }
+
+    /* Right Column: 2 Large Brushed-Steel Vertical Plaques reproducing ui_screen_gameplay_board_with_decks.jpg */
+    .hud-right-plaques-column {
+        flex: 0 0 12%;
+        height: 92%;
+        align-self: center;
         display: flex;
         flex-direction: column;
-        background: rgba(6, 12, 24, 0.8);
-        border: 1px solid rgba(0, 229, 255, 0.25);
-        border-radius: 8px;
-        padding: 2px 8px;
+        justify-content: space-between;
+        gap: 5%;
     }
 
-    .hand-header-label {
+    .hud-steel-plaque {
+        flex: 1;
+        background: linear-gradient(180deg, #7C8FA3 0%, #C4D2DF 50%, #6A7D91 100%);
+        border: 2.5px solid #A7B8C9;
+        border-radius: 10px;
+        padding: 6px;
+        box-sizing: border-box;
         display: flex;
+        flex-direction: column;
         justify-content: space-between;
         align-items: center;
-        font-size: 10px;
-        color: #00E676;
-        font-weight: 700;
-    }
-
-    .hand-slots-row {
-        flex: 1;
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 8px;
-        align-items: center;
-    }
-
-    .hand-card-item {
-        height: 100%;
         cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8), 0 0 14px rgba(0, 229, 255, 0.25);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    /* Right Turn Actions */
-    .board-turn-actions {
-        position: absolute;
-        top: 25%;
-        left: 83.5%;
-        width: 15%;
-        height: 50%;
-        z-index: 3;
+    .hud-steel-plaque:hover {
+        transform: scale(1.035);
+        box-shadow: 0 0 22px rgba(0, 229, 255, 0.7);
+    }
+
+    .steel-plaque-led-top, .steel-plaque-led-bottom {
+        width: 56%;
+        height: 4px;
+        background: #00E5FF;
+        box-shadow: 0 0 8px #00E5FF;
+        border-radius: 2px;
+    }
+
+    .steel-plaque-body {
+        flex: 1;
+        width: 100%;
+        margin: 4px 0;
+        background: linear-gradient(180deg, rgba(16, 30, 48, 0.92) 0%, rgba(10, 20, 34, 0.96) 100%);
+        border: 1.5px solid rgba(0, 229, 255, 0.5);
+        border-radius: 6px;
         display: flex;
         flex-direction: column;
-        justify-content: space-around;
-        gap: 12px;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 6px;
+        gap: 6px;
     }
 
-    .btn-journal {
-        background: rgba(14, 24, 46, 0.8) !important;
-        border: 1px solid rgba(0, 229, 255, 0.5) !important;
-        color: #00E5FF !important;
+    .steel-plaque-title {
+        font-weight: 900;
+        font-size: clamp(9px, 0.95vw, 12.5px);
+        color: #FFFFFF;
+        letter-spacing: 1px;
+        line-height: 1.2;
     }
 
-    .btn-journal:hover {
-        background: rgba(0, 229, 255, 0.25) !important;
-        box-shadow: 0 0 16px rgba(0, 229, 255, 0.6) !important;
-    }
-
-    .btn-new-event {
-        background: rgba(14, 24, 46, 0.8) !important;
-        border: 1px solid rgba(255, 215, 0, 0.5) !important;
-        color: #FFD700 !important;
-    }
-
-    .btn-new-event:hover {
-        background: rgba(255, 215, 0, 0.25) !important;
-        box-shadow: 0 0 16px rgba(255, 215, 0, 0.6) !important;
+    .steel-plaque-sub {
+        font-size: clamp(7.5px, 0.78vw, 10px);
+        color: #00E5FF;
+        font-weight: 700;
     }
 
     /* Ending Modal Styles */
@@ -1047,10 +1245,6 @@
 
     private GameSessionState Session => GameService.CurrentSession;
     private bool IsPortuguese => Session.Locale.StartsWith("pt", StringComparison.OrdinalIgnoreCase);
-
-    private string CurrentBoardBackground => Session.Phase == TurnPhase.BuildPhase
-        ? PymGameOrbitAssets.ScreenGameplayBoard
-        : PymGameOrbitAssets.ScreenGameplayBoardWithDecks;
 
     protected override async Task OnInitializedAsync()
     {
@@ -1107,7 +1301,6 @@
 
     private void ResetAssembly()
     {
-        // Return equipped cards to hand
         foreach (var c in Session.EquippedShipAndBaseCards.ToList())
         {
             Session.PlayerHand.Add(c);

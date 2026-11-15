@@ -331,7 +331,7 @@ public sealed class GameService : IGameService
             "Shield +28 g/cm² | -2,000 W", "Blindagem +28 g/cm² | -2.000 W",
             "Like a futuristic knight's armor made of boron nanotubes that blocks invisible cosmic rays!",
             "Como uma armadura espacial feita de nanotubos de boro que bloqueia raios cósmicos invisíveis!",
-            "https://images-assets.nasa.gov/image/iss064e016145/iss064e016145~medium.jpg",
+            "https://images-assets.nasa.gov/image/iss032e016954/iss032e016954~medium.jpg",
             13.5f, -2000f, 0f, 28.0f, 0f, 0f, 0.04f, 6.0f, 0.22f, 0.18f,
             new() { ["BNNT"] = new("BNNT", "Rad-Armor Nanotubes", "Armadura de Nanotubos", "Tiny tubes of boron and nitrogen that stop space radiation.", "Pequenos tubos de boro e nitrogênio que bloqueiam a radiação espacial.") }),
 
@@ -340,7 +340,7 @@ public sealed class GameService : IGameService
             "Power +145,000 W", "Energia +145.000 W",
             "A mini nuclear power plant plus roll-out solar wings so your base never loses electricity in the dark!",
             "Uma mini usina segura junto com painéis solares que se desenrolam para nunca faltar luz no escuro!",
-            "https://images-assets.nasa.gov/image/GRC-2018-C-03966/GRC-2018-C-03966~medium.jpg",
+            "https://images-assets.nasa.gov/image/ISS_Rosa_correct_channels/ISS_Rosa_correct_channels~small.jpg",
             9.6f, 145000f, 0f, 4.0f, -15f, 0f, 0.08f, 0f, 0.12f, 0.10f,
             new() { ["KRUSTY"] = new("KRUSTY", "Mini Space Reactor", "Mini Reator Espacial", "Generates electricity day and night even during dust storms.", "Gera eletricidade dia e noite mesmo em tempestades de poeira.") }),
 
@@ -349,7 +349,7 @@ public sealed class GameService : IGameService
             "Suit +32% | -4,000 W", "Trajes +32% | -4.000 W",
             "Spacesuits parked on the outside wall with an electric forcefield that shakes off sharp space dust!",
             "Trajes espaciais acoplados na parede com um campo elétrico que sacode para longe a poeira cortante!",
-            "https://images-assets.nasa.gov/image/jsc2021e022488/jsc2021e022488~medium.jpg",
+            "https://images-assets.nasa.gov/image/jsc2026e001909/jsc2026e001909~large.jpg",
             5.0f, -4000f, -120f, 6.0f, -10f, 0f, 0.05f, 32.0f, 0.25f, 0.15f,
             new() { ["EDS"] = new("EDS", "Dust Zapper Shield", "Escudo Anti-Poeira", "Uses static electricity waves to push dust off spacesuits.", "Usa ondas elétricas para afastar a poeira dos trajes.") }),
 
@@ -358,7 +358,7 @@ public sealed class GameService : IGameService
             "Health +30% | O2 +240 L/d", "Saúde +30% | O2 +240 L/d",
             "A space hospital and zero-gravity gym that keeps astronauts' bones and muscles strong!",
             "Um hospital espacial e academia sem gravidade que mantém os ossos e músculos fortes!",
-            "https://images-assets.nasa.gov/image/iss065e009841/iss065e009841~medium.jpg",
+            "https://images-assets.nasa.gov/image/0601352/0601352~medium.jpg",
             7.2f, -5500f, 240f, 8.0f, -45f, 0.01f, 0.06f, 0f, 0.30f, 0.10f,
             new() { ["ARED"] = new("ARED", "Zero-G Gym", "Academia Zero-G", "Vacuum cylinder workout machine that prevents bone loss in space.", "Aparelho de exercícios a vácuo que evita a perda óssea no espaço.") }),
 
@@ -367,7 +367,7 @@ public sealed class GameService : IGameService
             "Delay -420s | Suits +20%", "Atraso -420s | Trajes +20%",
             "Sends messages to Earth on a beam of laser light and 3D-prints replacement tools on the spot!",
             "Envia mensagens à Terra por raio laser e imprime ferramentas novas em 3D na hora!",
-            "https://images-assets.nasa.gov/image/PIA25666/PIA25666~medium.jpg",
+            "https://images-assets.nasa.gov/image/PIA24569/PIA24569~medium.jpg",
             5.4f, -6500f, 0f, 2.0f, -420f, 0f, 0.07f, 20.0f, 0.15f, 0.12f,
             new() { ["DSOC"] = new("DSOC", "Space Laser Internet", "Internet a Laser Espacial", "Sends data 10 to 100 times faster than old radio waves.", "Transmite dados de 10 a 100 vezes mais rápido que ondas de rádio.") }),
 
@@ -376,7 +376,7 @@ public sealed class GameService : IGameService
             "Water Loop +4.6% | O2 +520 L/d", "Reciclagem H2O +4,6% | O2 +520 L/d",
             "Turns 98.5% of sweat, breath moisture, and wastewater back into crystal-clear drinking water!",
             "Transforma 98,5% do suor, vapor da respiração e água usada em água pura de novo!",
-            "https://images-assets.nasa.gov/image/MSFC-1600816/MSFC-1600816~medium.jpg",
+            "https://images-assets.nasa.gov/image/0102168/0102168~medium.jpg",
             4.5f, -4800f, 520f, 4.0f, 0f, 0.046f, 0.14f, 0f, 0.14f, 0.18f,
             new() { ["WPA"] = new("WPA", "Water Recycler", "Reciclador de Água", "Cleans all cabin water so astronauts rarely need resupply from Earth.", "Purifica toda a água da cabine para não depender de cargas da Terra.") }),
 
@@ -385,7 +385,7 @@ public sealed class GameService : IGameService
             "O2 +6,440 L/d | -5,500 W", "O2 +6.440 L/d | -5.500 W",
             "Splits water molecules with electricity to make fresh breathing oxygen and traps exhaled CO2!",
             "Divide moléculas de água com eletricidade para criar oxigênio puro e captura o gás carbônico!",
-            "https://images-assets.nasa.gov/image/iss026e025219/iss026e025219~medium.jpg",
+            "https://images-assets.nasa.gov/image/iss066e155805/iss066e155805~medium.jpg",
             4.1f, -5500f, 6440f, 2.0f, 0f, 0.010f, 0.18f, 0f, 0.18f, 0.15f,
             new() { ["OGA"] = new("OGA", "Oxygen Maker", "Fábrica de Oxigênio", "Uses electricity to split water (H2O) into breathable O2 and hydrogen.", "Usa eletricidade para separar a água (H2O) em oxigênio respirável e hidrogênio.") }),
 
@@ -394,7 +394,7 @@ public sealed class GameService : IGameService
             "CH4 Fuel +28% | O2 +1,820 L/d", "Combustível CH4 +28% | O2 +1.820 L/d",
             "Combines the crew's exhaled carbon dioxide with hydrogen to brew rocket fuel for the trip home!",
             "Junta o gás carbônico que os astronautas expiram com hidrogênio para fabricar combustível de volta para casa!",
-            "https://images-assets.nasa.gov/image/MSFC-1001264/MSFC-1001264~medium.jpg",
+            "https://images-assets.nasa.gov/image/iss025e007248/iss025e007248~medium.jpg",
             3.5f, -4800f, 1820f, 2.4f, 0f, 0.026f, 0.22f, 0f, 0.12f, 0.20f,
             new() { ["SABATIER"] = new("SABATIER", "Breath-to-Fuel Reactor", "Reator Ar-em-Combustível", "Turns waste CO2 and H2 gas into liquid methane rocket propellant and water.", "Transforma gás CO2 e H2 em combustível metano para foguetes e água.") }),
 
@@ -403,7 +403,7 @@ public sealed class GameService : IGameService
             "O2 +3,950 L/d | Shield +8.5 g/cm²", "O2 +3.950 L/d | Blindagem +8,5 g/cm²",
             "Glowing green algae tanks that drink CO2, bubble out fresh oxygen, and make superfood snacks!",
             "Tanques verdes iluminados de microalgas que absorvem CO2, soltam oxigênio puro e produzem superalimento!",
-            "https://images-assets.nasa.gov/image/iss059e053902/iss059e053902~medium.jpg",
+            "https://images-assets.nasa.gov/image/iss059e114346/iss059e114346~medium.jpg",
             6.2f, -6000f, 3950f, 8.5f, 0f, 0.018f, 0.24f, 0f, 0.20f, 0.25f,
             new() { ["PBR"] = new("PBR", "Living Algae Garden", "Jardim Vivo de Algas", "Algae grow 10x faster than land plants while making oxygen and food.", "As microalgas crescem 10x mais rápido que plantas terrestres gerando oxigênio e comida.") }),
 
@@ -412,7 +412,7 @@ public sealed class GameService : IGameService
             "Shield +45 g/cm² | -6,200 W", "Blindagem +45 g/cm² | -6.200 W",
             "Robots melt Moon dirt with microwaves to print a thick stone igloo over your base!",
             "Robôs derretem a poeira da Lua com micro-ondas para imprimir um iglu de pedra superprotetor sobre a base!",
-            "https://images-assets.nasa.gov/image/MSFC-1900251/MSFC-1900251~medium.jpg",
+            "https://images-assets.nasa.gov/image/MSFC-201900567/MSFC-201900567~medium.jpg",
             2.0f, -6200f, -150f, 45.0f, 5f, 0f, 0.08f, 10.0f, 0.32f, 0.30f,
             new() { ["REGOLITH"] = new("REGOLITH", "Baked Moon Dirt Dome", "Domo de Solo Lunar", "1.5 meters of sintered lunar soil stops 94% of solar proton storms.", "1,5 metro de solo lunar fundido bloqueia 94% das tempestades de prótons solares.") }),
 
@@ -421,7 +421,7 @@ public sealed class GameService : IGameService
             "Shield +68 g/cm² | Delay +45s", "Blindagem +68 g/cm² | Atraso +45s",
             "Builds the Mars base inside an ancient volcanic cave so thick rock blocks cosmic radiation!",
             "Constrói a base de Marte dentro de uma caverna vulcânica antiga onde a rocha grossa bloqueia a radiação!",
-            "https://images-assets.nasa.gov/image/PIA13129/PIA13129~medium.jpg",
+            "https://images-assets.nasa.gov/image/PIA13387/PIA13387~medium.jpg",
             2.5f, -4100f, 220f, 68.0f, 45f, 0f, 0.10f, 14.0f, 0.38f, 0.35f,
             new() { ["LAVATUBE"] = new("LAVATUBE", "Volcanic Cave Shelter", "Caverna Vulcânica", "Natural underground tunnels on Mars that shield against radiation and micrometeoroids.", "Túneis subterrâneos naturais em Marte que protegem contra radiação e meteoritos.") }),
 
@@ -430,7 +430,7 @@ public sealed class GameService : IGameService
             "O2 +7,800 L/d | -14,500 W", "O2 +7.800 L/d | -14.500 W",
             "Breathes in Mars' thin carbon dioxide air and bakes it at 800°C to pour out pure oxygen!",
             "Aspira o ar fino de gás carbônico de Marte e o aquece a 800°C para liberar oxigênio puro!",
-            "https://images-assets.nasa.gov/image/PIA24432/PIA24432~medium.jpg",
+            "https://images-assets.nasa.gov/image/PIA23302/PIA23302~medium.jpg",
             4.8f, -14500f, 7800f, 12.5f, 0f, 0.015f, 0.20f, 0f, 0.24f, 0.22f,
             new() { ["MOXIE"] = new("MOXIE", "Mars Air-to-Oxygen Box", "Conversor de Ar de Marte", "Tested on NASA's Perseverance rover to make oxygen directly from Martian CO2.", "Testado no rover Perseverance da NASA para criar oxigênio direto do ar de Marte.") }),
 
@@ -439,7 +439,7 @@ public sealed class GameService : IGameService
             "Shield +24 g/cm² | Delay -380s", "Blindagem +24 g/cm² | Atraso -380s",
             "Pumps water and algae around the sleeping quarters when NASA DONKI spots a giant solar flare!",
             "Bombeia água e microalgas ao redor dos dormitórios quando o NASA DONKI detecta uma erupção solar gigante!",
-            "https://images-assets.nasa.gov/image/art002e000191/art002e000191~medium.jpg",
+            "https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e000934/GSFC_20171208_Archive_e000934~medium.jpg",
             3.2f, -3200f, 480f, 24.0f, -380f, 0.012f, 0.12f, 12.0f, 0.35f, 0.28f,
             new() { ["DONKI"] = new("DONKI", "Space Weather Radar", "Radar de Clima Espacial", "NASA's early-warning system for solar flares and proton storms.", "Sistema de alerta antecipado da NASA para tempestades e erupções solares.") })
     ];

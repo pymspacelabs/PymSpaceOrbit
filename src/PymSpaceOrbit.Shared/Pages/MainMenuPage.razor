@@ -11,10 +11,10 @@
 
 <div class="menu-screen-wrapper">
     <div class="menu-screen-canvas">
-        <!-- 16:9 Background Graphic from Shared Project -->
-        <img src="@PymGameOrbitAssets.ScreenMainMenu" alt="Pym Space Orbit Main Menu" class="menu-bg-img" />
+        <!-- 16:9 Cosmic Artwork Background from Shared Project -->
+        <img src="@PymGameOrbitAssets.ScreenMainMenu" alt="" class="menu-bg-img" />
 
-        <!-- Top Metallic Banner: Logo Title & Bilingual Subtitle -->
+        <!-- Top Metallic Banner: Precisely Aligned Inside the Hexagonal Plaque of ui_screen_main_menu.jpg -->
         <div class="menu-top-banner">
             <h1 class="menu-game-title">PYM SPACE ORBIT</h1>
             <p class="menu-game-subtitle">
@@ -22,43 +22,51 @@
             </p>
         </div>
 
-        <!-- 4 Stacked Rectangular Button Placeholders -->
+        <!-- 4 Stacked Sci-Fi Chamfered Button Plaques (Pure CSS Metallic HUD Reproduction) -->
         <div class="menu-buttons-column">
             <!-- 1. JOGAR / PLAY -->
-            <MudButton Variant="Variant.Filled"
-                       Class="menu-glass-btn btn-play"
-                       OnClick="OpenPlayDialog"
-                       StartIcon="@Icons.Material.Filled.PlayArrow"
-                       Size="Size.Large">
-                @(IsPortuguese ? "JOGAR" : "PLAY")
-            </MudButton>
+            <div class="hud-menu-btn-frame frame-cyan">
+                <MudButton Variant="Variant.Text"
+                           Class="menu-glass-btn btn-play"
+                           OnClick="OpenPlayDialog"
+                           StartIcon="@Icons.Material.Filled.PlayArrow"
+                           Size="Size.Large">
+                    @(IsPortuguese ? "JOGAR" : "PLAY")
+                </MudButton>
+            </div>
 
             <!-- 2. MODO CONSTRUÇÃO / BASE BUILDER -->
-            <MudButton Variant="Variant.Filled"
-                       Class="menu-glass-btn btn-builder"
-                       OnClick="StartBaseBuilderMode"
-                       StartIcon="@Icons.Material.Filled.BuildCircle"
-                       Size="Size.Large">
-                @(IsPortuguese ? "MODO CONSTRUÇÃO" : "BASE BUILDER")
-            </MudButton>
+            <div class="hud-menu-btn-frame frame-emerald">
+                <MudButton Variant="Variant.Text"
+                           Class="menu-glass-btn btn-builder"
+                           OnClick="StartBaseBuilderMode"
+                           StartIcon="@Icons.Material.Filled.BuildCircle"
+                           Size="Size.Large">
+                    @(IsPortuguese ? "MODO CONSTRUÇÃO" : "BASE BUILDER")
+                </MudButton>
+            </div>
 
             <!-- 3. SOBRE & CARD SETS / ABOUT & DECKS -->
-            <MudButton Variant="Variant.Filled"
-                       Class="menu-glass-btn btn-info"
-                       OnClick="@(() => Navigation.NavigateTo("/info"))"
-                       StartIcon="@Icons.Material.Filled.CollectionsBookmark"
-                       Size="Size.Large">
-                @(IsPortuguese ? "SOBRE & CARD SETS" : "ABOUT & DECKS")
-            </MudButton>
+            <div class="hud-menu-btn-frame frame-gold">
+                <MudButton Variant="Variant.Text"
+                           Class="menu-glass-btn btn-info"
+                           OnClick="@(() => Navigation.NavigateTo("/info"))"
+                           StartIcon="@Icons.Material.Filled.CollectionsBookmark"
+                           Size="Size.Large">
+                    @(IsPortuguese ? "SOBRE & CARD SETS" : "ABOUT & DECKS")
+                </MudButton>
+            </div>
 
             <!-- 4. OPÇÕES / OPTIONS -->
-            <MudButton Variant="Variant.Filled"
-                       Class="menu-glass-btn btn-options"
-                       OnClick="@(() => Navigation.NavigateTo("/options"))"
-                       StartIcon="@Icons.Material.Filled.Settings"
-                       Size="Size.Large">
-                @(IsPortuguese ? "OPÇÕES" : "OPTIONS")
-            </MudButton>
+            <div class="hud-menu-btn-frame frame-blue">
+                <MudButton Variant="Variant.Text"
+                           Class="menu-glass-btn btn-options"
+                           OnClick="@(() => Navigation.NavigateTo("/options"))"
+                           StartIcon="@Icons.Material.Filled.Settings"
+                           Size="Size.Large">
+                    @(IsPortuguese ? "OPÇÕES" : "OPTIONS")
+                </MudButton>
+            </div>
         </div>
     </div>
 </div>
@@ -168,18 +176,18 @@
         left: 0;
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: fill;
         pointer-events: none;
         z-index: 1;
     }
 
-    /* Top Logo Banner Placeholder */
+    /* Exact Inner Coordinates of the Top Metallic Hexagonal Plaque in ui_screen_main_menu.jpg */
     .menu-top-banner {
         position: absolute;
-        top: 10.5%;
-        left: 17%;
-        width: 66%;
-        height: 15.5%;
+        top: 8.8%;
+        left: 28.2%;
+        width: 43.6%;
+        height: 14.5%;
         z-index: 2;
         display: flex;
         flex-direction: column;
@@ -187,6 +195,8 @@
         justify-content: center;
         text-align: center;
         pointer-events: none;
+        padding: 0 12px;
+        box-sizing: border-box;
     }
 
     .menu-game-title {
@@ -194,48 +204,107 @@
         padding: 0;
         font-family: 'Roboto', 'Segoe UI', sans-serif;
         font-weight: 900;
-        font-size: clamp(20px, 3.2vw, 44px);
-        letter-spacing: 4px;
+        font-size: clamp(16px, 2.5vw, 36px);
+        letter-spacing: 3.5px;
         color: #FFFFFF;
-        text-shadow: 0 0 14px rgba(0, 229, 255, 0.8), 0 2px 4px rgba(0, 0, 0, 0.9);
+        text-shadow: 0 0 14px rgba(0, 229, 255, 0.85), 0 2px 4px rgba(0, 0, 0, 0.95);
         text-transform: uppercase;
-        background: linear-gradient(180deg, #FFFFFF 20%, #00E5FF 90%);
+        background: linear-gradient(180deg, #FFFFFF 20%, #00E5FF 95%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        line-height: 1.1;
     }
 
     .menu-game-subtitle {
-        margin: 4px 0 0 0;
+        margin: 3px 0 0 0;
         padding: 0;
         font-family: 'Roboto', 'Segoe UI', sans-serif;
-        font-weight: 500;
-        font-size: clamp(10px, 1.25vw, 16px);
-        letter-spacing: 1.5px;
+        font-weight: 600;
+        font-size: clamp(8.5px, 0.95vw, 13px);
+        letter-spacing: 1px;
         color: #FFD700;
-        text-shadow: 0 0 10px rgba(255, 215, 0, 0.6), 0 1px 3px rgba(0, 0, 0, 0.9);
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.6), 0 1px 3px rgba(0, 0, 0, 0.95);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
     }
 
-    /* 4 Stacked Rectangular Button Placeholders */
+    /* 4 Stacked Sci-Fi Chamfered Button Plaques Centered Below the Banner */
     .menu-buttons-column {
         position: absolute;
-        top: 48%;
-        left: 31%;
-        width: 38%;
-        height: 44%;
+        top: 38%;
+        left: 33.5%;
+        width: 33%;
+        height: 50%;
         z-index: 3;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        gap: 2%;
+        gap: 3.5%;
+    }
+
+    .hud-menu-btn-frame {
+        flex: 1;
+        position: relative;
+        display: flex;
+        padding: 2px;
+        background: linear-gradient(135deg, rgba(140, 165, 195, 0.75) 0%, rgba(45, 65, 90, 0.85) 50%, rgba(140, 165, 195, 0.75) 100%);
+        clip-path: polygon(14px 0%, calc(100% - 14px) 0%, 100% 14px, 100% calc(100% - 14px), calc(100% - 14px) 100%, 14px 100%, 0% calc(100% - 14px), 0% 14px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.75);
+        transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .hud-menu-btn-frame::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 22%;
+        width: 56%;
+        height: 2.5px;
+        background: #00E5FF;
+        box-shadow: 0 0 10px #00E5FF;
+        z-index: 2;
+        pointer-events: none;
+    }
+
+    .hud-menu-btn-frame::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 22%;
+        width: 56%;
+        height: 2.5px;
+        background: #00E5FF;
+        box-shadow: 0 0 10px #00E5FF;
+        z-index: 2;
+        pointer-events: none;
+    }
+
+    .frame-emerald::before, .frame-emerald::after {
+        background: #00E676;
+        box-shadow: 0 0 10px #00E676;
+    }
+
+    .frame-gold::before, .frame-gold::after {
+        background: #FFD700;
+        box-shadow: 0 0 10px #FFD700;
+    }
+
+    .hud-menu-btn-frame:hover {
+        transform: scale(1.03);
+        filter: brightness(1.18);
     }
 
     .menu-glass-btn {
         flex: 1;
         width: 100%;
-        background: rgba(8, 16, 32, 0.55) !important;
-        backdrop-filter: blur(8px);
-        border: 1.5px solid rgba(0, 229, 255, 0.45) !important;
-        border-radius: 8px !important;
+        height: 100%;
+        background: linear-gradient(180deg, rgba(12, 26, 46, 0.88) 0%, rgba(6, 14, 28, 0.94) 100%) !important;
+        backdrop-filter: blur(10px);
+        clip-path: polygon(13px 0%, calc(100% - 13px) 0%, 100% 13px, 100% calc(100% - 13px), calc(100% - 13px) 100%, 13px 100%, 0% calc(100% - 13px), 0% 13px);
+        border: 1px solid rgba(0, 229, 255, 0.4) !important;
+        border-radius: 0 !important;
         color: #FFFFFF !important;
         font-family: 'Roboto', 'Segoe UI', sans-serif;
         font-weight: 800 !important;
@@ -243,36 +312,27 @@
         font-size: clamp(11px, 1.25vw, 17px) !important;
         text-transform: uppercase !important;
         text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
-        transition: all 0.22s ease !important;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5) !important;
-    }
-
-    .menu-glass-btn:hover {
-        background: rgba(0, 229, 255, 0.28) !important;
-        border-color: #00E5FF !important;
-        transform: scale(1.025);
-        box-shadow: 0 0 22px rgba(0, 229, 255, 0.7), inset 0 0 12px rgba(0, 229, 255, 0.3) !important;
-        color: #E0F7FA !important;
+        transition: all 0.2s ease !important;
     }
 
     .btn-play:hover {
-        border-color: #00E676 !important;
-        box-shadow: 0 0 22px rgba(0, 230, 118, 0.7) !important;
+        background: linear-gradient(180deg, rgba(0, 229, 255, 0.3) 0%, rgba(6, 20, 38, 0.92) 100%) !important;
+        color: #00E5FF !important;
     }
 
     .btn-builder:hover {
-        border-color: #00E5FF !important;
-        box-shadow: 0 0 22px rgba(0, 229, 255, 0.7) !important;
+        background: linear-gradient(180deg, rgba(0, 230, 118, 0.28) 0%, rgba(6, 24, 20, 0.92) 100%) !important;
+        color: #00E676 !important;
     }
 
     .btn-info:hover {
-        border-color: #FFD700 !important;
-        box-shadow: 0 0 22px rgba(255, 215, 0, 0.7) !important;
+        background: linear-gradient(180deg, rgba(255, 215, 0, 0.25) 0%, rgba(28, 22, 6, 0.92) 100%) !important;
+        color: #FFD700 !important;
     }
 
     .btn-options:hover {
-        border-color: #00B0FF !important;
-        box-shadow: 0 0 22px rgba(0, 176, 255, 0.7) !important;
+        background: linear-gradient(180deg, rgba(0, 176, 255, 0.28) 0%, rgba(6, 18, 36, 0.92) 100%) !important;
+        color: #80D8FF !important;
     }
 </style>
 
@@ -300,6 +360,9 @@
 
     private void OpenPlayDialog()
     {
+        _selectedDestination = GameService.CurrentSession.Destination;
+        _crewCount = GameService.CurrentSession.CrewCount;
+        _minCards = GameService.CurrentSession.MinimumCardsToBuildBase;
         _showLaunchModal = true;
     }
 

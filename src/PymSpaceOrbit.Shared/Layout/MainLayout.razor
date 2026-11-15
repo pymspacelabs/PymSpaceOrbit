@@ -2,6 +2,7 @@
 @namespace PymSpaceOrbit.Shared.Layout
 @using MudBlazor
 @using PymSpaceOrbit.Shared.Abstractions.Game
+@using PymSpaceOrbit.Shared.Models.Game
 @inject IGameService GameService
 @inject NavigationManager Navigation
 
@@ -25,7 +26,7 @@
             @(IsPortuguese ? "Início" : "Home")
         </MudButton>
 
-        <MudButton Variant="Variant.Text" Href="/play" StartIcon="@Icons.Material.Filled.SportsEsports" Color="Color.Inherit" Size="Size.Small" Class="mx-1 appbar-nav-btn">
+        <MudButton Variant="Variant.Text" OnClick="OpenPlayCampaignDialog" StartIcon="@Icons.Material.Filled.SportsEsports" Color="Color.Inherit" Size="Size.Small" Class="mx-1 appbar-nav-btn">
             @(IsPortuguese ? "Jogar" : "Play")
         </MudButton>
 
@@ -59,6 +60,78 @@
         @Body
     </MudMainContent>
 </MudLayout>
+
+<!-- Modal Compartilhada de Início de Missão / New Campaign Dialog (Top Bar PLAY) -->
+<MudDialog @bind-Visible="_showTopPlayModal" Options="_topPlayDialogOptions">
+    <TitleContent>
+        <div class="d-flex align-center">
+            <MudIcon Icon="@Icons.Material.Filled.RocketLaunch" Color="Color.Primary" Class="mr-2" />
+            <MudText Typo="Typo.h6" Style="color: #00E5FF; font-weight: bold;">
+                @(IsPortuguese ? "CONFIGURAR NOVA EXPEDIÇÃO" : "NEW MISSION CAMPAIGN SETUP")
+            </MudText>
+        </div>
+    </TitleContent>
+    <DialogContent>
+        <MudText Typo="Typo.subtitle2" Class="mb-3" Style="color: #8B949E;">
+            @(IsPortuguese ? "Selecione o destino da sua nave PymGameOrbit, tamanho da tripulação e regras de construção:"
+                           : "Select your PymGameOrbit mission destination, astronaut crew size and base building rules:")
+        </MudText>
+
+        <MudText Typo="Typo.body2" Class="font-weight-bold mb-1" Style="color: #FFD700;">
+            @(IsPortuguese ? "Destino da Missão:" : "Mission Destination:")
+        </MudText>
+        <MudRadioGroup @bind-Value="_selectedDestination" T="OutpostDestination" Class="d-flex flex-wrap justify-space-between mb-4">
+            <MudRadio Value="OutpostDestination.ISS" Color="Color.Primary" Dense="true">
+                <span style="font-weight: 600;">🛰️ ISS</span>
+                <span style="font-size: 11px; color: #8B949E; display: block;">(LEO 414 km / 8 @(IsPortuguese ? "turnos" : "turns"))</span>
+            </MudRadio>
+            <MudRadio Value="OutpostDestination.Moon" Color="Color.Secondary" Dense="true">
+                <span style="font-weight: 600;">🌕 @(IsPortuguese ? "Lua (Moon)" : "Moon")</span>
+                <span style="font-size: 11px; color: #8B949E; display: block;">(Artemis Gateway / 10 @(IsPortuguese ? "turnos" : "turns"))</span>
+            </MudRadio>
+            <MudRadio Value="OutpostDestination.Mars" Color="Color.Error" Dense="true">
+                <span style="font-weight: 600;">🔴 @(IsPortuguese ? "Marte (Mars)" : "Mars")</span>
+                <span style="font-size: 11px; color: #8B949E; display: block;">(ISRU Surface / 12 @(IsPortuguese ? "turnos" : "turns"))</span>
+            </MudRadio>
+        </MudRadioGroup>
+
+        <div class="mb-4">
+            <div class="d-flex justify-space-between align-center mb-1">
+                <MudText Typo="Typo.body2" Style="color: #00E676; font-weight: 600;">
+                    @(IsPortuguese ? "Tamanho da Tripulação:" : "Astronaut Crew Count:")
+                </MudText>
+                <MudChip T="string" Size="Size.Small" Color="Color.Tertiary" Variant="Variant.Outlined">
+                    @_crewCount @(IsPortuguese ? "astronautas" : "astronauts")
+                </MudChip>
+            </div>
+            <MudSlider T="int" Min="1" Max="16" @bind-Value="_crewCount" Color="Color.Tertiary" ValueLabel="true" />
+        </div>
+
+        <div class="mb-2">
+            <div class="d-flex justify-space-between align-center mb-1">
+                <MudText Typo="Typo.body2" Style="color: #00E5FF; font-weight: 600;">
+                    @(IsPortuguese ? "Mínimo de Cartas para a Base:" : "Min. Base Build Cards:")
+                </MudText>
+                <MudChip T="string" Size="Size.Small" Color="Color.Primary" Variant="Variant.Outlined">
+                    @_minCards @(IsPortuguese ? "cartas" : "cards")
+                </MudChip>
+            </div>
+            <MudSlider T="int" Min="3" Max="8" @bind-Value="_minCards" Color="Color.Primary" ValueLabel="true" />
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="@(() => _showTopPlayModal = false)" Color="Color.Default" Variant="Variant.Text">
+            @(IsPortuguese ? "Cancelar" : "Cancel")
+        </MudButton>
+        <MudButton OnClick="LaunchCampaignFromTopBar"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.Launch"
+                   Style="font-weight: bold; background: linear-gradient(90deg, #00E5FF, #0097A7); color: #000;">
+            @(IsPortuguese ? "INICIAR MISSÃO" : "LAUNCH MISSION")
+        </MudButton>
+    </DialogActions>
+</MudDialog>
 
 <div id="blazor-error-ui" data-nosnippet>
     An unhandled error has occurred.
@@ -102,6 +175,17 @@
 
 @code {
     private bool _isDarkMode = true;
+    private bool _showTopPlayModal = false;
+    private OutpostDestination _selectedDestination = OutpostDestination.Moon;
+    private int _crewCount = 4;
+    private int _minCards = 5;
+
+    private readonly DialogOptions _topPlayDialogOptions = new()
+    {
+        CloseOnEscapeKey = true,
+        BackdropClick = true,
+        MaxWidth = MaxWidth.Small
+    };
 
     private bool IsPortuguese => GameService.CurrentSession.Locale.StartsWith("pt", StringComparison.OrdinalIgnoreCase);
 
@@ -145,6 +229,25 @@
             }
         }
     };
+
+    private void OpenPlayCampaignDialog()
+    {
+        _selectedDestination = GameService.CurrentSession.Destination;
+        _crewCount = GameService.CurrentSession.CrewCount;
+        _minCards = GameService.CurrentSession.MinimumCardsToBuildBase;
+        _showTopPlayModal = true;
+    }
+
+    private async Task LaunchCampaignFromTopBar()
+    {
+        _showTopPlayModal = false;
+        await GameService.StartNewCampaignAsync(
+            _selectedDestination,
+            _crewCount,
+            _minCards,
+            GameService.CurrentSession.Locale);
+        Navigation.NavigateTo("/play");
+    }
 
     private void ToggleLocale()
     {
