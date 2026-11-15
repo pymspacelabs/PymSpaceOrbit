@@ -12,8 +12,10 @@ public sealed record GameCardModel(
     string CardId,
     CardSlotCategory Category,
     OutpostDestination? TargetAffinity,
-    string NameEn,
-    string NamePtBr,
+    string DisplayNameEn,
+    string DisplayNamePtBr,
+    string OriginalNameEn,
+    string OriginalNamePtBr,
     string GameUiLabelEn,
     string GameUiLabelPtBr,
     string KidSummaryEn,
@@ -31,4 +33,20 @@ public sealed record GameCardModel(
     float BiomeShieldingBuffBonus,
     Dictionary<string, TechnicalTermNote> TechnicalGlossary,
     string? NasaImageApiUrl = null
-);
+)
+{
+    public string DisplayName => DisplayNameEn;
+    public string OriginalName => OriginalNameEn;
+    public string NameEn => DisplayNameEn;
+    public string NamePtBr => DisplayNamePtBr;
+
+    public string GetDisplayName(bool isPortuguese) =>
+        isPortuguese
+            ? (string.IsNullOrWhiteSpace(DisplayNamePtBr) ? DisplayNameEn : DisplayNamePtBr)
+            : DisplayNameEn;
+
+    public string GetOriginalName(bool isPortuguese) =>
+        isPortuguese
+            ? (string.IsNullOrWhiteSpace(OriginalNamePtBr) ? OriginalNameEn : OriginalNamePtBr)
+            : OriginalNameEn;
+}

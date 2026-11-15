@@ -193,12 +193,13 @@
                         @for (int i = 0; i < 5; i++)
                         {
                             var handCard = i < Session.PlayerHand.Count ? Session.PlayerHand[i] : null;
-                            <div class="hud-hand-slot-bay" @onclick="@(async () => { if (handCard is not null) await EquipCard(handCard); })">
+                            <div class="hud-hand-slot-bay">
                                 @if (handCard is not null)
                                 {
                                     <PymGameOrbitCard Card="@handCard"
                                                      Locale="@Session.Locale"
-                                                     CustomStyle="height: 100%; width: auto; max-width: 100%;" />
+                                                     CustomStyle="height: 100%; width: auto; max-width: 100%;"
+                                                     OnCardClicked="EquipCard" />
                                 }
                                 else
                                 {
@@ -341,12 +342,13 @@
                             @for (int i = 0; i < 5; i++)
                             {
                                 var cardInHand = i < Session.PlayerHand.Count ? Session.PlayerHand[i] : null;
-                                <div class="hud-hand-slot-bay" @onclick="@(async () => { if (cardInHand is not null) await PlayCard(cardInHand); })">
+                                <div class="hud-hand-slot-bay">
                                     @if (cardInHand is not null)
                                     {
                                         <PymGameOrbitCard Card="@cardInHand"
                                                          Locale="@Session.Locale"
-                                                         CustomStyle="height: 100%; width: auto; max-width: 100%;" />
+                                                         CustomStyle="height: 100%; width: auto; max-width: 100%;"
+                                                         OnCardClicked="PlayCard" />
                                     }
                                     else
                                     {

@@ -115,7 +115,7 @@ public sealed class GameService : IGameService
         ApplyCardToResources(CurrentSession.Resources, card);
         CurrentSession.LatestMlPrediction = _mlModelService.EvaluateState(CurrentSession.Resources, CurrentSession.Destination);
 
-        string cardName = isPt ? card.NamePtBr : card.NameEn;
+        string cardName = card.GetDisplayName(isPt);
         statusMessage = isPt
             ? $"Carta equipada: {cardName} ({card.GameUiLabelPtBr}). Estadia prevista pelo ML.NET: {CurrentSession.LatestMlPrediction.MaxExplorationStayDays:F0} dias."
             : $"Equipped card: {cardName} ({card.GameUiLabelEn}). ML.NET predicted stay: {CurrentSession.LatestMlPrediction.MaxExplorationStayDays:F0} days.";
@@ -327,6 +327,7 @@ public sealed class GameService : IGameService
     private static List<GameCardModel> BuildUnifiedShipAndBaseDeck() =>
     [
         new("BLD-01", CardSlotCategory.ShipAndBaseHull, null,
+            "Shielded Hull", "Casco Blindado",
             "Multilayer BNNT Radiation Shield Hull", "Casco Multicamadas Anti-Radiação BNNT",
             "Shield +28 g/cm² | -2,000 W", "Blindagem +28 g/cm² | -2.000 W",
             "Like a futuristic knight's armor made of boron nanotubes that blocks invisible cosmic rays!",
@@ -336,6 +337,7 @@ public sealed class GameService : IGameService
             new() { ["BNNT"] = new("BNNT", "Rad-Armor Nanotubes", "Armadura de Nanotubos", "Tiny tubes of boron and nitrogen that stop space radiation.", "Pequenos tubos de boro e nitrogênio que bloqueiam a radiação espacial.") }),
 
         new("BLD-02", CardSlotCategory.PowerAndThermal, null,
+            "Solar Power Wings", "Asas Solares",
             "Dual Kilopower KRUSTY Fission + iROSA Solar Wings", "Reator Nuclear Kilopower KRUSTY + Asas Solares iROSA",
             "Power +145,000 W", "Energia +145.000 W",
             "A mini nuclear power plant plus roll-out solar wings so your base never loses electricity in the dark!",
@@ -345,6 +347,7 @@ public sealed class GameService : IGameService
             new() { ["KRUSTY"] = new("KRUSTY", "Mini Space Reactor", "Mini Reator Espacial", "Generates electricity day and night even during dust storms.", "Gera eletricidade dia e noite mesmo em tempestades de poeira.") }),
 
         new("BLD-03", CardSlotCategory.EnvironmentAndSuits, null,
+            "Spacesuit Airlock", "Eclusa de Trajes",
             "xEMU Z-2 SuitPort + Electrodynamic Dust Shield (EDS)", "Baia de Trajes xEMU Z-2 + Escudo Anti-Poeira (EDS)",
             "Suit +32% | -4,000 W", "Trajes +32% | -4.000 W",
             "Spacesuits parked on the outside wall with an electric forcefield that shakes off sharp space dust!",
@@ -354,6 +357,7 @@ public sealed class GameService : IGameService
             new() { ["EDS"] = new("EDS", "Dust Zapper Shield", "Escudo Anti-Poeira", "Uses static electricity waves to push dust off spacesuits.", "Usa ondas elétricas para afastar a poeira dos trajes.") }),
 
         new("BLD-04", CardSlotCategory.ShipAndBaseHull, null,
+            "Space Med-Bay", "Hospital Espacial",
             "OSDR GeneLab Med-Bay + ARED Space Gym + Pantry", "Ala Médica OSDR GeneLab + Academia ARED + Despensa",
             "Health +30% | O2 +240 L/d", "Saúde +30% | O2 +240 L/d",
             "A space hospital and zero-gravity gym that keeps astronauts' bones and muscles strong!",
@@ -363,6 +367,7 @@ public sealed class GameService : IGameService
             new() { ["ARED"] = new("ARED", "Zero-G Gym", "Academia Zero-G", "Vacuum cylinder workout machine that prevents bone loss in space.", "Aparelho de exercícios a vácuo que evita a perda óssea no espaço.") }),
 
         new("BLD-05", CardSlotCategory.OutpostArchitecture, null,
+            "Laser & 3D Lab", "Laser e Lab 3D",
             "DSOC Deep-Space Laser Comms + 3D CNC Printer Fab", "Laser Óptico DSOC + Impressora 3D de Metais CNC",
             "Delay -420s | Suits +20%", "Atraso -420s | Trajes +20%",
             "Sends messages to Earth on a beam of laser light and 3D-prints replacement tools on the spot!",
@@ -372,6 +377,7 @@ public sealed class GameService : IGameService
             new() { ["DSOC"] = new("DSOC", "Space Laser Internet", "Internet a Laser Espacial", "Sends data 10 to 100 times faster than old radio waves.", "Transmite dados de 10 a 100 vezes mais rápido que ondas de rádio.") }),
 
         new("ECL-01", CardSlotCategory.MarshallEclssLoop, null,
+            "Water Recycler", "Reciclador d'Água",
             "Marshall Water Recovery System (WPA + UPA) + BPA Brine", "Reciclador de Água Marshall (WPA + UPA) + Destilador BPA",
             "Water Loop +4.6% | O2 +520 L/d", "Reciclagem H2O +4,6% | O2 +520 L/d",
             "Turns 98.5% of sweat, breath moisture, and wastewater back into crystal-clear drinking water!",
@@ -381,6 +387,7 @@ public sealed class GameService : IGameService
             new() { ["WPA"] = new("WPA", "Water Recycler", "Reciclador de Água", "Cleans all cabin water so astronauts rarely need resupply from Earth.", "Purifica toda a água da cabine para não depender de cargas da Terra.") }),
 
         new("ECL-03", CardSlotCategory.MarshallEclssLoop, null,
+            "Oxygen Generator", "Gerador de O2",
             "OGA Oxygen Electrolyzer + 4-Bed Zeolite CDRA Scrubber", "Gerador de Oxigênio OGA + Removedor de CO2 Zeólita CDRA",
             "O2 +6,440 L/d | -5,500 W", "O2 +6.440 L/d | -5.500 W",
             "Splits water molecules with electricity to make fresh breathing oxygen and traps exhaled CO2!",
@@ -390,6 +397,7 @@ public sealed class GameService : IGameService
             new() { ["OGA"] = new("OGA", "Oxygen Maker", "Fábrica de Oxigênio", "Uses electricity to split water (H2O) into breathable O2 and hydrogen.", "Usa eletricidade para separar a água (H2O) em oxigênio respirável e hidrogênio.") }),
 
         new("ECL-04", CardSlotCategory.MarshallEclssLoop, null,
+            "CO2 Fuel Maker", "Reator de Metano",
             "Sabatier + Bosch Methane Propellant Synthesizer", "Reator Sabatier + Bosch Sintetizador de Combustível Metano",
             "CH4 Fuel +28% | O2 +1,820 L/d", "Combustível CH4 +28% | O2 +1.820 L/d",
             "Combines the crew's exhaled carbon dioxide with hydrogen to brew rocket fuel for the trip home!",
@@ -399,6 +407,7 @@ public sealed class GameService : IGameService
             new() { ["SABATIER"] = new("SABATIER", "Breath-to-Fuel Reactor", "Reator Ar-em-Combustível", "Turns waste CO2 and H2 gas into liquid methane rocket propellant and water.", "Transforma gás CO2 e H2 em combustível metano para foguetes e água.") }),
 
         new("ECL-05", CardSlotCategory.MarshallEclssLoop, null,
+            "Algae Oxygen Tank", "Tanque de Algas",
             "Hybrid Chlorella & Spirulina Photobioreactor (3,400 L)", "Fotobiorreator de Microalgas Chlorella e Spirulina (3.400 L)",
             "O2 +3,950 L/d | Shield +8.5 g/cm²", "O2 +3.950 L/d | Blindagem +8,5 g/cm²",
             "Glowing green algae tanks that drink CO2, bubble out fresh oxygen, and make superfood snacks!",
@@ -408,6 +417,7 @@ public sealed class GameService : IGameService
             new() { ["PBR"] = new("PBR", "Living Algae Garden", "Jardim Vivo de Algas", "Algae grow 10x faster than land plants while making oxygen and food.", "As microalgas crescem 10x mais rápido que plantas terrestres gerando oxigênio e comida.") }),
 
         new("ARC-SHD-01", CardSlotCategory.OutpostArchitecture, OutpostDestination.Moon,
+            "Lunar Stone Dome", "Domo de Rocha 3D",
             "3D-Sintered Lunar Regolith Vault (+45 g/cm² Shielding)", "Abóbada de Regolito Lunar Impressa em 3D (+45 g/cm²)",
             "Shield +45 g/cm² | -6,200 W", "Blindagem +45 g/cm² | -6.200 W",
             "Robots melt Moon dirt with microwaves to print a thick stone igloo over your base!",
@@ -417,6 +427,7 @@ public sealed class GameService : IGameService
             new() { ["REGOLITH"] = new("REGOLITH", "Baked Moon Dirt Dome", "Domo de Solo Lunar", "1.5 meters of sintered lunar soil stops 94% of solar proton storms.", "1,5 metro de solo lunar fundido bloqueia 94% das tempestades de prótons solares.") }),
 
         new("ARC-SHD-02", CardSlotCategory.OutpostArchitecture, OutpostDestination.Mars,
+            "Lava Cave Base", "Base na Caverna",
             "Arsia Mons Lava Tube Underground Base (+68 g/cm²)", "Base Subterrânea em Tubo de Lava de Arsia Mons (+68 g/cm²)",
             "Shield +68 g/cm² | Delay +45s", "Blindagem +68 g/cm² | Atraso +45s",
             "Builds the Mars base inside an ancient volcanic cave so thick rock blocks cosmic radiation!",
@@ -426,6 +437,7 @@ public sealed class GameService : IGameService
             new() { ["LAVATUBE"] = new("LAVATUBE", "Volcanic Cave Shelter", "Caverna Vulcânica", "Natural underground tunnels on Mars that shield against radiation and micrometeoroids.", "Túneis subterrâneos naturais em Marte que protegem contra radiação e meteoritos.") }),
 
         new("ARC-LSS-02", CardSlotCategory.OutpostArchitecture, OutpostDestination.Mars,
+            "Mars Oxygen Dome", "Estufa de Marte",
             "Scaled 200x MOXIE Mars Atmospheric O2 Factory", "Usina de Oxigênio Atmosférico MOXIE 200x em Marte",
             "O2 +7,800 L/d | -14,500 W", "O2 +7.800 L/d | -14.500 W",
             "Breathes in Mars' thin carbon dioxide air and bakes it at 800°C to pour out pure oxygen!",
@@ -435,6 +447,7 @@ public sealed class GameService : IGameService
             new() { ["MOXIE"] = new("MOXIE", "Mars Air-to-Oxygen Box", "Conversor de Ar de Marte", "Tested on NASA's Perseverance rover to make oxygen directly from Martian CO2.", "Testado no rover Perseverance da NASA para criar oxigênio direto do ar de Marte.") }),
 
         new("SWX-DONKI-01", CardSlotCategory.DonkiSpaceWeatherCounter, null,
+            "Giant Solar Flare", "Explosão Solar",
             "Algal Water-Wall Storm Shelter & Edge-AI Autopilot", "Abrigo Hidráulico de Microalgas e Piloto Edge-AI DONKI",
             "Shield +24 g/cm² | Delay -380s", "Blindagem +24 g/cm² | Atraso -380s",
             "Pumps water and algae around the sleeping quarters when NASA DONKI spots a giant solar flare!",

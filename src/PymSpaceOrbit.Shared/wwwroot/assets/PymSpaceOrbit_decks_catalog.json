@@ -149,7 +149,11 @@
           "MeaningEn": "Hydrogenated Boron Nitride Nanotubes providing high areal density (g/cm²) radiation shielding against GCR and SEP protons.",
           "MeaningPtBr": "Nanotubos de Nitreto de Boro Hidrogenados que fornecem blindagem leve (g/cm²) contra raios cósmicos (GCR) e prótons solares (SEP)."
         }
-      }
+      },
+      "DisplayName": "Shielded Hull",
+      "DisplayNamePtBr": "Casco Blindado",
+      "OriginalName": "Multilayer Carbon-Silicate & Hydrogenated Boron-Nitride (BNNT) Hull",
+      "OriginalNamePtBr": "Casco Multicamadas de Carbono-Silicato e Nitreto de Boro Hidrogenado (BNNT)"
     },
     {
       "CardId": "BLD-02",
@@ -193,7 +197,11 @@
           "MeaningEn": "Kilopower Reactor Using Stirling Technology: nuclear fission core generating continuous electrical Watts across 14-day lunar nights and Martian dust storms.",
           "MeaningPtBr": "Reator Kilopower com Tecnologia Stirling: núcleo de fissão nuclear que gera Watts elétricos contínuos na noite lunar e em tempestades em Marte."
         }
-      }
+      },
+      "DisplayName": "Solar Power Wings",
+      "DisplayNamePtBr": "Asas Solares",
+      "OriginalName": "Dual Kilopower Krusty Fission Cores + iROSA Solar Wings (220 kWe)",
+      "OriginalNamePtBr": "Núcleos Duplos de Fissão Kilopower KRUSTY + Asas Solares iROSA (220 kWe)"
     },
     {
       "CardId": "BLD-03",
@@ -237,7 +245,11 @@
           "MeaningEn": "Electrodynamic Dust Shield: active travelling-wave electric curtain that repels abrasive silicate regolith from suits, visors, and seals.",
           "MeaningPtBr": "Escudo Eletrodinâmico de Poeira: cortina elétrica ativa que repele a poeira abrasiva de regolito dos trajes, visores e vedações."
         }
-      }
+      },
+      "DisplayName": "Spacesuit Airlock",
+      "DisplayNamePtBr": "Eclusa de Trajes",
+      "OriginalName": "xEMU Z-2 Orthofabric SuitPort Bay + Electrodynamic Dust Shield (EDS)",
+      "OriginalNamePtBr": "Baia SuitPort de Orto-Tecido xEMU Z-2 + Escudo Eletrodinâmico de Poeira (EDS)"
     },
     {
       "CardId": "BLD-04",
@@ -281,7 +293,11 @@
           "MeaningEn": "NASA Open Science Data Repository (GeneLab): space-biology database tracking bone demineralization, radiation DNA repair, and Chlorella growth.",
           "MeaningPtBr": "Repositório de Ciência Aberta da NASA (GeneLab): banco biológico sobre perda óssea, reparo de DNA sob radiação e cultivo de Chlorella."
         }
-      }
+      },
+      "DisplayName": "Space Med-Bay",
+      "DisplayNamePtBr": "Hospital Espacial",
+      "OriginalName": "OSDR GeneLab Surgical Med-Bay + ARED + Cryo-Lyophilized Pantry",
+      "OriginalNamePtBr": "Ala Médica Cirúrgica OSDR GeneLab + ARED + Despensa Crio-Liofilizada"
     },
     {
       "CardId": "BLD-05",
@@ -325,7 +341,11 @@
           "MeaningEn": "Deep Space Optical Communications: high-bandwidth laser transceiver mitigating Earth-Moon and Earth-Mars communication latency.",
           "MeaningPtBr": "Comunicações Ópticas de Espaço Profundo: transceptor a laser de alta banda que mitiga o atraso de comunicação Terra-Lua e Terra-Marte."
         }
-      }
+      },
+      "DisplayName": "Laser & 3D Lab",
+      "DisplayNamePtBr": "Laser e Lab 3D",
+      "OriginalName": "DSOC Deep-Space Optical Laser + 3D CNC Titanium/Polymer Sintering Fab",
+      "OriginalNamePtBr": "Laser Óptico de Espaço Profundo DSOC + Sinterização CNC 3D de Titânio/Polímero"
     },
     {
       "CardId": "BLD-06",
@@ -369,7 +389,11 @@
           "MeaningEn": "Hydrogenated Boron Nitride Nanotubes providing high areal density (g/cm²) radiation shielding against GCR and SEP protons.",
           "MeaningPtBr": "Nanotubos de Nitreto de Boro Hidrogenados que fornecem blindagem leve (g/cm²) contra raios cósmicos (GCR) e prótons solares (SEP)."
         }
-      }
+      },
+      "DisplayName": "Cryo Fuel Tank",
+      "DisplayNamePtBr": "Tanque de Foguete",
+      "OriginalName": "Zero-Boil-Off Cryo-Methalox (CH4/LOX) Broad-Area Cooled Depot",
+      "OriginalNamePtBr": "Depósito Criogênico Methalox (CH4/LOX) Zero-Boil-Off de Resfriamento Amplo"
     },
     {
       "CardId": "BLD-07",
@@ -413,7 +437,11 @@
           "MeaningEn": "Hydrogenated Boron Nitride Nanotubes providing high areal density (g/cm²) radiation shielding against GCR and SEP protons.",
           "MeaningPtBr": "Nanotubos de Nitreto de Boro Hidrogenados que fornecem blindagem leve (g/cm²) contra raios cósmicos (GCR) e prótons solares (SEP)."
         }
-      }
+      },
+      "DisplayName": "Origami Radiators",
+      "DisplayNamePtBr": "Radiador Origami",
+      "OriginalName": "Two-Phase Pumped Ammonia Loop + Deployable Origami Radiators",
+      "OriginalNamePtBr": "Circuito Bifásico Bombeado de Amônia + Radiadores Origami Desdobráveis"
     },
     {
       "CardId": "BLD-08",
@@ -457,7 +485,11 @@
           "MeaningEn": "Hydrogenated Boron Nitride Nanotubes providing high areal density (g/cm²) radiation shielding against GCR and SEP protons.",
           "MeaningPtBr": "Nanotubos de Nitreto de Boro Hidrogenados que fornecem blindagem leve (g/cm²) contra raios cósmicos (GCR) e prótons solares (SEP)."
         }
-      }
+      },
+      "DisplayName": "Space Robot Crew",
+      "DisplayNamePtBr": "Robôs Espaciais",
+      "OriginalName": "Canadarm3 Dexterous Manipulator + Valkyrie R5 EVA Humanoid Twins",
+      "OriginalNamePtBr": "Manipulador Destro Canadarm3 + Gêmeos Humanoides EVA Valkyrie R5"
     },
     {
       "CardId": "BLD-09",
@@ -501,7 +533,11 @@
           "MeaningEn": "Hydrogenated Boron Nitride Nanotubes providing high areal density (g/cm²) radiation shielding against GCR and SEP protons.",
           "MeaningPtBr": "Nanotubos de Nitreto de Boro Hidrogenados que fornecem blindagem leve (g/cm²) contra raios cósmicos (GCR) e prótons solares (SEP)."
         }
-      }
+      },
+      "DisplayName": "Gravity Sleep Pod",
+      "DisplayNamePtBr": "Cama de Gravidade",
+      "OriginalName": "Short-Radius Counter-Rotating Sleep Centrifuge (0.38g to 0.50g)",
+      "OriginalNamePtBr": "Centrífuga de Sono Contra-Rotativa de Curto Raio (0,38g a 0,50g)"
     },
     {
       "CardId": "BLD-10",
@@ -545,7 +581,11 @@
           "MeaningEn": "Hydrogenated Boron Nitride Nanotubes providing high areal density (g/cm²) radiation shielding against GCR and SEP protons.",
           "MeaningPtBr": "Nanotubos de Nitreto de Boro Hidrogenados que fornecem blindagem leve (g/cm²) contra raios cósmicos (GCR) e prótons solares (SEP)."
         }
-      }
+      },
+      "DisplayName": "Space Batteries",
+      "DisplayNamePtBr": "Banco de Baterias",
+      "OriginalName": "Solid-State Li-Sulfur Battery Bank + Regenerative PEM Fuel Cells",
+      "OriginalNamePtBr": "Banco de Baterias de Estado Sólido Lítio-Enxofre + Células a Combustível PEM Regenerativas"
     }
   ],
   "EclssPropertiesDeck": [
@@ -583,7 +623,11 @@
           "MeaningEn": "Environmental Control and Life Support System: Marshall Space Flight Center hardware closing the cabin water (WPA/BPA) and air (OGA/CDRA/Sabatier) loops.",
           "MeaningPtBr": "Sistema de Controle Ambiental e Suporte à Vida: hardware da NASA Marshall que fecha os ciclos de água (WPA/BPA) e ar (OGA/CDRA/Sabatier)."
         }
-      }
+      },
+      "DisplayName": "Water Recycler",
+      "DisplayNamePtBr": "Reciclador d'Água",
+      "OriginalName": "Marshall Water Recovery System (WPA Catalytic Reactor + UPA VCD)",
+      "OriginalNamePtBr": "Sistema de Recuperação de Água Marshall (Reator Catalítico WPA + Destilação VCD UPA)"
     },
     {
       "CardId": "ECL-02",
@@ -619,7 +663,11 @@
           "MeaningEn": "Environmental Control and Life Support System: Marshall Space Flight Center hardware closing the cabin water (WPA/BPA) and air (OGA/CDRA/Sabatier) loops.",
           "MeaningPtBr": "Sistema de Controle Ambiental e Suporte à Vida: hardware da NASA Marshall que fecha os ciclos de água (WPA/BPA) e ar (OGA/CDRA/Sabatier)."
         }
-      }
+      },
+      "DisplayName": "Saltwater Filter",
+      "DisplayNamePtBr": "Filtro de Salmoura",
+      "OriginalName": "Brine Processor Assembly (BPA) Ionomer-Membrane Dewatering",
+      "OriginalNamePtBr": "Conjunto Processador de Salmoura (BPA) por Desidratação em Membrana Ionomérica"
     },
     {
       "CardId": "ECL-03",
@@ -655,7 +703,11 @@
           "MeaningEn": "Environmental Control and Life Support System: Marshall Space Flight Center hardware closing the cabin water (WPA/BPA) and air (OGA/CDRA/Sabatier) loops.",
           "MeaningPtBr": "Sistema de Controle Ambiental e Suporte à Vida: hardware da NASA Marshall que fecha os ciclos de água (WPA/BPA) e ar (OGA/CDRA/Sabatier)."
         }
-      }
+      },
+      "DisplayName": "Oxygen Generator",
+      "DisplayNamePtBr": "Gerador de O2",
+      "OriginalName": "Oxygen Generation Assembly (OGA PEM) + 4-Bed Zeolite 5A CDRA",
+      "OriginalNamePtBr": "Conjunto Gerador de Oxigênio (OGA PEM) + Removedor CDRA de 4 Leitos de Zeólita 5A"
     },
     {
       "CardId": "ECL-04",
@@ -691,7 +743,11 @@
           "MeaningEn": "Environmental Control and Life Support System: Marshall Space Flight Center hardware closing the cabin water (WPA/BPA) and air (OGA/CDRA/Sabatier) loops.",
           "MeaningPtBr": "Sistema de Controle Ambiental e Suporte à Vida: hardware da NASA Marshall que fecha os ciclos de água (WPA/BPA) e ar (OGA/CDRA/Sabatier)."
         }
-      }
+      },
+      "DisplayName": "CO2 Fuel Maker",
+      "DisplayNamePtBr": "Reator de Metano",
+      "OriginalName": "Sabatier Carbon Dioxide Reduction Assembly (Ru-Al2O3 Catalyst)",
+      "OriginalNamePtBr": "Conjunto de Redução de Dióxido de Carbono Sabatier (Catalisador Ru-Al2O3)"
     },
     {
       "CardId": "ECL-05",
@@ -727,7 +783,11 @@
           "MeaningEn": "NASA Open Science Data Repository (GeneLab): space-biology database tracking bone demineralization, radiation DNA repair, and Chlorella growth.",
           "MeaningPtBr": "Repositório de Ciência Aberta da NASA (GeneLab): banco biológico sobre perda óssea, reparo de DNA sob radiação e cultivo de Chlorella."
         }
-      }
+      },
+      "DisplayName": "Algae Oxygen Tank",
+      "DisplayNamePtBr": "Tanque de Algas",
+      "OriginalName": "Hybrid Chlorella Vulgaris & Spirulina Photobioreactor (3,400 L)",
+      "OriginalNamePtBr": "Fotobiorreator Híbrido de Chlorella Vulgaris e Spirulina (3.400 L)"
     },
     {
       "CardId": "ECL-06",
@@ -763,7 +823,11 @@
           "MeaningEn": "Environmental Control and Life Support System: Marshall Space Flight Center hardware closing the cabin water (WPA/BPA) and air (OGA/CDRA/Sabatier) loops.",
           "MeaningPtBr": "Sistema de Controle Ambiental e Suporte à Vida: hardware da NASA Marshall que fecha os ciclos de água (WPA/BPA) e ar (OGA/CDRA/Sabatier)."
         }
-      }
+      },
+      "DisplayName": "UV Air Purifier",
+      "DisplayNamePtBr": "Purificador UV",
+      "OriginalName": "Trace Contaminant Control (TCCS) + Silver-Ion Biocide & UV Sterilizer",
+      "OriginalNamePtBr": "Controle de Contaminantes Traço (TCCS) + Biocida de Íons de Prata e Esterilizador UV"
     },
     {
       "CardId": "ECL-07",
@@ -799,7 +863,11 @@
           "MeaningEn": "Environmental Control and Life Support System: Marshall Space Flight Center hardware closing the cabin water (WPA/BPA) and air (OGA/CDRA/Sabatier) loops.",
           "MeaningPtBr": "Sistema de Controle Ambiental e Suporte à Vida: hardware da NASA Marshall que fecha os ciclos de água (WPA/BPA) e ar (OGA/CDRA/Sabatier)."
         }
-      }
+      },
+      "DisplayName": "Hydrogen Recycler",
+      "DisplayNamePtBr": "Reciclador de H2",
+      "OriginalName": "Methane Pyrolysis & Bosch Series Reactor (Closed Hydrogen Loop)",
+      "OriginalNamePtBr": "Pirólise de Metano e Reator em Série Bosch (Ciclo Fechado de Hidrogênio)"
     },
     {
       "CardId": "ECL-08",
@@ -835,7 +903,11 @@
           "MeaningEn": "Environmental Control and Life Support System: Marshall Space Flight Center hardware closing the cabin water (WPA/BPA) and air (OGA/CDRA/Sabatier) loops.",
           "MeaningPtBr": "Sistema de Controle Ambiental e Suporte à Vida: hardware da NASA Marshall que fecha os ciclos de água (WPA/BPA) e ar (OGA/CDRA/Sabatier)."
         }
-      }
+      },
+      "DisplayName": "Space Veggie Pod",
+      "DisplayNamePtBr": "Horta Espacial",
+      "OriginalName": "Advanced Plant Habitat (APH) + Veggie Aeroponic Crop Module",
+      "OriginalNamePtBr": "Habitat Avançado de Plantas (APH) + Módulo Agrícola Aeropônico Veggie"
     },
     {
       "CardId": "ECL-09",
@@ -871,7 +943,11 @@
           "MeaningEn": "Environmental Control and Life Support System: Marshall Space Flight Center hardware closing the cabin water (WPA/BPA) and air (OGA/CDRA/Sabatier) loops.",
           "MeaningPtBr": "Sistema de Controle Ambiental e Suporte à Vida: hardware da NASA Marshall que fecha os ciclos de água (WPA/BPA) e ar (OGA/CDRA/Sabatier)."
         }
-      }
+      },
+      "DisplayName": "Cabin Air Tank",
+      "DisplayNamePtBr": "Pressão da Cabine",
+      "OriginalName": "Cryogenic Nitrogen Recovery & Cabin Pressure Makeup Assembly",
+      "OriginalNamePtBr": "Recuperação Criogênica de Nitrogênio e Reposição de Pressão da Cabine"
     },
     {
       "CardId": "ECL-10",
@@ -907,7 +983,11 @@
           "MeaningEn": "Environmental Control and Life Support System: Marshall Space Flight Center hardware closing the cabin water (WPA/BPA) and air (OGA/CDRA/Sabatier) loops.",
           "MeaningPtBr": "Sistema de Controle Ambiental e Suporte à Vida: hardware da NASA Marshall que fecha os ciclos de água (WPA/BPA) e ar (OGA/CDRA/Sabatier)."
         }
-      }
+      },
+      "DisplayName": "Bio-Waste Tank",
+      "DisplayNamePtBr": "Biogás Orgânico",
+      "OriginalName": "Anaerobic Membrane Bioreactor (AnMBR) Solid Waste Methanizer",
+      "OriginalNamePtBr": "Metanizador de Resíduos Sólidos com Biorreator de Membrana Anaeróbica (AnMBR)"
     }
   ],
   "EnvironmentDecks": [
@@ -973,7 +1053,11 @@
               "MeaningEn": "Electrodynamic Dust Shield: active travelling-wave electric curtain that repels abrasive silicate regolith from suits, visors, and seals.",
               "MeaningPtBr": "Escudo Eletrodinâmico de Poeira: cortina elétrica ativa que repele a poeira abrasiva de regolito dos trajes, visores e vedações."
             }
-          }
+          },
+          "DisplayName": "Meteoroid Shield",
+          "DisplayNamePtBr": "Escudo de Meteoros",
+          "OriginalName": "Whipple Micrometeoroid & SAA Polyethylene Liner",
+          "OriginalNamePtBr": "Escudo Whipple contra Micrometeoroides e Revestimento de Polietileno para a SAA"
         },
         {
           "CardId": "ENV-ISS-02",
@@ -1004,7 +1088,11 @@
               "MeaningEn": "Electrodynamic Dust Shield: active travelling-wave electric curtain that repels abrasive silicate regolith from suits, visors, and seals.",
               "MeaningPtBr": "Escudo Eletrodinâmico de Poeira: cortina elétrica ativa que repele a poeira abrasiva de regolito dos trajes, visores e vedações."
             }
-          }
+          },
+          "DisplayName": "Bubble Separator",
+          "DisplayNamePtBr": "Caça-Bolhas Zero-G",
+          "OriginalName": "Capillary Zero-G Acoustic Phase Separator",
+          "OriginalNamePtBr": "Separador Acústico Capilar de Fases em Gravidade Zero"
         },
         {
           "CardId": "ENV-ISS-03",
@@ -1035,7 +1123,11 @@
               "MeaningEn": "Electrodynamic Dust Shield: active travelling-wave electric curtain that repels abrasive silicate regolith from suits, visors, and seals.",
               "MeaningPtBr": "Escudo Eletrodinâmico de Poeira: cortina elétrica ativa que repele a poeira abrasiva de regolito dos trajes, visores e vedações."
             }
-          }
+          },
+          "DisplayName": "Zero-G Gym Suit",
+          "DisplayNamePtBr": "Traje de Academia",
+          "OriginalName": "Lower-Body Negative Pressure (LBNP) + ARED Suite",
+          "OriginalNamePtBr": "Pressão Negativa nos Membros Inferiores (LBNP) + Suíte ARED"
         },
         {
           "CardId": "ENV-ISS-04",
@@ -1066,7 +1158,11 @@
               "MeaningEn": "Electrodynamic Dust Shield: active travelling-wave electric curtain that repels abrasive silicate regolith from suits, visors, and seals.",
               "MeaningPtBr": "Escudo Eletrodinâmico de Poeira: cortina elétrica ativa que repele a poeira abrasiva de regolito dos trajes, visores e vedações."
             }
-          }
+          },
+          "DisplayName": "Orbit Booster",
+          "DisplayNamePtBr": "Propulsor Orbital",
+          "OriginalName": "SiO2 Atomic Oxygen (ATOX) Protective Coating & Reboost Thruster",
+          "OriginalNamePtBr": "Revestimento Protetor SiO2 contra Oxigênio Atômico (ATOX) e Propulsor de Reboost"
         }
       ],
       "TargetNamePtBr": "Estação Espacial Internacional (ISS — Órbita Terrestre Baixa 414 km)"
@@ -1133,7 +1229,11 @@
               "MeaningEn": "Electrodynamic Dust Shield: active travelling-wave electric curtain that repels abrasive silicate regolith from suits, visors, and seals.",
               "MeaningPtBr": "Escudo Eletrodinâmico de Poeira: cortina elétrica ativa que repele a poeira abrasiva de regolito dos trajes, visores e vedações."
             }
-          }
+          },
+          "DisplayName": "Moon Dust Shield",
+          "DisplayNamePtBr": "Escudo Anti-Poeira",
+          "OriginalName": "Electrodynamic Regolith Dust Shield (EDS) + SuitPort",
+          "OriginalNamePtBr": "Escudo Eletrodinâmico de Poeira de Regolito (EDS) + SuitPort"
         },
         {
           "CardId": "ENV-LUN-02",
@@ -1164,7 +1264,11 @@
               "MeaningEn": "Electrodynamic Dust Shield: active travelling-wave electric curtain that repels abrasive silicate regolith from suits, visors, and seals.",
               "MeaningPtBr": "Escudo Eletrodinâmico de Poeira: cortina elétrica ativa que repele a poeira abrasiva de regolito dos trajes, visores e vedações."
             }
-          }
+          },
+          "DisplayName": "Crater Ice Melter",
+          "DisplayNamePtBr": "Extrator de Gelo",
+          "OriginalName": "Shackleton Crater Polar Ice ISRU Electrolyzer",
+          "OriginalNamePtBr": "Eletrolisador ISRU de Gelo Polar da Cratera Shackleton"
         },
         {
           "CardId": "ENV-LUN-03",
@@ -1195,7 +1299,11 @@
               "MeaningEn": "Electrodynamic Dust Shield: active travelling-wave electric curtain that repels abrasive silicate regolith from suits, visors, and seals.",
               "MeaningPtBr": "Escudo Eletrodinâmico de Poeira: cortina elétrica ativa que repele a poeira abrasiva de regolito dos trajes, visores e vedações."
             }
-          }
+          },
+          "DisplayName": "Water-Wall Shelter",
+          "DisplayNamePtBr": "Parede de Água",
+          "OriginalName": "Algal Water-Wall Solar Storm Shelter",
+          "OriginalNamePtBr": "Abrigo de Tempestade Solar com Parede d'Água de Microalgas"
         },
         {
           "CardId": "ENV-LUN-04",
@@ -1226,7 +1334,11 @@
               "MeaningEn": "Electrodynamic Dust Shield: active travelling-wave electric curtain that repels abrasive silicate regolith from suits, visors, and seals.",
               "MeaningPtBr": "Escudo Eletrodinâmico de Poeira: cortina elétrica ativa que repele a poeira abrasiva de regolito dos trajes, visores e vedações."
             }
-          }
+          },
+          "DisplayName": "Moon Rock Heater",
+          "DisplayNamePtBr": "Aquecedor Lunar",
+          "OriginalName": "Regolith Thermal Mass Accumulator & Carbothermal O2 Rig",
+          "OriginalNamePtBr": "Acumulador de Massa Térmica de Regolito e Extrator Carbotérmico de O2"
         }
       ],
       "TargetNamePtBr": "Lua — Órbita NRHO Lunar Gateway e Base Artemis no Polo Sul"
@@ -1293,7 +1405,11 @@
               "MeaningEn": "Electrodynamic Dust Shield: active travelling-wave electric curtain that repels abrasive silicate regolith from suits, visors, and seals.",
               "MeaningPtBr": "Escudo Eletrodinâmico de Poeira: cortina elétrica ativa que repele a poeira abrasiva de regolito dos trajes, visores e vedações."
             }
-          }
+          },
+          "DisplayName": "Mars Dust Shower",
+          "DisplayNamePtBr": "Ducha Anti-Tóxica",
+          "OriginalName": "Perchlorate Bio-Scrubber Enzyme Washlock (Azospira Orizae)",
+          "OriginalNamePtBr": "Eclusa de Lavagem Enzimática Bio-Scrubber de Perclorato (Azospira Orizae)"
         },
         {
           "CardId": "ENV-MAR-02",
@@ -1324,7 +1440,11 @@
               "MeaningEn": "Mars Oxygen ISRU Experiment: solid-oxide electrolysis unit compressing Martian atmospheric CO2 into breathable liters of O2 at high Watt cost.",
               "MeaningPtBr": "Experimento ISRU de Oxigênio em Marte: eletrólise de óxido sólido que converte o CO2 marciano em litros de O2 com alto consumo em Watts."
             }
-          }
+          },
+          "DisplayName": "Mars Air Collector",
+          "DisplayNamePtBr": "Coletor de Ar",
+          "OriginalName": "MOXIE Solid-Oxide + Sabatier Atmospheric CO2 Compressor",
+          "OriginalNamePtBr": "Compressor de CO2 Atmosférico de Óxido Sólido MOXIE + Sabatier"
         },
         {
           "CardId": "ENV-MAR-03",
@@ -1355,7 +1475,11 @@
               "MeaningEn": "Electrodynamic Dust Shield: active travelling-wave electric curtain that repels abrasive silicate regolith from suits, visors, and seals.",
               "MeaningPtBr": "Escudo Eletrodinâmico de Poeira: cortina elétrica ativa que repele a poeira abrasiva de regolito dos trajes, visores e vedações."
             }
-          }
+          },
+          "DisplayName": "Magnetic Shield",
+          "DisplayNamePtBr": "Escudo Magnético",
+          "OriginalName": "Active Toroidal GCR Magneto-Shield + Radioprotectants",
+          "OriginalNamePtBr": "Magneto-Escudo Toroidal Ativo contra GCR + Radioprotetores"
         },
         {
           "CardId": "ENV-MAR-04",
@@ -1386,7 +1510,11 @@
               "MeaningEn": "Electrodynamic Dust Shield: active travelling-wave electric curtain that repels abrasive silicate regolith from suits, visors, and seals.",
               "MeaningPtBr": "Escudo Eletrodinâmico de Poeira: cortina elétrica ativa que repele a poeira abrasiva de regolito dos trajes, visores e vedações."
             }
-          }
+          },
+          "DisplayName": "Mars Ice Drill",
+          "DisplayNamePtBr": "Broca de Geleira",
+          "OriginalName": "Subsurface Rodwell Glacier Drill & Dust-Storm Laser Lidar",
+          "OriginalNamePtBr": "Perfuratriz Glacial Subsuperficial Rodwell e Lidar a Laser para Tempestades de Poeira"
         }
       ],
       "TargetNamePtBr": "Marte — Órbita Areocêntrica e Campanha Superficial ISRU"
@@ -1487,7 +1615,11 @@
           "MeaningEn": "Mars Oxygen ISRU Experiment: solid-oxide electrolysis unit compressing Martian atmospheric CO2 into breathable liters of O2 at high Watt cost.",
           "MeaningPtBr": "Experimento ISRU de Oxigênio em Marte: eletrólise de óxido sólido que converte o CO2 marciano em litros de O2 com alto consumo em Watts."
         }
-      }
+      },
+      "DisplayName": "Moon Oxygen Plant",
+      "DisplayNamePtBr": "Usina de O2 Lunar",
+      "OriginalName": "Shackleton Regolith Ice-Mining & Carbothermal Oxygen Plant",
+      "OriginalNamePtBr": "Usina de Mineração de Gelo em Regolito e Oxigênio Carbotérmico em Shackleton"
     },
     {
       "CardId": "ARC-LSS-02",
@@ -1523,7 +1655,11 @@
           "MeaningEn": "Mars Oxygen ISRU Experiment: solid-oxide electrolysis unit compressing Martian atmospheric CO2 into breathable liters of O2 at high Watt cost.",
           "MeaningPtBr": "Experimento ISRU de Oxigênio em Marte: eletrólise de óxido sólido que converte o CO2 marciano em litros de O2 com alto consumo em Watts."
         }
-      }
+      },
+      "DisplayName": "Mars Oxygen Dome",
+      "DisplayNamePtBr": "Estufa de Marte",
+      "OriginalName": "Scaled 200x MOXIE Solid-Oxide + Chlorella Pressurized Greenhouse Dome",
+      "OriginalNamePtBr": "MOXIE de Óxido Sólido Escalado 200x + Domo Estufa Pressurizado de Chlorella"
     },
     {
       "CardId": "ARC-SHD-01",
@@ -1559,7 +1695,11 @@
           "MeaningEn": "Mars Oxygen ISRU Experiment: solid-oxide electrolysis unit compressing Martian atmospheric CO2 into breathable liters of O2 at high Watt cost.",
           "MeaningPtBr": "Experimento ISRU de Oxigênio em Marte: eletrólise de óxido sólido que converte o CO2 marciano em litros de O2 com alto consumo em Watts."
         }
-      }
+      },
+      "DisplayName": "Lunar Stone Dome",
+      "DisplayNamePtBr": "Domo de Rocha 3D",
+      "OriginalName": "3D-Sintered Lunar Regolith Vault (45 g/cm2 Overburden) + Water Jacket",
+      "OriginalNamePtBr": "Abóbada de Regolito Lunar Sinterizado em 3D (45 g/cm² de Cobertura) + Camisa d'Água"
     },
     {
       "CardId": "ARC-SHD-02",
@@ -1595,7 +1735,11 @@
           "MeaningEn": "Hydrogenated Boron Nitride Nanotubes providing high areal density (g/cm²) radiation shielding against GCR and SEP protons.",
           "MeaningPtBr": "Nanotubos de Nitreto de Boro Hidrogenados que fornecem blindagem leve (g/cm²) contra raios cósmicos (GCR) e prótons solares (SEP)."
         }
-      }
+      },
+      "DisplayName": "Lava Cave Base",
+      "DisplayNamePtBr": "Base na Caverna",
+      "OriginalName": "Arsia Mons Lava Tube Subsurface Outpost + BNNT Inflatable Liner",
+      "OriginalNamePtBr": "Posto Subsuperficial em Tubo de Lava de Arsia Mons + Revestimento Inflável BNNT"
     },
     {
       "CardId": "ARC-PWR-01",
@@ -1631,7 +1775,11 @@
           "MeaningEn": "Mars Oxygen ISRU Experiment: solid-oxide electrolysis unit compressing Martian atmospheric CO2 into breathable liters of O2 at high Watt cost.",
           "MeaningPtBr": "Experimento ISRU de Oxigênio em Marte: eletrólise de óxido sólido que converte o CO2 marciano em litros de O2 com alto consumo em Watts."
         }
-      }
+      },
+      "DisplayName": "Lunar Power Grid",
+      "DisplayNamePtBr": "Usina Solar Lunar",
+      "OriginalName": "Quad-Kilopower 40 kWe Fission Microgrid + Vertical Polar Solar Array",
+      "OriginalNamePtBr": "Microrrede de Fissão Quad-Kilopower 40 kWe + Painel Solar Polar Vertical"
     },
     {
       "CardId": "ARC-PWR-02",
@@ -1667,7 +1815,11 @@
           "MeaningEn": "Mars Oxygen ISRU Experiment: solid-oxide electrolysis unit compressing Martian atmospheric CO2 into breathable liters of O2 at high Watt cost.",
           "MeaningPtBr": "Experimento ISRU de Oxigênio em Marte: eletrólise de óxido sólido que converte o CO2 marciano em litros de O2 com alto consumo em Watts."
         }
-      }
+      },
+      "DisplayName": "Storm Power Core",
+      "DisplayNamePtBr": "Gerador Blindado",
+      "OriginalName": "Dust-Tolerant Nuclear Stirling Matrix + Regenerative Methalox Fuel Cell",
+      "OriginalNamePtBr": "Matriz Nuclear Stirling Tolerante à Poeira + Célula a Combustível Methalox Regenerativa"
     },
     {
       "CardId": "ARC-COM-01",
@@ -1703,7 +1855,11 @@
           "MeaningEn": "Mars Oxygen ISRU Experiment: solid-oxide electrolysis unit compressing Martian atmospheric CO2 into breathable liters of O2 at high Watt cost.",
           "MeaningPtBr": "Experimento ISRU de Oxigênio em Marte: eletrólise de óxido sólido que converte o CO2 marciano em litros de O2 com alto consumo em Watts."
         }
-      }
+      },
+      "DisplayName": "Moon Relay Dish",
+      "DisplayNamePtBr": "Satélites da Lua",
+      "OriginalName": "LunarNet L2 Halo Relay Constellation + Ka-Band Phased Array",
+      "OriginalNamePtBr": "Constelação Relay Halo LunarNet L2 + Matriz de Fase Banda Ka"
     },
     {
       "CardId": "ARC-COM-02",
@@ -1739,7 +1895,11 @@
           "MeaningEn": "Deep Space Optical Communications: high-bandwidth laser transceiver mitigating Earth-Moon and Earth-Mars communication latency.",
           "MeaningPtBr": "Comunicações Ópticas de Espaço Profundo: transceptor a laser de alta banda que mitiga o atraso de comunicação Terra-Lua e Terra-Marte."
         }
-      }
+      },
+      "DisplayName": "Mars AI Autopilot",
+      "DisplayNamePtBr": "Piloto IA Marte",
+      "OriginalName": "Areostationary DSOC Optical Relay + Onboard Quad-ML.NET Edge Autopilot",
+      "OriginalNamePtBr": "Relay Óptico Areoestacionário DSOC + Piloto Automático de Borda Quad-ML.NET"
     }
   ],
   "DonkiSpaceWeatherEventsDeck": [
@@ -1777,7 +1937,11 @@
           "MeaningEn": "Space Weather Database Of Notifications, Knowledge, Information: real-time NASA API tracking solar flares (FLR), proton storms (SEP), and CMEs.",
           "MeaningPtBr": "Banco de Dados de Clima Espacial da NASA: API em tempo real que monitora erupções solares (FLR), tempestades de prótons (SEP) e CMEs."
         }
-      }
+      },
+      "DisplayName": "Giant Solar Flare",
+      "DisplayNamePtBr": "Explosão Solar",
+      "OriginalName": "X-Class Solar Flare (X10.4 Peak Flux)",
+      "OriginalNamePtBr": "Erupção Solar Classe X (Fluxo de Pico X10.4)"
     },
     {
       "CardId": "SWX-DONKI-02",
@@ -1812,7 +1976,11 @@
           "MeaningEn": "Space Weather Database Of Notifications, Knowledge, Information: real-time NASA API tracking solar flares (FLR), proton storms (SEP), and CMEs.",
           "MeaningPtBr": "Banco de Dados de Clima Espacial da NASA: API em tempo real que monitora erupções solares (FLR), tempestades de prótons (SEP) e CMEs."
         }
-      }
+      },
+      "DisplayName": "Solar Storm",
+      "DisplayNamePtBr": "Tempestade Solar",
+      "OriginalName": "Solar Energetic Particle (SEP) S4 Severe Proton Storm (>100 MeV)",
+      "OriginalNamePtBr": "Tempestade Severa S4 de Partículas Energéticas Solares (SEP > 100 MeV)"
     },
     {
       "CardId": "SWX-DONKI-03",
@@ -1848,7 +2016,11 @@
           "MeaningEn": "Space Weather Database Of Notifications, Knowledge, Information: real-time NASA API tracking solar flares (FLR), proton storms (SEP), and CMEs.",
           "MeaningPtBr": "Banco de Dados de Clima Espacial da NASA: API em tempo real que monitora erupções solares (FLR), tempestades de prótons (SEP) e CMEs."
         }
-      }
+      },
+      "DisplayName": "Solar Plasma Wave",
+      "DisplayNamePtBr": "Onda de Plasma",
+      "OriginalName": "Fast Halo Coronal Mass Ejection (CME > 2,100 km/s)",
+      "OriginalNamePtBr": "Ejeção de Massa Coronal (CME) Rápida em Halo (> 2.100 km/s)"
     },
     {
       "CardId": "SWX-DONKI-04",
@@ -1882,7 +2054,11 @@
           "MeaningEn": "Space Weather Database Of Notifications, Knowledge, Information: real-time NASA API tracking solar flares (FLR), proton storms (SEP), and CMEs.",
           "MeaningPtBr": "Banco de Dados de Clima Espacial da NASA: API em tempo real que monitora erupções solares (FLR), tempestades de prótons (SEP) e CMEs."
         }
-      }
+      },
+      "DisplayName": "Radio Blackout",
+      "DisplayNamePtBr": "Apagão de Rádio",
+      "OriginalName": "Solar Conjunction Blackout + CME Forbush Decrease",
+      "OriginalNamePtBr": "Blackout de Conjunção Solar + Decréscimo de Forbush por CME"
     }
   ],
   "SupportedLocales": [
