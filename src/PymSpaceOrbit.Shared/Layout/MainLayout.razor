@@ -57,6 +57,15 @@
                            OnClick="ToggleTheme"
                            Class="ml-1" />
         </MudTooltip>
+
+        <!-- Audio On/Off Toggle -->
+        <MudTooltip Text="@(_isAudioOn ? "Audio Ligado / On" : "Audio desligado / Muted")">
+            <MudIconButton Icon="@(_isAudioOn ? Icons.Material.Filled.VolumeUp : Icons.Material.Filled.VolumeOff)"
+                           Color="Color.Warning"
+                           Size="Size.Small"
+                           OnClick="@(() => OnAudioEnabledChanged(_isAudioOn))"
+                           Class="ml-1" />
+        </MudTooltip>
     </MudAppBar>
 
     <MudMainContent Class="pym-space-main-content">
@@ -178,6 +187,7 @@
 
 @code {
     private bool _isDarkMode = true;
+    private bool _isAudioOn = true;
     private bool _showTopPlayModal = false;
     private OutpostDestination _selectedDestination = OutpostDestination.Moon;
     private int _crewCount = 4;
@@ -191,6 +201,17 @@
     };
 
     private bool IsPortuguese => GameService.CurrentSession.Locale.StartsWith("pt", StringComparison.OrdinalIgnoreCase);
+
+    private async Task OnAudioEnabledChanged(bool enabled)
+    {
+        _isAudioOn = !_isAudioOn;
+        await AudioService.SetMutedAsync(_isAudioOn);
+        if (_isAudioOn)
+        {
+            await AudioService.SyncScreenMusicAsync("/options", GameService.CurrentSession);
+            await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
+        }
+    }
 
     private readonly MudTheme _spaceTheme = new()
     {
