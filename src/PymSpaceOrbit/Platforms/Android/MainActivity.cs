@@ -33,4 +33,4 @@ public class MainActivity : MauiAppCompatActivity
             WindowInsetsControllerCompat.BehaviorShowTransientBarsBySwipe;
     }
 }
-}
+
