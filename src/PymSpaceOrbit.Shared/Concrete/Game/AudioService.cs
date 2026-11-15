@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Microsoft.JSInterop;
 using PymSpaceOrbit.Shared.Abstractions.Game;
 using PymSpaceOrbit.Shared.Constants;
@@ -11,6 +12,7 @@ public sealed class AudioService : IAudioService
     private readonly SemaphoreSlim _moduleLock = new(1, 1);
 
     private IJSObjectReference? _jsModule;
+    private bool _useGlobalAudioService;
     private bool _disposed;
 
     public bool IsInitialized { get; private set; }
@@ -36,25 +38,23 @@ public sealed class AudioService : IAudioService
             return;
         }
 
-        await EnsureModuleLoadedAsync(cancellationToken);
+        await EnsureInitializedAsync(cancellationToken);
     }
 
     public async Task PlayMusicAsync(BackgroundMusic track, bool loop = true, CancellationToken cancellationToken = default)
     {
         if (_disposed) return;
 
-        bool isSameTrack = CurrentMusic == track && _currentMusicLoop == loop;
         CurrentMusic = track;
         _currentMusicLoop = loop;
 
-        var module = await EnsureModuleLoadedAsync(cancellationToken);
-        if (module is null)
+        if (!await EnsureInitializedAsync(cancellationToken))
         {
             return;
         }
 
         string path = PymGameOrbitAssets.GetMusicPath(track);
-        await InvokeSafeVoidAsync(module, "playMusic", cancellationToken, track.ToString(), path, loop);
+        await InvokeSafeVoidAsync("playMusic", cancellationToken, track.ToString(), path, loop);
     }
 
     public async Task StopMusicAsync(CancellationToken cancellationToken = default)
@@ -62,30 +62,27 @@ public sealed class AudioService : IAudioService
         if (_disposed) return;
         CurrentMusic = null;
 
-        var module = await EnsureModuleLoadedAsync(cancellationToken);
-        if (module is null) return;
+        if (!await EnsureInitializedAsync(cancellationToken)) return;
 
-        await InvokeSafeVoidAsync(module, "stopMusic", cancellationToken);
+        await InvokeSafeVoidAsync("stopMusic", cancellationToken);
     }
 
     public async Task PauseMusicAsync(CancellationToken cancellationToken = default)
     {
         if (_disposed) return;
 
-        var module = await EnsureModuleLoadedAsync(cancellationToken);
-        if (module is null) return;
+        if (!await EnsureInitializedAsync(cancellationToken)) return;
 
-        await InvokeSafeVoidAsync(module, "pauseMusic", cancellationToken);
+        await InvokeSafeVoidAsync("pauseMusic", cancellationToken);
     }
 
     public async Task ResumeMusicAsync(CancellationToken cancellationToken = default)
     {
         if (_disposed) return;
 
-        var module = await EnsureModuleLoadedAsync(cancellationToken);
-        if (module is null) return;
+        if (!await EnsureInitializedAsync(cancellationToken)) return;
 
-        await InvokeSafeVoidAsync(module, "resumeMusic", cancellationToken);
+        await InvokeSafeVoidAsync("resumeMusic", cancellationToken);
     }
 
     public async Task SetMusicVolumeAsync(double volume, CancellationToken cancellationToken = default)
@@ -93,41 +90,37 @@ public sealed class AudioService : IAudioService
         if (_disposed) return;
         MusicVolume = Math.Clamp(volume, 0.0, 1.0);
 
-        var module = await EnsureModuleLoadedAsync(cancellationToken);
-        if (module is null) return;
+        if (!await EnsureInitializedAsync(cancellationToken)) return;
 
-        await InvokeSafeVoidAsync(module, "setMusicVolume", cancellationToken, MusicVolume);
+        await InvokeSafeVoidAsync("setMusicVolume", cancellationToken, MusicVolume);
     }
 
     public async Task PlaySoundEffectAsync(SoundEffect effect, CancellationToken cancellationToken = default)
     {
         if (_disposed) return;
 
-        var module = await EnsureModuleLoadedAsync(cancellationToken);
-        if (module is null) return;
+        if (!await EnsureInitializedAsync(cancellationToken)) return;
 
         string path = PymGameOrbitAssets.GetSoundEffectPath(effect);
-        await InvokeSafeVoidAsync(module, "playSoundEffect", cancellationToken, effect.ToString(), path);
+        await InvokeSafeVoidAsync("playSoundEffect", cancellationToken, effect.ToString(), path);
     }
 
     public async Task StopSoundEffectAsync(SoundEffect effect, CancellationToken cancellationToken = default)
     {
         if (_disposed) return;
 
-        var module = await EnsureModuleLoadedAsync(cancellationToken);
-        if (module is null) return;
+        if (!await EnsureInitializedAsync(cancellationToken)) return;
 
-        await InvokeSafeVoidAsync(module, "stopSoundEffect", cancellationToken, effect.ToString());
+        await InvokeSafeVoidAsync("stopSoundEffect", cancellationToken, effect.ToString());
     }
 
     public async Task StopAllSoundEffectsAsync(CancellationToken cancellationToken = default)
     {
         if (_disposed) return;
 
-        var module = await EnsureModuleLoadedAsync(cancellationToken);
-        if (module is null) return;
+        if (!await EnsureInitializedAsync(cancellationToken)) return;
 
-        await InvokeSafeVoidAsync(module, "stopAllSoundEffects", cancellationToken);
+        await InvokeSafeVoidAsync("stopAllSoundEffects", cancellationToken);
     }
 
     public async Task SetSoundEffectsVolumeAsync(double volume, CancellationToken cancellationToken = default)
@@ -135,10 +128,9 @@ public sealed class AudioService : IAudioService
         if (_disposed) return;
         SoundEffectsVolume = Math.Clamp(volume, 0.0, 1.0);
 
-        var module = await EnsureModuleLoadedAsync(cancellationToken);
-        if (module is null) return;
+        if (!await EnsureInitializedAsync(cancellationToken)) return;
 
-        await InvokeSafeVoidAsync(module, "setSoundEffectsVolume", cancellationToken, SoundEffectsVolume);
+        await InvokeSafeVoidAsync("setSoundEffectsVolume", cancellationToken, SoundEffectsVolume);
     }
 
     public async Task PlayAmbientAsync(SoundEffect ambientEffect = SoundEffect.BioshipCruisingLoop, bool loop = true, CancellationToken cancellationToken = default)
@@ -147,11 +139,10 @@ public sealed class AudioService : IAudioService
         CurrentAmbient = ambientEffect;
         _currentAmbientLoop = loop;
 
-        var module = await EnsureModuleLoadedAsync(cancellationToken);
-        if (module is null) return;
+        if (!await EnsureInitializedAsync(cancellationToken)) return;
 
         string path = PymGameOrbitAssets.GetSoundEffectPath(ambientEffect);
-        await InvokeSafeVoidAsync(module, "playAmbient", cancellationToken, ambientEffect.ToString(), path, loop);
+        await InvokeSafeVoidAsync("playAmbient", cancellationToken, ambientEffect.ToString(), path, loop);
     }
 
     public async Task StopAmbientAsync(CancellationToken cancellationToken = default)
@@ -159,10 +150,9 @@ public sealed class AudioService : IAudioService
         if (_disposed) return;
         CurrentAmbient = null;
 
-        var module = await EnsureModuleLoadedAsync(cancellationToken);
-        if (module is null) return;
+        if (!await EnsureInitializedAsync(cancellationToken)) return;
 
-        await InvokeSafeVoidAsync(module, "stopAmbient", cancellationToken);
+        await InvokeSafeVoidAsync("stopAmbient", cancellationToken);
     }
 
     public async Task SetMasterVolumeAsync(double volume, CancellationToken cancellationToken = default)
@@ -170,10 +160,9 @@ public sealed class AudioService : IAudioService
         if (_disposed) return;
         MasterVolume = Math.Clamp(volume, 0.0, 1.0);
 
-        var module = await EnsureModuleLoadedAsync(cancellationToken);
-        if (module is null) return;
+        if (!await EnsureInitializedAsync(cancellationToken)) return;
 
-        await InvokeSafeVoidAsync(module, "setMasterVolume", cancellationToken, MasterVolume);
+        await InvokeSafeVoidAsync("setMasterVolume", cancellationToken, MasterVolume);
     }
 
     public async Task SetMutedAsync(bool muted, CancellationToken cancellationToken = default)
@@ -181,10 +170,9 @@ public sealed class AudioService : IAudioService
         if (_disposed) return;
         IsMuted = muted;
 
-        var module = await EnsureModuleLoadedAsync(cancellationToken);
-        if (module is null) return;
+        if (!await EnsureInitializedAsync(cancellationToken)) return;
 
-        await InvokeSafeVoidAsync(module, "setMuted", cancellationToken, IsMuted);
+        await InvokeSafeVoidAsync("setMuted", cancellationToken, IsMuted);
     }
 
     public async Task SyncScreenMusicAsync(string? routeOrUri, GameSessionState? session = null, CancellationToken cancellationToken = default)
@@ -494,31 +482,44 @@ public sealed class AudioService : IAudioService
         return segments.Length == 0 ? string.Empty : segments[^1];
     }
 
-    private async Task<IJSObjectReference?> EnsureModuleLoadedAsync(CancellationToken cancellationToken)
+    private async Task<bool> EnsureInitializedAsync(CancellationToken cancellationToken)
     {
-        if (_disposed) return null;
-        if (_jsModule is not null && IsInitialized)
+        if (_disposed) return false;
+        if (IsInitialized && (_useGlobalAudioService || _jsModule is not null))
         {
-            return _jsModule;
+            return true;
         }
 
         await _moduleLock.WaitAsync(cancellationToken);
         try
         {
-            if (_disposed) return null;
-            if (_jsModule is not null && IsInitialized)
+            if (_disposed) return false;
+            if (IsInitialized && (_useGlobalAudioService || _jsModule is not null))
             {
-                return _jsModule;
+                return true;
             }
 
-            _jsModule ??= await _jsRuntime.InvokeAsync<IJSObjectReference>(
-                "import",
-                cancellationToken,
-                PymGameOrbitAssets.AudioJsModulePath);
+            AudioPersistedSettingsDto? persisted = null;
 
-            var persisted = await _jsModule.InvokeAsync<AudioPersistedSettingsDto?>(
-                "initialize",
-                cancellationToken);
+            try
+            {
+                persisted = await _jsRuntime.InvokeAsync<AudioPersistedSettingsDto?>(
+                    "window.pymAudioService.initialize",
+                    cancellationToken);
+                _useGlobalAudioService = true;
+            }
+            catch (JSException)
+            {
+                _jsModule ??= await _jsRuntime.InvokeAsync<IJSObjectReference>(
+                    "import",
+                    cancellationToken,
+                    PymGameOrbitAssets.AudioJsModulePath);
+
+                persisted = await _jsModule.InvokeAsync<AudioPersistedSettingsDto?>(
+                    "initialize",
+                    cancellationToken);
+                _useGlobalAudioService = false;
+            }
 
             if (persisted is not null)
             {
@@ -534,21 +535,21 @@ public sealed class AudioService : IAudioService
             if (CurrentMusic is { } pendingTrack)
             {
                 string trackPath = PymGameOrbitAssets.GetMusicPath(pendingTrack);
-                await _jsModule.InvokeVoidAsync("playMusic", cancellationToken, pendingTrack.ToString(), trackPath, _currentMusicLoop);
+                await InvokeSafeVoidAsync("playMusic", cancellationToken, pendingTrack.ToString(), trackPath, _currentMusicLoop);
             }
 
             if (CurrentAmbient is { } pendingAmbient)
             {
                 string ambientPath = PymGameOrbitAssets.GetSoundEffectPath(pendingAmbient);
-                await _jsModule.InvokeVoidAsync("playAmbient", cancellationToken, pendingAmbient.ToString(), ambientPath, _currentAmbientLoop);
+                await InvokeSafeVoidAsync("playAmbient", cancellationToken, pendingAmbient.ToString(), ambientPath, _currentAmbientLoop);
             }
 
-            return _jsModule;
+            return true;
         }
         catch (Exception ex) when (ex is JSDisconnectedException or InvalidOperationException or JSException or TaskCanceledException or OperationCanceledException)
         {
             // During static prerendering or disconnection, JS interop may not be available yet.
-            return null;
+            return false;
         }
         finally
         {
@@ -556,15 +557,21 @@ public sealed class AudioService : IAudioService
         }
     }
 
-    private static async Task InvokeSafeVoidAsync(
-        IJSObjectReference module,
+    private async Task InvokeSafeVoidAsync(
         string identifier,
         CancellationToken cancellationToken,
         params object?[] args)
     {
         try
         {
-            await module.InvokeVoidAsync(identifier, cancellationToken, args);
+            if (_useGlobalAudioService)
+            {
+                await _jsRuntime.InvokeVoidAsync($"window.pymAudioService.{identifier}", cancellationToken, args);
+            }
+            else if (_jsModule is not null)
+            {
+                await _jsModule.InvokeVoidAsync(identifier, cancellationToken, args);
+            }
         }
         catch (Exception ex) when (ex is JSDisconnectedException or InvalidOperationException or JSException or TaskCanceledException or OperationCanceledException)
         {
@@ -581,7 +588,6 @@ public sealed class AudioService : IAudioService
         {
             try
             {
-                await _jsModule.InvokeVoidAsync("disposeAudio");
                 await _jsModule.DisposeAsync();
             }
             catch (Exception ex) when (ex is JSDisconnectedException or InvalidOperationException or JSException or TaskCanceledException or OperationCanceledException)
@@ -597,11 +603,18 @@ public sealed class AudioService : IAudioService
         _moduleLock.Dispose();
     }
 
-    private sealed class AudioPersistedSettingsDto
+    public sealed class AudioPersistedSettingsDto
     {
+        [JsonPropertyName("masterVolume")]
         public double MasterVolume { get; set; } = 0.85;
+
+        [JsonPropertyName("musicVolume")]
         public double MusicVolume { get; set; } = 0.70;
+
+        [JsonPropertyName("sfxVolume")]
         public double SfxVolume { get; set; } = 0.85;
+
+        [JsonPropertyName("isMuted")]
         public bool IsMuted { get; set; }
     }
 }

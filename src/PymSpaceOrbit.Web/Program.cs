@@ -39,13 +39,22 @@ app.UseAntiforgery();
 
 app.Use(async (context, next) =>
 {
-    if (context.Request.Path.StartsWithSegments("/assets", out var remaining))
+    if (context.Request.Path.StartsWithSegments("/assets", out var remainingAssets))
     {
-        context.Request.Path = "/_content/PymSpaceOrbit.Shared/assets" + remaining;
+        context.Request.Path = "/_content/PymSpaceOrbit.Shared/assets" + remainingAssets;
+    }
+    else if (context.Request.Path.StartsWithSegments("/audio", out var remainingAudio))
+    {
+        context.Request.Path = "/_content/PymSpaceOrbit.Shared/audio" + remainingAudio;
+    }
+    else if (context.Request.Path.StartsWithSegments("/js", out var remainingJs))
+    {
+        context.Request.Path = "/_content/PymSpaceOrbit.Shared/js" + remainingJs;
     }
     await next();
 });
 
+app.UseStaticFiles();
 app.MapStaticAssets();
 
 app.MapRazorComponents<App>()

@@ -528,6 +528,7 @@
         if (firstRender)
         {
             await AudioService.InitializeAsync();
+            await AudioService.SyncScreenMusicAsync("/options", GameService.CurrentSession);
             SyncAudioReadoutsFromService();
             StateHasChanged();
         }

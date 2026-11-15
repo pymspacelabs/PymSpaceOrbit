@@ -765,6 +765,15 @@
         SelectTab(0);
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await AudioService.InitializeAsync();
+            await AudioService.SyncScreenMusicAsync("/info", GameService.CurrentSession);
+        }
+    }
+
     private async Task NavigateBackToMenu()
     {
         await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);

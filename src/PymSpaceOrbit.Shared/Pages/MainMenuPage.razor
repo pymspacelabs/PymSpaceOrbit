@@ -360,6 +360,15 @@
         _minCards = GameService.CurrentSession.MinimumCardsToBuildBase;
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await AudioService.InitializeAsync();
+            await AudioService.SyncScreenMusicAsync("/menu", GameService.CurrentSession);
+        }
+    }
+
     private async Task OpenPlayDialog()
     {
         await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
