@@ -44,14 +44,6 @@ app.Use(async (context, next) =>
     {
         context.Request.Path = "/_content/PymSpaceOrbit.Shared/assets" + remainingAssets;
     }
-    else if (context.Request.Path.StartsWithSegments("/audio", out var remainingAudio))
-    {
-        context.Request.Path = "/_content/PymSpaceOrbit.Shared/audio" + remainingAudio;
-    }
-    else if (context.Request.Path.StartsWithSegments("/js", out var remainingJs))
-    {
-        context.Request.Path = "/_content/PymSpaceOrbit.Shared/js" + remainingJs;
-    }
     await next();
 });
 

@@ -1,4 +1,4 @@
-using System.Collections.Concurrent;
+using System.Reflection;
 using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Storage;
 using Plugin.Maui.Audio;
@@ -10,7 +10,7 @@ namespace PymSpaceOrbit.Services;
 
 /// <summary>
 /// Native .NET MAUI implementation of <see cref="IAudioService"/> powered by <see cref="Plugin.Maui.Audio"/>
-/// for Windows, Android, iOS, and MacCatalyst targets.
+/// using the audio assets packaged inside the MAUI project (<c>Resources/Raw/audio/</c>).
 /// </summary>
 public sealed class AudioService : IAudioService
 {
@@ -23,17 +23,16 @@ public sealed class AudioService : IAudioService
 
     private readonly IAudioManager _audioManager;
     private readonly SemaphoreSlim _stateLock = new(1, 1);
-    private readonly ConcurrentDictionary<string, byte[]> _audioByteCache = new(StringComparer.OrdinalIgnoreCase);
     private readonly List<ActiveSfxEntry> _activeSfx = [];
     private readonly object _sfxLock = new();
 
     private IAudioPlayer? _bgmPlayer;
-    private MemoryStream? _bgmStream;
+    private Stream? _bgmStream;
     private bool _bgmPaused;
     private bool _currentMusicLoop = true;
 
     private IAudioPlayer? _ambientPlayer;
-    private MemoryStream? _ambientStream;
+    private Stream? _ambientStream;
     private bool _currentAmbientLoop = true;
 
     private bool _disposed;
@@ -99,24 +98,26 @@ public sealed class AudioService : IAudioService
             _currentMusicLoop = loop;
             _bgmPaused = false;
 
-            string path = PymGameOrbitAssets.GetMusicPath(track);
-            MemoryStream? stream = await CreateAudioMemoryStreamAsync(path, cancellationToken);
-            if (stream is null)
-            {
-                return;
-            }
+            string fileName = PymGameOrbitAssets.GetMusicFileName(track);
+            string relativePath = PymGameOrbitAssets.GetMusicPath(track);
 
-            await RunOnMainThreadAsync(() =>
+            await RunOnMainThreadAsync(async () =>
             {
                 DisposeBgmInternal();
 
+                var (player, ownedStream) = await CreatePlatformPlayerAsync(fileName, relativePath, cancellationToken);
+                if (player is null)
+                {
+                    ownedStream?.Dispose();
+                    return;
+                }
+
                 try
                 {
-                    var player = _audioManager.CreatePlayer(stream);
                     player.Loop = loop;
                     player.Volume = GetEffectiveMusicVolume();
                     _bgmPlayer = player;
-                    _bgmStream = stream;
+                    _bgmStream = ownedStream;
 
                     if (!IsMuted)
                     {
@@ -125,7 +126,8 @@ public sealed class AudioService : IAudioService
                 }
                 catch
                 {
-                    stream.Dispose();
+                    player.Dispose();
+                    ownedStream?.Dispose();
                 }
             });
         }
@@ -135,7 +137,7 @@ public sealed class AudioService : IAudioService
         }
         catch
         {
-            // Never allow audio failures to block gameplay
+            // Audio failures must never block gameplay
         }
         finally
         {
@@ -236,24 +238,22 @@ public sealed class AudioService : IAudioService
 
         try
         {
-            string path = PymGameOrbitAssets.GetSoundEffectPath(effect);
-            MemoryStream? stream = await CreateAudioMemoryStreamAsync(path, cancellationToken);
-            if (stream is null)
-            {
-                return;
-            }
+            string fileName = PymGameOrbitAssets.GetSoundEffectFileName(effect);
+            string relativePath = PymGameOrbitAssets.GetSoundEffectPath(effect);
 
-            await RunOnMainThreadAsync(() =>
+            await RunOnMainThreadAsync(async () =>
             {
-                if (_disposed)
+                if (_disposed) return;
+
+                var (player, ownedStream) = await CreatePlatformPlayerAsync(fileName, relativePath, cancellationToken);
+                if (player is null)
                 {
-                    stream.Dispose();
+                    ownedStream?.Dispose();
                     return;
                 }
 
                 try
                 {
-                    var player = _audioManager.CreatePlayer(stream);
                     player.Loop = false;
                     player.Volume = GetEffectiveSfxVolume();
 
@@ -266,7 +266,7 @@ public sealed class AudioService : IAudioService
                         }
                     }
 
-                    entry = new ActiveSfxEntry(effect, player, stream, OnPlaybackEnded);
+                    entry = new ActiveSfxEntry(effect, player, ownedStream, OnPlaybackEnded);
                     player.PlaybackEnded += OnPlaybackEnded;
 
                     lock (_sfxLock)
@@ -285,7 +285,8 @@ public sealed class AudioService : IAudioService
                 }
                 catch
                 {
-                    stream.Dispose();
+                    player.Dispose();
+                    ownedStream?.Dispose();
                 }
             });
         }
@@ -369,24 +370,26 @@ public sealed class AudioService : IAudioService
             CurrentAmbient = ambientEffect;
             _currentAmbientLoop = loop;
 
-            string path = PymGameOrbitAssets.GetSoundEffectPath(ambientEffect);
-            MemoryStream? stream = await CreateAudioMemoryStreamAsync(path, cancellationToken);
-            if (stream is null)
-            {
-                return;
-            }
+            string fileName = PymGameOrbitAssets.GetSoundEffectFileName(ambientEffect);
+            string relativePath = PymGameOrbitAssets.GetSoundEffectPath(ambientEffect);
 
-            await RunOnMainThreadAsync(() =>
+            await RunOnMainThreadAsync(async () =>
             {
                 DisposeAmbientInternal();
 
+                var (player, ownedStream) = await CreatePlatformPlayerAsync(fileName, relativePath, cancellationToken);
+                if (player is null)
+                {
+                    ownedStream?.Dispose();
+                    return;
+                }
+
                 try
                 {
-                    var player = _audioManager.CreatePlayer(stream);
                     player.Loop = loop;
                     player.Volume = GetEffectiveAmbientVolume();
                     _ambientPlayer = player;
-                    _ambientStream = stream;
+                    _ambientStream = ownedStream;
 
                     if (!IsMuted)
                     {
@@ -395,7 +398,8 @@ public sealed class AudioService : IAudioService
                 }
                 catch
                 {
-                    stream.Dispose();
+                    player.Dispose();
+                    ownedStream?.Dispose();
                 }
             });
         }
@@ -552,7 +556,6 @@ public sealed class AudioService : IAudioService
             return;
         }
 
-        // Active gameplay: keep continuous Bio-Ship / Outpost cabin hum running on Ambient channel
         await PlayAmbientAsync(SoundEffect.BioshipCruisingLoop, loop: true, cancellationToken);
 
         if (session.Phase == TurnPhase.BuildPhase)
@@ -673,6 +676,128 @@ public sealed class AudioService : IAudioService
         await SyncGameplayMusicAsync(session, cancellationToken);
     }
 
+    private async Task<(IAudioPlayer? Player, Stream? OwnedStream)> CreatePlatformPlayerAsync(
+        string fileName,
+        string relativePath,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+#if WINDOWS
+        string? diskPath = ResolveLocalFilePath(fileName, relativePath);
+        if (!string.IsNullOrEmpty(diskPath))
+        {
+            try
+            {
+                var player = _audioManager.CreatePlayer();
+                var mediaPlayerField = player.GetType().GetField("player", BindingFlags.Instance | BindingFlags.NonPublic);
+                if (mediaPlayerField?.GetValue(player) is Windows.Media.Playback.MediaPlayer nativeMediaPlayer)
+                {
+                    nativeMediaPlayer.AudioCategory = Windows.Media.Playback.MediaPlayerAudioCategory.Media;
+                    nativeMediaPlayer.Source = Windows.Media.Core.MediaSource.CreateFromUri(new Uri(diskPath));
+                    return (player, null);
+                }
+                player.Dispose();
+            }
+            catch
+            {
+                // Fall back to stream-based creation below
+            }
+
+            try
+            {
+                FileStream fs = File.OpenRead(diskPath);
+                var player = _audioManager.CreatePlayer(fs);
+                return (player, fs);
+            }
+            catch
+            {
+                // Continue to package stream fallback
+            }
+        }
+#else
+        // On Android, iOS, and MacCatalyst, try direct asset filename first
+        string[] directNames = [fileName, relativePath];
+        foreach (string candidate in directNames)
+        {
+            try
+            {
+                var player = _audioManager.CreatePlayer(candidate);
+                return (player, null);
+            }
+            catch
+            {
+                // Fall back to FileSystem.OpenAppPackageFileAsync below
+            }
+        }
+#endif
+
+        Stream? pkgStream = await OpenPackageAudioStreamAsync(fileName, relativePath);
+        if (pkgStream is not null)
+        {
+            try
+            {
+                var player = _audioManager.CreatePlayer(pkgStream);
+                return (player, pkgStream);
+            }
+            catch
+            {
+                await pkgStream.DisposeAsync();
+            }
+        }
+
+        return (null, null);
+    }
+
+    private static string? ResolveLocalFilePath(string fileName, string relativePath)
+    {
+        string baseDir = AppContext.BaseDirectory;
+        string osRelative = relativePath.Replace('/', Path.DirectorySeparatorChar);
+
+        string[] candidates =
+        [
+            Path.Combine(baseDir, fileName),
+            Path.Combine(baseDir, osRelative),
+            Path.Combine(baseDir, "Resources", "Raw", osRelative),
+            Path.Combine(baseDir, "Resources", "Raw", fileName),
+            Path.Combine(baseDir, "wwwroot", osRelative)
+        ];
+
+        foreach (string path in candidates)
+        {
+            if (File.Exists(path))
+            {
+                return path;
+            }
+        }
+
+        return null;
+    }
+
+    private static async Task<Stream?> OpenPackageAudioStreamAsync(string fileName, string relativePath)
+    {
+        string[] candidates =
+        [
+            fileName,
+            relativePath,
+            relativePath.Replace('/', '\\')
+        ];
+
+        foreach (string candidate in candidates)
+        {
+            try
+            {
+                return await FileSystem.OpenAppPackageFileAsync(candidate);
+            }
+            catch
+            {
+                // Try next candidate
+            }
+        }
+
+        return null;
+    }
+
     private double GetEffectiveMusicVolume() =>
         IsMuted ? 0.0 : Math.Clamp(MasterVolume * MusicVolume, 0.0, 1.0);
 
@@ -763,95 +888,6 @@ public sealed class AudioService : IAudioService
         }
     }
 
-    private async Task<MemoryStream?> CreateAudioMemoryStreamAsync(string assetWebPath, CancellationToken cancellationToken)
-    {
-        if (string.IsNullOrWhiteSpace(assetWebPath))
-        {
-            return null;
-        }
-
-        string normalized = assetWebPath.TrimStart('/', '\\').Replace('\\', '/');
-        if (_audioByteCache.TryGetValue(normalized, out byte[]? cachedBytes))
-        {
-            return new MemoryStream(cachedBytes, writable: false);
-        }
-
-        byte[]? loadedBytes = await LoadAudioBytesFromPackageOrDiskAsync(normalized, cancellationToken);
-        if (loadedBytes is null || loadedBytes.Length == 0)
-        {
-            return null;
-        }
-
-        _audioByteCache[normalized] = loadedBytes;
-        return new MemoryStream(loadedBytes, writable: false);
-    }
-
-    private static async Task<byte[]?> LoadAudioBytesFromPackageOrDiskAsync(string normalizedWebPath, CancellationToken cancellationToken)
-    {
-        string audioSubPath = normalizedWebPath;
-        int audioIdx = normalizedWebPath.IndexOf("audio/", StringComparison.OrdinalIgnoreCase);
-        if (audioIdx >= 0)
-        {
-            audioSubPath = normalizedWebPath[audioIdx..];
-        }
-
-        string fileNameOnly = Path.GetFileName(normalizedWebPath);
-        string baseDir = AppContext.BaseDirectory;
-
-        string[] diskCandidates =
-        [
-            Path.Combine(baseDir, "wwwroot", normalizedWebPath.Replace('/', Path.DirectorySeparatorChar)),
-            Path.Combine(baseDir, audioSubPath.Replace('/', Path.DirectorySeparatorChar)),
-            Path.Combine(baseDir, "Resources", "Raw", audioSubPath.Replace('/', Path.DirectorySeparatorChar)),
-            Path.Combine(baseDir, fileNameOnly)
-        ];
-
-        foreach (string diskPath in diskCandidates)
-        {
-            try
-            {
-                if (File.Exists(diskPath))
-                {
-                    return await File.ReadAllBytesAsync(diskPath, cancellationToken);
-                }
-            }
-            catch
-            {
-                // Continue to next candidate
-            }
-        }
-
-        string[] packageCandidates =
-        [
-            audioSubPath,
-            audioSubPath.Replace('/', '\\'),
-            $"wwwroot/{normalizedWebPath}",
-            $"wwwroot\\{normalizedWebPath.Replace('/', '\\')}",
-            normalizedWebPath,
-            fileNameOnly
-        ];
-
-        foreach (string pkgPath in packageCandidates)
-        {
-            try
-            {
-                await using Stream pkgStream = await FileSystem.OpenAppPackageFileAsync(pkgPath);
-                using var ms = new MemoryStream();
-                await pkgStream.CopyToAsync(ms, cancellationToken);
-                if (ms.Length > 0)
-                {
-                    return ms.ToArray();
-                }
-            }
-            catch
-            {
-                // Try next package path format
-            }
-        }
-
-        return null;
-    }
-
     private void LoadPersistedPreferences()
     {
         try
@@ -891,6 +927,16 @@ public sealed class AudioService : IAudioService
         }
 
         return MainThread.InvokeOnMainThreadAsync(action);
+    }
+
+    private static Task RunOnMainThreadAsync(Func<Task> asyncAction)
+    {
+        if (MainThread.IsMainThread)
+        {
+            return asyncAction();
+        }
+
+        return MainThread.InvokeOnMainThreadAsync(asyncAction);
     }
 
     private void DisposeBgmInternal()
@@ -999,7 +1045,7 @@ public sealed class AudioService : IAudioService
 
         try
         {
-            entry.Stream.Dispose();
+            entry.OwnedStream?.Dispose();
         }
         catch
         {
@@ -1156,6 +1202,6 @@ public sealed class AudioService : IAudioService
     private sealed record ActiveSfxEntry(
         SoundEffect Effect,
         IAudioPlayer Player,
-        MemoryStream Stream,
+        Stream? OwnedStream,
         EventHandler EndedHandler);
 }
