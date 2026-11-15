@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/PymSpaceOrbit.Shared/PymSpaceOrbit.Shared.csproj" />
+    <Project Path="src/PymSpaceOrbit/PymSpaceOrbit.csproj" />
+    <Project Path="src/PymSpaceOrbit.Web/PymSpaceOrbit.Web.csproj" />
+  </Folder>
+</Solution>

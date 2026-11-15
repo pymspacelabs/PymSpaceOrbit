@@ -1,0 +1,1892 @@
+{
+  "SchemaVersion": "7.0-MAUI-3Deck-240kSamples-32Features-QuadEnsemble",
+  "Locale": "en-US",
+  "SupportedDestinations": [
+    "ISS",
+    "Moon",
+    "Mars"
+  ],
+  "MlModelArchitecture": {
+    "TotalTrainingSamples": 240000,
+    "SamplesPerDestination": 80000,
+    "InputFeaturesCount": 36,
+    "PredictedTargetsCount": 4,
+    "PredictedTargets": [
+      "LabelFuelYieldRate",
+      "LabelMaxExplorationStayDays",
+      "LabelCrewHealthSurvivalProb",
+      "LabelSystemReliabilityIndex"
+    ],
+    "AddedOutpostAndDonkiFeatures": [
+      "OutpostWattBudgetDelta",
+      "OutpostOxygenLitersPerDayDelta",
+      "OutpostShieldingGcm2Delta",
+      "CommunicationDelaySec"
+    ]
+  },
+  "DeckCombinationRules": {
+    "MaxShipBuildCardsEquipped": 5,
+    "MaxEclssCardsEquipped": 5,
+    "MaxEnvironmentCardsEquipped": 4,
+    "BaseChassisDryMassTons": 38.0,
+    "ComboSynergies": [
+      {
+        "SynergyId": "SYN-CLOSED-WATER-99",
+        "Name": "Ultra-Closed 99.2% Hydro-Loop",
+        "RequiredCards": [
+          "ECL-01",
+          "ECL-02",
+          "ECL-06"
+        ],
+        "BonusDescription": "+1.2% Water Recovery Efficiency & -35% Membrane Biofilm Fouling",
+        "NamePtBr": "Hidro-Loop Ultra-Fechado de 99,2%",
+        "BonusDescriptionPtBr": "+1,2% Eficiência de Recuperação de Água e -35% Incrustação de Biofilme nas Membranas"
+      },
+      {
+        "SynergyId": "SYN-CRYO-METHALOX-ISRU",
+        "Name": "Sabatier + Bosch + Zero-Boil-Off Methalox Loop",
+        "RequiredCards": [
+          "BLD-06",
+          "ECL-04",
+          "ECL-07"
+        ],
+        "BonusDescription": "+24% CH4 Propellant Yield & +18% Return Delta-V Margin",
+        "NamePtBr": "Loop Methalox Zero-Boil-Off + Sabatier + Bosch",
+        "BonusDescriptionPtBr": "+24% Rendimento de Propelente CH4 e +18% Margem de Delta-V de Retorno"
+      },
+      {
+        "SynergyId": "SYN-DEEP-SPACE-IMMUNE",
+        "Name": "Centrifuge + OSDR Radioprotectant + Toroidal Shield",
+        "RequiredCards": [
+          "BLD-04",
+          "BLD-09",
+          "ECL-10"
+        ],
+        "BonusDescription": "+42% Crew Radiation & Bone Preservation in Lunar/Martian Deep Space",
+        "NamePtBr": "Centrífuga + Radioprotetor OSDR + Escudo Toroidal",
+        "BonusDescriptionPtBr": "+42% Preservação Óssea e contra Radiação da Tripulação no Espaço Profundo Lunar/Marciano"
+      },
+      {
+        "SynergyId": "SYN-AUTONOMOUS-EVA-FAB",
+        "Name": "xEMU Z-2 + Valkyrie Robotics + 3D CNC Sintering",
+        "RequiredCards": [
+          "BLD-03",
+          "BLD-05",
+          "BLD-08"
+        ],
+        "BonusDescription": "+45% EVA Suit & Tool Service Life & -40% Crew EVA Fatigue",
+        "NamePtBr": "xEMU Z-2 + Robótica Valkyrie + Sinterização CNC 3D",
+        "BonusDescriptionPtBr": "+45% Vida Útil de Trajes EVA e Ferramentas e -40% Fadiga da Tripulação em EVA"
+      },
+      {
+        "SynergyId": "SYN-OUTPOST-POWER-O2-SHIELD-TRIAD",
+        "Name": "Lunar/Martian Outpost Watt-Liter-Gram Equilibrium Triad",
+        "RequiredCards": [
+          "BLD-02",
+          "ECL-03",
+          "ARC-SHD-01",
+          "ARC-PWR-01"
+        ],
+        "BonusDescription": "-22% Watt-per-Liter O2 Electrolysis Cost, +15 g/cm2 Effective Regolith Shielding & +30% Outpost Autonomy",
+        "NamePtBr": "Tríade de Equilíbrio Watt-Litro-Grama para Outpost Lunar/Marciano",
+        "BonusDescriptionPtBr": "-22% Custo em Watts por Litro de O2 na Eletrólise, +15 g/cm² de Blindagem de Regolito e +30% Autonomia do Outpost"
+      },
+      {
+        "SynergyId": "SYN-DONKI-SOLAR-STORM-AUTONOMY",
+        "Name": "DONKI X-Class Flare & Mars Conjunction Edge-AI Autonomy",
+        "RequiredCards": [
+          "BLD-05",
+          "ARC-COM-01",
+          "SWX-DONKI-01",
+          "SWX-DONKI-04"
+        ],
+        "BonusDescription": "-85% Communication Delay Penalty during 22-min Mars Conjunction & +50% Crew Survival during X-Class SEP Events",
+        "NamePtBr": "Autonomia Edge-AI para Flares Classe X DONKI e Conjunção Solar em Marte",
+        "BonusDescriptionPtBr": "-85% Penalidade de Atraso de Comunicação durante Conjunção de 22 min em Marte e +50% Sobrevivência em Eventos SEP Classe X"
+      }
+    ]
+  },
+  "ShipBuildDeck": [
+    {
+      "CardId": "BLD-01",
+      "SlotCategory": "HullAndShielding",
+      "Name": "Multilayer Carbon-Silicate & Hydrogenated Boron-Nitride (BNNT) Hull",
+      "Rarity": "Legendary",
+      "DryMassTons": 13.5,
+      "RadiationShieldingGcm2": 28.0,
+      "MicrometeoroidWhippleLayers": 6,
+      "ThermalRejectionCapacityKw": 140.0,
+      "ElectricalPowerKwDelta": -2.0,
+      "BatteryStorageKwhBonus": 120.0,
+      "FoodProvisionsKgBonus": 600.0,
+      "PotableWaterLitersBonus": 500.0,
+      "MedicalSuppliesKgBonus": 40.0,
+      "EvaSuitDurabilityBonusPct": 6.0,
+      "ToolsAndSparesKgBonus": 140.0,
+      "CommsBandwidthGbpsBonus": 0.0,
+      "ArtificialGravityCentrifugeG": 0.0,
+      "CrewProtectionBuff": 0.26,
+      "NasaSource": "NASA Langley BNNT Radiation Shielding & ISS Whipple Bumper Specs",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=radiation%20shielding%20composite%20habitat&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/iss064e016145/iss064e016145~medium.jpg",
+      "ArchitecturalDecisionDomain": "RadiationShielding",
+      "WattOfPowerCost": 2000.0,
+      "LiterOfOxygenPerDayNet": 0.0,
+      "GramOfRadiationShieldingGcm2": 28.0,
+      "CommunicationDelayMitigationSec": 0.0,
+      "RarityPtBr": "Lendária",
+      "ArchitecturalDecisionDomainPtBr": "Blindagem contra Radiação",
+      "SlotCategoryPtBr": "Casco e Blindagem",
+      "NamePtBr": "Casco Multicamadas de Carbono-Silicato e Nitreto de Boro Hidrogenado (BNNT)",
+      "NasaSourcePtBr": "Blindagem contra Radiação BNNT da NASA Langley e Especificações de Escudo Whipple da ISS",
+      "GameUiLabel": "[BLD-01] +2000W | +0L O2 | 28g/cm²",
+      "GameUiLabelPtBr": "[BLD-01] +2000W | +0L O2 | 28g/cm²",
+      "TechnicalGlossary": {
+        "BNNT": {
+          "TermKey": "BNNT",
+          "GameUiLabel": "Nanotube Rad-Shield",
+          "GameUiLabelPtBr": "Blindagem Nanotubos BNNT",
+          "MeaningEn": "Hydrogenated Boron Nitride Nanotubes providing high areal density (g/cm²) radiation shielding against GCR and SEP protons.",
+          "MeaningPtBr": "Nanotubos de Nitreto de Boro Hidrogenados que fornecem blindagem leve (g/cm²) contra raios cósmicos (GCR) e prótons solares (SEP)."
+        }
+      }
+    },
+    {
+      "CardId": "BLD-02",
+      "SlotCategory": "PowerGeneration",
+      "Name": "Dual Kilopower Krusty Fission Cores + iROSA Solar Wings (220 kWe)",
+      "Rarity": "Legendary",
+      "DryMassTons": 9.6,
+      "RadiationShieldingGcm2": 4.0,
+      "MicrometeoroidWhippleLayers": 1,
+      "ThermalRejectionCapacityKw": 85.0,
+      "ElectricalPowerKwDelta": 145.0,
+      "BatteryStorageKwhBonus": 480.0,
+      "FoodProvisionsKgBonus": 0.0,
+      "PotableWaterLitersBonus": 0.0,
+      "MedicalSuppliesKgBonus": 0.0,
+      "EvaSuitDurabilityBonusPct": 0.0,
+      "ToolsAndSparesKgBonus": 110.0,
+      "CommsBandwidthGbpsBonus": 2.5,
+      "ArtificialGravityCentrifugeG": 0.0,
+      "CrewProtectionBuff": 0.14,
+      "NasaSource": "NASA Glenn/LANL Kilopower KRUSTY Fission & ISS iROSA Arrays",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Kilopower%20KRUSTY%20fission&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/GRC-2018-C-03966/GRC-2018-C-03966~medium.jpg",
+      "ArchitecturalDecisionDomain": "PowerBudgeting",
+      "WattOfPowerCost": -145000.0,
+      "LiterOfOxygenPerDayNet": 0.0,
+      "GramOfRadiationShieldingGcm2": 4.0,
+      "CommunicationDelayMitigationSec": 15.0,
+      "RarityPtBr": "Lendária",
+      "ArchitecturalDecisionDomainPtBr": "Orçamento de Energia",
+      "SlotCategoryPtBr": "Geração de Energia",
+      "NamePtBr": "Núcleos Duplos de Fissão Kilopower KRUSTY + Asas Solares iROSA (220 kWe)",
+      "NasaSourcePtBr": "Fissão Kilopower KRUSTY da NASA Glenn/LANL e Painéis iROSA da ISS",
+      "GameUiLabel": "[BLD-02] -145000W | +0L O2 | 4g/cm²",
+      "GameUiLabelPtBr": "[BLD-02] -145000W | +0L O2 | 4g/cm²",
+      "TechnicalGlossary": {
+        "KRUSTY": {
+          "TermKey": "KRUSTY",
+          "GameUiLabel": "Fission Core (Watts)",
+          "GameUiLabelPtBr": "Núcleo de Fissão (Watts)",
+          "MeaningEn": "Kilopower Reactor Using Stirling Technology: nuclear fission core generating continuous electrical Watts across 14-day lunar nights and Martian dust storms.",
+          "MeaningPtBr": "Reator Kilopower com Tecnologia Stirling: núcleo de fissão nuclear que gera Watts elétricos contínuos na noite lunar e em tempestades em Marte."
+        }
+      }
+    },
+    {
+      "CardId": "BLD-03",
+      "SlotCategory": "EvaSuitsAndAirlock",
+      "Name": "xEMU Z-2 Orthofabric SuitPort Bay + Electrodynamic Dust Shield (EDS)",
+      "Rarity": "Legendary",
+      "DryMassTons": 5.0,
+      "RadiationShieldingGcm2": 6.0,
+      "MicrometeoroidWhippleLayers": 2,
+      "ThermalRejectionCapacityKw": 20.0,
+      "ElectricalPowerKwDelta": -4.0,
+      "BatteryStorageKwhBonus": 60.0,
+      "FoodProvisionsKgBonus": 0.0,
+      "PotableWaterLitersBonus": 0.0,
+      "MedicalSuppliesKgBonus": 50.0,
+      "EvaSuitDurabilityBonusPct": 32.0,
+      "ToolsAndSparesKgBonus": 340.0,
+      "CommsBandwidthGbpsBonus": 1.2,
+      "ArtificialGravityCentrifugeG": 0.0,
+      "CrewProtectionBuff": 0.3,
+      "NasaSource": "NASA Johnson xEMU PLSS & Kennedy Electrodynamic Dust Shield",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=xEMU%20spacesuit%20lunar&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/jsc2021e022488/jsc2021e022488~medium.jpg",
+      "ArchitecturalDecisionDomain": "LifeSupport",
+      "WattOfPowerCost": 4000.0,
+      "LiterOfOxygenPerDayNet": -120.0,
+      "GramOfRadiationShieldingGcm2": 6.0,
+      "CommunicationDelayMitigationSec": 10.0,
+      "RarityPtBr": "Lendária",
+      "ArchitecturalDecisionDomainPtBr": "Suporte à Vida",
+      "SlotCategoryPtBr": "Trajes EVA e Eclusa",
+      "NamePtBr": "Baia SuitPort de Orto-Tecido xEMU Z-2 + Escudo Eletrodinâmico de Poeira (EDS)",
+      "NasaSourcePtBr": "Mochila PLSS xEMU da NASA Johnson e Escudo Eletrodinâmico de Poeira da NASA Kennedy",
+      "GameUiLabel": "[BLD-03] +4000W | -120L O2 | 6g/cm²",
+      "GameUiLabelPtBr": "[BLD-03] +4000W | -120L O2 | 6g/cm²",
+      "TechnicalGlossary": {
+        "EDS": {
+          "TermKey": "EDS",
+          "GameUiLabel": "Electrostatic Dust Shield",
+          "GameUiLabelPtBr": "Escudo Eletrostático Anti-Poeira",
+          "MeaningEn": "Electrodynamic Dust Shield: active travelling-wave electric curtain that repels abrasive silicate regolith from suits, visors, and seals.",
+          "MeaningPtBr": "Escudo Eletrodinâmico de Poeira: cortina elétrica ativa que repele a poeira abrasiva de regolito dos trajes, visores e vedações."
+        }
+      }
+    },
+    {
+      "CardId": "BLD-04",
+      "SlotCategory": "MedBayAndProvisions",
+      "Name": "OSDR GeneLab Surgical Med-Bay + ARED + Cryo-Lyophilized Pantry",
+      "Rarity": "Legendary",
+      "DryMassTons": 7.2,
+      "RadiationShieldingGcm2": 8.0,
+      "MicrometeoroidWhippleLayers": 1,
+      "ThermalRejectionCapacityKw": 25.0,
+      "ElectricalPowerKwDelta": -5.5,
+      "BatteryStorageKwhBonus": 80.0,
+      "FoodProvisionsKgBonus": 2600.0,
+      "PotableWaterLitersBonus": 950.0,
+      "MedicalSuppliesKgBonus": 360.0,
+      "EvaSuitDurabilityBonusPct": 0.0,
+      "ToolsAndSparesKgBonus": 80.0,
+      "CommsBandwidthGbpsBonus": 0.0,
+      "ArtificialGravityCentrifugeG": 0.0,
+      "CrewProtectionBuff": 0.36,
+      "NasaSource": "NASA OSDR GeneLab Countermeasures & NASA-STD-3001 Vol. 1/2",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=ISS%20ARED%20medical%20astronaut&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/iss065e009841/iss065e009841~medium.jpg",
+      "ArchitecturalDecisionDomain": "LifeSupport",
+      "WattOfPowerCost": 5500.0,
+      "LiterOfOxygenPerDayNet": 240.0,
+      "GramOfRadiationShieldingGcm2": 8.0,
+      "CommunicationDelayMitigationSec": 45.0,
+      "RarityPtBr": "Lendária",
+      "ArchitecturalDecisionDomainPtBr": "Suporte à Vida",
+      "SlotCategoryPtBr": "Ala Médica e Mantimentos",
+      "NamePtBr": "Ala Médica Cirúrgica OSDR GeneLab + ARED + Despensa Crio-Liofilizada",
+      "NasaSourcePtBr": "Contramedidas NASA OSDR GeneLab e Padrão NASA-STD-3001 Vol. 1/2",
+      "GameUiLabel": "[BLD-04] +5500W | +240L O2 | 8g/cm²",
+      "GameUiLabelPtBr": "[BLD-04] +5500W | +240L O2 | 8g/cm²",
+      "TechnicalGlossary": {
+        "OSDR": {
+          "TermKey": "OSDR",
+          "GameUiLabel": "Bio-Medical Telemetry",
+          "GameUiLabelPtBr": "Telemetria Biomédica OSDR",
+          "MeaningEn": "NASA Open Science Data Repository (GeneLab): space-biology database tracking bone demineralization, radiation DNA repair, and Chlorella growth.",
+          "MeaningPtBr": "Repositório de Ciência Aberta da NASA (GeneLab): banco biológico sobre perda óssea, reparo de DNA sob radiação e cultivo de Chlorella."
+        }
+      }
+    },
+    {
+      "CardId": "BLD-05",
+      "SlotCategory": "CommsAndFabrication",
+      "Name": "DSOC Deep-Space Optical Laser + 3D CNC Titanium/Polymer Sintering Fab",
+      "Rarity": "Legendary",
+      "DryMassTons": 5.4,
+      "RadiationShieldingGcm2": 2.0,
+      "MicrometeoroidWhippleLayers": 1,
+      "ThermalRejectionCapacityKw": 30.0,
+      "ElectricalPowerKwDelta": -6.5,
+      "BatteryStorageKwhBonus": 90.0,
+      "FoodProvisionsKgBonus": 0.0,
+      "PotableWaterLitersBonus": 0.0,
+      "MedicalSuppliesKgBonus": 0.0,
+      "EvaSuitDurabilityBonusPct": 20.0,
+      "ToolsAndSparesKgBonus": 780.0,
+      "CommsBandwidthGbpsBonus": 22.0,
+      "ArtificialGravityCentrifugeG": 0.0,
+      "CrewProtectionBuff": 0.16,
+      "NasaSource": "NASA Psyche DSOC Laser Transceiver & Marshall In-Space Manufacturing",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Deep%20Space%20Optical%20Communications%20DSOC&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/PIA25666/PIA25666~medium.jpg",
+      "ArchitecturalDecisionDomain": "CommunicationDelay",
+      "WattOfPowerCost": 6500.0,
+      "LiterOfOxygenPerDayNet": 0.0,
+      "GramOfRadiationShieldingGcm2": 2.0,
+      "CommunicationDelayMitigationSec": 420.0,
+      "RarityPtBr": "Lendária",
+      "ArchitecturalDecisionDomainPtBr": "Atraso de Comunicação",
+      "SlotCategoryPtBr": "Comunicações e Manufatura",
+      "NamePtBr": "Laser Óptico de Espaço Profundo DSOC + Sinterização CNC 3D de Titânio/Polímero",
+      "NasaSourcePtBr": "Transceptor a Laser DSOC da Missão Psyche e Manufatura Espacial da NASA Marshall",
+      "GameUiLabel": "[BLD-05] +6500W | +0L O2 | 2g/cm²",
+      "GameUiLabelPtBr": "[BLD-05] +6500W | +0L O2 | 2g/cm²",
+      "TechnicalGlossary": {
+        "DSOC": {
+          "TermKey": "DSOC",
+          "GameUiLabel": "Optical Laser Comms",
+          "GameUiLabelPtBr": "Comunicação a Laser DSOC",
+          "MeaningEn": "Deep Space Optical Communications: high-bandwidth laser transceiver mitigating Earth-Moon and Earth-Mars communication latency.",
+          "MeaningPtBr": "Comunicações Ópticas de Espaço Profundo: transceptor a laser de alta banda que mitiga o atraso de comunicação Terra-Lua e Terra-Marte."
+        }
+      }
+    },
+    {
+      "CardId": "BLD-06",
+      "SlotCategory": "PropulsionAndCryoStorage",
+      "Name": "Zero-Boil-Off Cryo-Methalox (CH4/LOX) Broad-Area Cooled Depot",
+      "Rarity": "Epic",
+      "DryMassTons": 7.8,
+      "RadiationShieldingGcm2": 10.0,
+      "MicrometeoroidWhippleLayers": 3,
+      "ThermalRejectionCapacityKw": 95.0,
+      "ElectricalPowerKwDelta": -5.0,
+      "BatteryStorageKwhBonus": 100.0,
+      "FoodProvisionsKgBonus": 400.0,
+      "PotableWaterLitersBonus": 600.0,
+      "MedicalSuppliesKgBonus": 0.0,
+      "EvaSuitDurabilityBonusPct": 0.0,
+      "ToolsAndSparesKgBonus": 160.0,
+      "CommsBandwidthGbpsBonus": 0.0,
+      "ArtificialGravityCentrifugeG": 0.0,
+      "CrewProtectionBuff": 0.15,
+      "NasaSource": "NASA Marshall Cryogenic Fluid Management (CFM) Zero-Boil-Off",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=cryogenic%20propellant%20depot%20methane&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/MSFC-1900908/MSFC-1900908~medium.jpg",
+      "ArchitecturalDecisionDomain": "PowerBudgeting",
+      "WattOfPowerCost": 5000.0,
+      "LiterOfOxygenPerDayNet": 450.0,
+      "GramOfRadiationShieldingGcm2": 10.0,
+      "CommunicationDelayMitigationSec": 0.0,
+      "RarityPtBr": "Épica",
+      "ArchitecturalDecisionDomainPtBr": "Orçamento de Energia",
+      "SlotCategoryPtBr": "Propulsão e Armazenamento Criogênico",
+      "NamePtBr": "Depósito Criogênico Methalox (CH4/LOX) Zero-Boil-Off de Resfriamento Amplo",
+      "NasaSourcePtBr": "Gerenciamento de Fluidos Criogênicos (CFM) Zero-Boil-Off da NASA Marshall",
+      "GameUiLabel": "[BLD-06] +5000W | +450L O2 | 10g/cm²",
+      "GameUiLabelPtBr": "[BLD-06] +5000W | +450L O2 | 10g/cm²",
+      "TechnicalGlossary": {
+        "BNNT": {
+          "TermKey": "BNNT",
+          "GameUiLabel": "Nanotube Rad-Shield",
+          "GameUiLabelPtBr": "Blindagem Nanotubos BNNT",
+          "MeaningEn": "Hydrogenated Boron Nitride Nanotubes providing high areal density (g/cm²) radiation shielding against GCR and SEP protons.",
+          "MeaningPtBr": "Nanotubos de Nitreto de Boro Hidrogenados que fornecem blindagem leve (g/cm²) contra raios cósmicos (GCR) e prótons solares (SEP)."
+        }
+      }
+    },
+    {
+      "CardId": "BLD-07",
+      "SlotCategory": "ThermalControl",
+      "Name": "Two-Phase Pumped Ammonia Loop + Deployable Origami Radiators",
+      "Rarity": "Rare",
+      "DryMassTons": 3.4,
+      "RadiationShieldingGcm2": 2.0,
+      "MicrometeoroidWhippleLayers": 2,
+      "ThermalRejectionCapacityKw": 180.0,
+      "ElectricalPowerKwDelta": -3.0,
+      "BatteryStorageKwhBonus": 40.0,
+      "FoodProvisionsKgBonus": 0.0,
+      "PotableWaterLitersBonus": 200.0,
+      "MedicalSuppliesKgBonus": 0.0,
+      "EvaSuitDurabilityBonusPct": 5.0,
+      "ToolsAndSparesKgBonus": 120.0,
+      "CommsBandwidthGbpsBonus": 0.0,
+      "ArtificialGravityCentrifugeG": 0.0,
+      "CrewProtectionBuff": 0.12,
+      "NasaSource": "NASA ISS External Active Thermal Control System (EATCS)",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=ISS%20thermal%20radiator%20ammonia&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/iss063e054212/iss063e054212~medium.jpg",
+      "ArchitecturalDecisionDomain": "PowerBudgeting",
+      "WattOfPowerCost": 3000.0,
+      "LiterOfOxygenPerDayNet": 0.0,
+      "GramOfRadiationShieldingGcm2": 2.0,
+      "CommunicationDelayMitigationSec": 0.0,
+      "RarityPtBr": "Rara",
+      "ArchitecturalDecisionDomainPtBr": "Orçamento de Energia",
+      "SlotCategoryPtBr": "Controle Térmico",
+      "NamePtBr": "Circuito Bifásico Bombeado de Amônia + Radiadores Origami Desdobráveis",
+      "NasaSourcePtBr": "Sistema Externo de Controle Térmico Ativo (EATCS) da NASA ISS",
+      "GameUiLabel": "[BLD-07] +3000W | +0L O2 | 2g/cm²",
+      "GameUiLabelPtBr": "[BLD-07] +3000W | +0L O2 | 2g/cm²",
+      "TechnicalGlossary": {
+        "BNNT": {
+          "TermKey": "BNNT",
+          "GameUiLabel": "Nanotube Rad-Shield",
+          "GameUiLabelPtBr": "Blindagem Nanotubos BNNT",
+          "MeaningEn": "Hydrogenated Boron Nitride Nanotubes providing high areal density (g/cm²) radiation shielding against GCR and SEP protons.",
+          "MeaningPtBr": "Nanotubos de Nitreto de Boro Hidrogenados que fornecem blindagem leve (g/cm²) contra raios cósmicos (GCR) e prótons solares (SEP)."
+        }
+      }
+    },
+    {
+      "CardId": "BLD-08",
+      "SlotCategory": "RoboticsAndAutomation",
+      "Name": "Canadarm3 Dexterous Manipulator + Valkyrie R5 EVA Humanoid Twins",
+      "Rarity": "Epic",
+      "DryMassTons": 4.1,
+      "RadiationShieldingGcm2": 0.0,
+      "MicrometeoroidWhippleLayers": 1,
+      "ThermalRejectionCapacityKw": 15.0,
+      "ElectricalPowerKwDelta": -4.5,
+      "BatteryStorageKwhBonus": 70.0,
+      "FoodProvisionsKgBonus": 0.0,
+      "PotableWaterLitersBonus": 0.0,
+      "MedicalSuppliesKgBonus": 30.0,
+      "EvaSuitDurabilityBonusPct": 24.0,
+      "ToolsAndSparesKgBonus": 480.0,
+      "CommsBandwidthGbpsBonus": 4.0,
+      "ArtificialGravityCentrifugeG": 0.0,
+      "CrewProtectionBuff": 0.24,
+      "NasaSource": "NASA JSC Valkyrie R5 Robot & Gateway Canadarm3",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Valkyrie%20robot%20JSC&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/jsc2013e090633/jsc2013e090633~medium.jpg",
+      "ArchitecturalDecisionDomain": "CommunicationDelay",
+      "WattOfPowerCost": 4500.0,
+      "LiterOfOxygenPerDayNet": 180.0,
+      "GramOfRadiationShieldingGcm2": 0.0,
+      "CommunicationDelayMitigationSec": 180.0,
+      "RarityPtBr": "Épica",
+      "ArchitecturalDecisionDomainPtBr": "Atraso de Comunicação",
+      "SlotCategoryPtBr": "Robótica e Automação",
+      "NamePtBr": "Manipulador Destro Canadarm3 + Gêmeos Humanoides EVA Valkyrie R5",
+      "NasaSourcePtBr": "Robô Valkyrie R5 da NASA JSC e Canadarm3 da Lunar Gateway",
+      "GameUiLabel": "[BLD-08] +4500W | +180L O2 | 0g/cm²",
+      "GameUiLabelPtBr": "[BLD-08] +4500W | +180L O2 | 0g/cm²",
+      "TechnicalGlossary": {
+        "BNNT": {
+          "TermKey": "BNNT",
+          "GameUiLabel": "Nanotube Rad-Shield",
+          "GameUiLabelPtBr": "Blindagem Nanotubos BNNT",
+          "MeaningEn": "Hydrogenated Boron Nitride Nanotubes providing high areal density (g/cm²) radiation shielding against GCR and SEP protons.",
+          "MeaningPtBr": "Nanotubos de Nitreto de Boro Hidrogenados que fornecem blindagem leve (g/cm²) contra raios cósmicos (GCR) e prótons solares (SEP)."
+        }
+      }
+    },
+    {
+      "CardId": "BLD-09",
+      "SlotCategory": "ArtificialGravity",
+      "Name": "Short-Radius Counter-Rotating Sleep Centrifuge (0.38g to 0.50g)",
+      "Rarity": "Legendary",
+      "DryMassTons": 8.9,
+      "RadiationShieldingGcm2": 6.0,
+      "MicrometeoroidWhippleLayers": 2,
+      "ThermalRejectionCapacityKw": 20.0,
+      "ElectricalPowerKwDelta": -7.5,
+      "BatteryStorageKwhBonus": 50.0,
+      "FoodProvisionsKgBonus": 300.0,
+      "PotableWaterLitersBonus": 250.0,
+      "MedicalSuppliesKgBonus": 90.0,
+      "EvaSuitDurabilityBonusPct": 0.0,
+      "ToolsAndSparesKgBonus": 100.0,
+      "CommsBandwidthGbpsBonus": 0.0,
+      "ArtificialGravityCentrifugeG": 0.42,
+      "CrewProtectionBuff": 0.34,
+      "NasaSource": "NASA Ames Artificial Gravity & SANS Vestibular Countermeasures",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=artificial%20gravity%20centrifuge%20NASA&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/ACD19-0032-001/ACD19-0032-001~medium.jpg",
+      "ArchitecturalDecisionDomain": "LifeSupport",
+      "WattOfPowerCost": 7500.0,
+      "LiterOfOxygenPerDayNet": 0.0,
+      "GramOfRadiationShieldingGcm2": 6.0,
+      "CommunicationDelayMitigationSec": 0.0,
+      "RarityPtBr": "Lendária",
+      "ArchitecturalDecisionDomainPtBr": "Suporte à Vida",
+      "SlotCategoryPtBr": "Gravidade Artificial",
+      "NamePtBr": "Centrífuga de Sono Contra-Rotativa de Curto Raio (0,38g a 0,50g)",
+      "NasaSourcePtBr": "Gravidade Artificial e Contramedidas Vestibulares SANS da NASA Ames",
+      "GameUiLabel": "[BLD-09] +7500W | +0L O2 | 6g/cm²",
+      "GameUiLabelPtBr": "[BLD-09] +7500W | +0L O2 | 6g/cm²",
+      "TechnicalGlossary": {
+        "BNNT": {
+          "TermKey": "BNNT",
+          "GameUiLabel": "Nanotube Rad-Shield",
+          "GameUiLabelPtBr": "Blindagem Nanotubos BNNT",
+          "MeaningEn": "Hydrogenated Boron Nitride Nanotubes providing high areal density (g/cm²) radiation shielding against GCR and SEP protons.",
+          "MeaningPtBr": "Nanotubos de Nitreto de Boro Hidrogenados que fornecem blindagem leve (g/cm²) contra raios cósmicos (GCR) e prótons solares (SEP)."
+        }
+      }
+    },
+    {
+      "CardId": "BLD-10",
+      "SlotCategory": "PowerStorageAndFuelCells",
+      "Name": "Solid-State Li-Sulfur Battery Bank + Regenerative PEM Fuel Cells",
+      "Rarity": "Rare",
+      "DryMassTons": 4.6,
+      "RadiationShieldingGcm2": 3.0,
+      "MicrometeoroidWhippleLayers": 1,
+      "ThermalRejectionCapacityKw": 35.0,
+      "ElectricalPowerKwDelta": 48.0,
+      "BatteryStorageKwhBonus": 650.0,
+      "FoodProvisionsKgBonus": 0.0,
+      "PotableWaterLitersBonus": 350.0,
+      "MedicalSuppliesKgBonus": 0.0,
+      "EvaSuitDurabilityBonusPct": 0.0,
+      "ToolsAndSparesKgBonus": 90.0,
+      "CommsBandwidthGbpsBonus": 1.5,
+      "ArtificialGravityCentrifugeG": 0.0,
+      "CrewProtectionBuff": 0.1,
+      "NasaSource": "NASA Glenn SABERS Solid-State Battery & Regenerative Fuel Cells",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=SABERS%20solid%20state%20battery%20NASA%20Glenn&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/GRC-2022-C-06319/GRC-2022-C-06319~medium.jpg",
+      "ArchitecturalDecisionDomain": "PowerBudgeting",
+      "WattOfPowerCost": -48000.0,
+      "LiterOfOxygenPerDayNet": 110.0,
+      "GramOfRadiationShieldingGcm2": 3.0,
+      "CommunicationDelayMitigationSec": 25.0,
+      "RarityPtBr": "Rara",
+      "ArchitecturalDecisionDomainPtBr": "Orçamento de Energia",
+      "SlotCategoryPtBr": "Armazenamento de Energia e Células a Combustível",
+      "NamePtBr": "Banco de Baterias de Estado Sólido Lítio-Enxofre + Células a Combustível PEM Regenerativas",
+      "NasaSourcePtBr": "Bateria de Estado Sólido SABERS e Células a Combustível Regenerativas da NASA Glenn",
+      "GameUiLabel": "[BLD-10] -48000W | +110L O2 | 3g/cm²",
+      "GameUiLabelPtBr": "[BLD-10] -48000W | +110L O2 | 3g/cm²",
+      "TechnicalGlossary": {
+        "BNNT": {
+          "TermKey": "BNNT",
+          "GameUiLabel": "Nanotube Rad-Shield",
+          "GameUiLabelPtBr": "Blindagem Nanotubos BNNT",
+          "MeaningEn": "Hydrogenated Boron Nitride Nanotubes providing high areal density (g/cm²) radiation shielding against GCR and SEP protons.",
+          "MeaningPtBr": "Nanotubos de Nitreto de Boro Hidrogenados que fornecem blindagem leve (g/cm²) contra raios cósmicos (GCR) e prótons solares (SEP)."
+        }
+      }
+    }
+  ],
+  "EclssPropertiesDeck": [
+    {
+      "CardId": "ECL-01",
+      "SubsystemCode": "WRS-WPA-UPA",
+      "Name": "Marshall Water Recovery System (WPA Catalytic Reactor + UPA VCD)",
+      "DryMassTons": 3.8,
+      "BioreactorVolumeLitersBonus": 400.0,
+      "WaterRecoveryEfficiencyBonus": 0.046,
+      "O2GenerationEfficiencyBonus": 0.05,
+      "Co2ScrubbingEfficiencyBonus": 0.04,
+      "SabatierMethaneYieldBonus": 0.06,
+      "NitrogenBufferConservationBonus": 0.08,
+      "ElectricalPowerKwDraw": 4.2,
+      "FilterEntropyResistanceBonus": 0.24,
+      "NasaSource": "NASA Marshall ECLSS WRS (Vapor Compression Distillation 93.5%-98%)",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Water%20Recovery%20System%20ECLSS%20Marshall&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/MSFC-1600816/MSFC-1600816~medium.jpg",
+      "ArchitecturalDecisionDomain": "LifeSupport",
+      "WattOfPowerCost": 4200.0,
+      "LiterOfOxygenPerDayNet": 310.0,
+      "GramOfRadiationShieldingGcm2": 3.5,
+      "CommunicationDelayMitigationSec": 0.0,
+      "ArchitecturalDecisionDomainPtBr": "Suporte à Vida",
+      "NamePtBr": "Sistema de Recuperação de Água Marshall (Reator Catalítico WPA + Destilação VCD UPA)",
+      "NasaSourcePtBr": "Sistema WRS ECLSS da NASA Marshall (Destilação por Compressão de Vapor 93,5%–98%)",
+      "GameUiLabel": "[ECL-01] +4200W | +310L O2 | 4g/cm²",
+      "GameUiLabelPtBr": "[ECL-01] +4200W | +310L O2 | 4g/cm²",
+      "TechnicalGlossary": {
+        "ECLSS": {
+          "TermKey": "ECLSS",
+          "GameUiLabel": "Closed-Loop Life Support",
+          "GameUiLabelPtBr": "Suporte à Vida Ciclo Fechado",
+          "MeaningEn": "Environmental Control and Life Support System: Marshall Space Flight Center hardware closing the cabin water (WPA/BPA) and air (OGA/CDRA/Sabatier) loops.",
+          "MeaningPtBr": "Sistema de Controle Ambiental e Suporte à Vida: hardware da NASA Marshall que fecha os ciclos de água (WPA/BPA) e ar (OGA/CDRA/Sabatier)."
+        }
+      }
+    },
+    {
+      "CardId": "ECL-02",
+      "SubsystemCode": "BPA-BRINE",
+      "Name": "Brine Processor Assembly (BPA) Ionomer-Membrane Dewatering",
+      "DryMassTons": 2.3,
+      "BioreactorVolumeLitersBonus": 200.0,
+      "WaterRecoveryEfficiencyBonus": 0.034,
+      "O2GenerationEfficiencyBonus": 0.04,
+      "Co2ScrubbingEfficiencyBonus": 0.03,
+      "SabatierMethaneYieldBonus": 0.05,
+      "NitrogenBufferConservationBonus": 0.05,
+      "ElectricalPowerKwDraw": 2.6,
+      "FilterEntropyResistanceBonus": 0.28,
+      "NasaSource": "NASA ISS Brine Processor Assembly (Closes water loop to 98.5%)",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Brine%20Processor%20Assembly%20ISS&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/iss065e030645/iss065e030645~medium.jpg",
+      "ArchitecturalDecisionDomain": "LifeSupport",
+      "WattOfPowerCost": 2600.0,
+      "LiterOfOxygenPerDayNet": 210.0,
+      "GramOfRadiationShieldingGcm2": 1.8,
+      "CommunicationDelayMitigationSec": 0.0,
+      "ArchitecturalDecisionDomainPtBr": "Suporte à Vida",
+      "NamePtBr": "Conjunto Processador de Salmoura (BPA) por Desidratação em Membrana Ionomérica",
+      "NasaSourcePtBr": "Conjunto Processador de Salmoura da NASA ISS (Fecha o ciclo da água em 98,5%)",
+      "GameUiLabel": "[ECL-02] +2600W | +210L O2 | 2g/cm²",
+      "GameUiLabelPtBr": "[ECL-02] +2600W | +210L O2 | 2g/cm²",
+      "TechnicalGlossary": {
+        "ECLSS": {
+          "TermKey": "ECLSS",
+          "GameUiLabel": "Closed-Loop Life Support",
+          "GameUiLabelPtBr": "Suporte à Vida Ciclo Fechado",
+          "MeaningEn": "Environmental Control and Life Support System: Marshall Space Flight Center hardware closing the cabin water (WPA/BPA) and air (OGA/CDRA/Sabatier) loops.",
+          "MeaningPtBr": "Sistema de Controle Ambiental e Suporte à Vida: hardware da NASA Marshall que fecha os ciclos de água (WPA/BPA) e ar (OGA/CDRA/Sabatier)."
+        }
+      }
+    },
+    {
+      "CardId": "ECL-03",
+      "SubsystemCode": "ARS-OGA-CDRA",
+      "Name": "Oxygen Generation Assembly (OGA PEM) + 4-Bed Zeolite 5A CDRA",
+      "DryMassTons": 4.1,
+      "BioreactorVolumeLitersBonus": 600.0,
+      "WaterRecoveryEfficiencyBonus": 0.01,
+      "O2GenerationEfficiencyBonus": 0.25,
+      "Co2ScrubbingEfficiencyBonus": 0.28,
+      "SabatierMethaneYieldBonus": 0.1,
+      "NitrogenBufferConservationBonus": 0.14,
+      "ElectricalPowerKwDraw": 5.5,
+      "FilterEntropyResistanceBonus": 0.18,
+      "NasaSource": "NASA ECLSS OGA (up to 9.2 kg O2/day) & 4BMS CDRA",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Oxygen%20Generation%20Assembly%20ISS&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/iss026e025219/iss026e025219~medium.jpg",
+      "ArchitecturalDecisionDomain": "LifeSupport",
+      "WattOfPowerCost": 5500.0,
+      "LiterOfOxygenPerDayNet": 6440.0,
+      "GramOfRadiationShieldingGcm2": 2.0,
+      "CommunicationDelayMitigationSec": 0.0,
+      "ArchitecturalDecisionDomainPtBr": "Suporte à Vida",
+      "NamePtBr": "Conjunto Gerador de Oxigênio (OGA PEM) + Removedor CDRA de 4 Leitos de Zeólita 5A",
+      "NasaSourcePtBr": "NASA ECLSS OGA (até 9,2 kg O2/dia) e Peneira Molecular de 4 Leitos CDRA",
+      "GameUiLabel": "[ECL-03] +5500W | +6440L O2 | 2g/cm²",
+      "GameUiLabelPtBr": "[ECL-03] +5500W | +6440L O2 | 2g/cm²",
+      "TechnicalGlossary": {
+        "ECLSS": {
+          "TermKey": "ECLSS",
+          "GameUiLabel": "Closed-Loop Life Support",
+          "GameUiLabelPtBr": "Suporte à Vida Ciclo Fechado",
+          "MeaningEn": "Environmental Control and Life Support System: Marshall Space Flight Center hardware closing the cabin water (WPA/BPA) and air (OGA/CDRA/Sabatier) loops.",
+          "MeaningPtBr": "Sistema de Controle Ambiental e Suporte à Vida: hardware da NASA Marshall que fecha os ciclos de água (WPA/BPA) e ar (OGA/CDRA/Sabatier)."
+        }
+      }
+    },
+    {
+      "CardId": "ECL-04",
+      "SubsystemCode": "SABATIER-CRA",
+      "Name": "Sabatier Carbon Dioxide Reduction Assembly (Ru-Al2O3 Catalyst)",
+      "DryMassTons": 3.5,
+      "BioreactorVolumeLitersBonus": 500.0,
+      "WaterRecoveryEfficiencyBonus": 0.026,
+      "O2GenerationEfficiencyBonus": 0.12,
+      "Co2ScrubbingEfficiencyBonus": 0.22,
+      "SabatierMethaneYieldBonus": 0.28,
+      "NitrogenBufferConservationBonus": 0.06,
+      "ElectricalPowerKwDraw": 4.8,
+      "FilterEntropyResistanceBonus": 0.2,
+      "NasaSource": "NASA NTRS Integrated ECLSS & Sabatier Methalox Propulsion",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Sabatier%20system%20ECLSS%20NASA&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/MSFC-1001264/MSFC-1001264~medium.jpg",
+      "ArchitecturalDecisionDomain": "LifeSupport",
+      "WattOfPowerCost": 4800.0,
+      "LiterOfOxygenPerDayNet": 1820.0,
+      "GramOfRadiationShieldingGcm2": 2.4,
+      "CommunicationDelayMitigationSec": 0.0,
+      "ArchitecturalDecisionDomainPtBr": "Suporte à Vida",
+      "NamePtBr": "Conjunto de Redução de Dióxido de Carbono Sabatier (Catalisador Ru-Al2O3)",
+      "NasaSourcePtBr": "NASA NTRS ECLSS Integrado e Propulsão Methalox Sabatier",
+      "GameUiLabel": "[ECL-04] +4800W | +1820L O2 | 2g/cm²",
+      "GameUiLabelPtBr": "[ECL-04] +4800W | +1820L O2 | 2g/cm²",
+      "TechnicalGlossary": {
+        "ECLSS": {
+          "TermKey": "ECLSS",
+          "GameUiLabel": "Closed-Loop Life Support",
+          "GameUiLabelPtBr": "Suporte à Vida Ciclo Fechado",
+          "MeaningEn": "Environmental Control and Life Support System: Marshall Space Flight Center hardware closing the cabin water (WPA/BPA) and air (OGA/CDRA/Sabatier) loops.",
+          "MeaningPtBr": "Sistema de Controle Ambiental e Suporte à Vida: hardware da NASA Marshall que fecha os ciclos de água (WPA/BPA) e ar (OGA/CDRA/Sabatier)."
+        }
+      }
+    },
+    {
+      "CardId": "ECL-05",
+      "SubsystemCode": "PBR-OSD521",
+      "Name": "Hybrid Chlorella Vulgaris & Spirulina Photobioreactor (3,400 L)",
+      "DryMassTons": 6.2,
+      "BioreactorVolumeLitersBonus": 3400.0,
+      "WaterRecoveryEfficiencyBonus": 0.018,
+      "O2GenerationEfficiencyBonus": 0.34,
+      "Co2ScrubbingEfficiencyBonus": 0.32,
+      "SabatierMethaneYieldBonus": 0.24,
+      "NitrogenBufferConservationBonus": 0.12,
+      "ElectricalPowerKwDraw": 6.0,
+      "FilterEntropyResistanceBonus": 0.25,
+      "NasaSource": "NASA OSDR OSD-521 Photobioreactor & PBR@LSR ISS Experiment",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Photobioreactor%20algae%20ISS&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/iss059e053902/iss059e053902~medium.jpg",
+      "ArchitecturalDecisionDomain": "LifeSupport",
+      "WattOfPowerCost": 6000.0,
+      "LiterOfOxygenPerDayNet": 3950.0,
+      "GramOfRadiationShieldingGcm2": 8.5,
+      "CommunicationDelayMitigationSec": 0.0,
+      "ArchitecturalDecisionDomainPtBr": "Suporte à Vida",
+      "NamePtBr": "Fotobiorreator Híbrido de Chlorella Vulgaris e Spirulina (3.400 L)",
+      "NasaSourcePtBr": "Fotobiorreator NASA OSDR OSD-521 e Experimento PBR@LSR na ISS",
+      "GameUiLabel": "[ECL-05] +6000W | +3950L O2 | 8g/cm²",
+      "GameUiLabelPtBr": "[ECL-05] +6000W | +3950L O2 | 8g/cm²",
+      "TechnicalGlossary": {
+        "OSDR": {
+          "TermKey": "OSDR",
+          "GameUiLabel": "Bio-Medical Telemetry",
+          "GameUiLabelPtBr": "Telemetria Biomédica OSDR",
+          "MeaningEn": "NASA Open Science Data Repository (GeneLab): space-biology database tracking bone demineralization, radiation DNA repair, and Chlorella growth.",
+          "MeaningPtBr": "Repositório de Ciência Aberta da NASA (GeneLab): banco biológico sobre perda óssea, reparo de DNA sob radiação e cultivo de Chlorella."
+        }
+      }
+    },
+    {
+      "CardId": "ECL-06",
+      "SubsystemCode": "TCCS-SILVER",
+      "Name": "Trace Contaminant Control (TCCS) + Silver-Ion Biocide & UV Sterilizer",
+      "DryMassTons": 1.9,
+      "BioreactorVolumeLitersBonus": 300.0,
+      "WaterRecoveryEfficiencyBonus": 0.014,
+      "O2GenerationEfficiencyBonus": 0.06,
+      "Co2ScrubbingEfficiencyBonus": 0.12,
+      "SabatierMethaneYieldBonus": 0.08,
+      "NitrogenBufferConservationBonus": 0.15,
+      "ElectricalPowerKwDraw": 1.8,
+      "FilterEntropyResistanceBonus": 0.35,
+      "NasaSource": "NASA TechPort Silver Biocide Foam & Biofilm Mitigation",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Trace%20Contaminant%20Control%20ECLSS&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/iss061e094418/iss061e094418~medium.jpg",
+      "ArchitecturalDecisionDomain": "LifeSupport",
+      "WattOfPowerCost": 1800.0,
+      "LiterOfOxygenPerDayNet": 420.0,
+      "GramOfRadiationShieldingGcm2": 1.0,
+      "CommunicationDelayMitigationSec": 0.0,
+      "ArchitecturalDecisionDomainPtBr": "Suporte à Vida",
+      "NamePtBr": "Controle de Contaminantes Traço (TCCS) + Biocida de Íons de Prata e Esterilizador UV",
+      "NasaSourcePtBr": "Espuma Biocida de Prata e Mitigação de Biofilme do NASA TechPort",
+      "GameUiLabel": "[ECL-06] +1800W | +420L O2 | 1g/cm²",
+      "GameUiLabelPtBr": "[ECL-06] +1800W | +420L O2 | 1g/cm²",
+      "TechnicalGlossary": {
+        "ECLSS": {
+          "TermKey": "ECLSS",
+          "GameUiLabel": "Closed-Loop Life Support",
+          "GameUiLabelPtBr": "Suporte à Vida Ciclo Fechado",
+          "MeaningEn": "Environmental Control and Life Support System: Marshall Space Flight Center hardware closing the cabin water (WPA/BPA) and air (OGA/CDRA/Sabatier) loops.",
+          "MeaningPtBr": "Sistema de Controle Ambiental e Suporte à Vida: hardware da NASA Marshall que fecha os ciclos de água (WPA/BPA) e ar (OGA/CDRA/Sabatier)."
+        }
+      }
+    },
+    {
+      "CardId": "ECL-07",
+      "SubsystemCode": "BOSCH-MPA",
+      "Name": "Methane Pyrolysis & Bosch Series Reactor (Closed Hydrogen Loop)",
+      "DryMassTons": 3.2,
+      "BioreactorVolumeLitersBonus": 300.0,
+      "WaterRecoveryEfficiencyBonus": 0.022,
+      "O2GenerationEfficiencyBonus": 0.18,
+      "Co2ScrubbingEfficiencyBonus": 0.2,
+      "SabatierMethaneYieldBonus": 0.22,
+      "NitrogenBufferConservationBonus": 0.1,
+      "ElectricalPowerKwDraw": 5.2,
+      "FilterEntropyResistanceBonus": 0.22,
+      "NasaSource": "NASA Marshall Methane Pyrolysis Assembly (MPA) & Bosch Reactor",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Methane%20Pyrolysis%20Bosch%20Marshall&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/MSFC-1800342/MSFC-1800342~medium.jpg",
+      "ArchitecturalDecisionDomain": "LifeSupport",
+      "WattOfPowerCost": 5200.0,
+      "LiterOfOxygenPerDayNet": 2480.0,
+      "GramOfRadiationShieldingGcm2": 2.2,
+      "CommunicationDelayMitigationSec": 0.0,
+      "ArchitecturalDecisionDomainPtBr": "Suporte à Vida",
+      "NamePtBr": "Pirólise de Metano e Reator em Série Bosch (Ciclo Fechado de Hidrogênio)",
+      "NasaSourcePtBr": "Conjunto de Pirólise de Metano (MPA) e Reator Bosch da NASA Marshall",
+      "GameUiLabel": "[ECL-07] +5200W | +2480L O2 | 2g/cm²",
+      "GameUiLabelPtBr": "[ECL-07] +5200W | +2480L O2 | 2g/cm²",
+      "TechnicalGlossary": {
+        "ECLSS": {
+          "TermKey": "ECLSS",
+          "GameUiLabel": "Closed-Loop Life Support",
+          "GameUiLabelPtBr": "Suporte à Vida Ciclo Fechado",
+          "MeaningEn": "Environmental Control and Life Support System: Marshall Space Flight Center hardware closing the cabin water (WPA/BPA) and air (OGA/CDRA/Sabatier) loops.",
+          "MeaningPtBr": "Sistema de Controle Ambiental e Suporte à Vida: hardware da NASA Marshall que fecha os ciclos de água (WPA/BPA) e ar (OGA/CDRA/Sabatier)."
+        }
+      }
+    },
+    {
+      "CardId": "ECL-08",
+      "SubsystemCode": "VEGGIE-APH",
+      "Name": "Advanced Plant Habitat (APH) + Veggie Aeroponic Crop Module",
+      "DryMassTons": 4.4,
+      "BioreactorVolumeLitersBonus": 1800.0,
+      "WaterRecoveryEfficiencyBonus": 0.015,
+      "O2GenerationEfficiencyBonus": 0.2,
+      "Co2ScrubbingEfficiencyBonus": 0.18,
+      "SabatierMethaneYieldBonus": 0.14,
+      "NitrogenBufferConservationBonus": 0.08,
+      "ElectricalPowerKwDraw": 4.5,
+      "FilterEntropyResistanceBonus": 0.16,
+      "NasaSource": "NASA Kennedy Veggie & ISS Advanced Plant Habitat (APH)",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Advanced%20Plant%20Habitat%20Veggie%20ISS&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/KSC-20170215-PH_KLS01_0060/KSC-20170215-PH_KLS01_0060~medium.jpg",
+      "ArchitecturalDecisionDomain": "LifeSupport",
+      "WattOfPowerCost": 4500.0,
+      "LiterOfOxygenPerDayNet": 2150.0,
+      "GramOfRadiationShieldingGcm2": 4.2,
+      "CommunicationDelayMitigationSec": 0.0,
+      "ArchitecturalDecisionDomainPtBr": "Suporte à Vida",
+      "NamePtBr": "Habitat Avançado de Plantas (APH) + Módulo Agrícola Aeropônico Veggie",
+      "NasaSourcePtBr": "Sistema Veggie da NASA Kennedy e Habitat Avançado de Plantas (APH) da ISS",
+      "GameUiLabel": "[ECL-08] +4500W | +2150L O2 | 4g/cm²",
+      "GameUiLabelPtBr": "[ECL-08] +4500W | +2150L O2 | 4g/cm²",
+      "TechnicalGlossary": {
+        "ECLSS": {
+          "TermKey": "ECLSS",
+          "GameUiLabel": "Closed-Loop Life Support",
+          "GameUiLabelPtBr": "Suporte à Vida Ciclo Fechado",
+          "MeaningEn": "Environmental Control and Life Support System: Marshall Space Flight Center hardware closing the cabin water (WPA/BPA) and air (OGA/CDRA/Sabatier) loops.",
+          "MeaningPtBr": "Sistema de Controle Ambiental e Suporte à Vida: hardware da NASA Marshall que fecha os ciclos de água (WPA/BPA) e ar (OGA/CDRA/Sabatier)."
+        }
+      }
+    },
+    {
+      "CardId": "ECL-09",
+      "SubsystemCode": "N2-MEMBRANE",
+      "Name": "Cryogenic Nitrogen Recovery & Cabin Pressure Makeup Assembly",
+      "DryMassTons": 2.1,
+      "BioreactorVolumeLitersBonus": 200.0,
+      "WaterRecoveryEfficiencyBonus": 0.008,
+      "O2GenerationEfficiencyBonus": 0.1,
+      "Co2ScrubbingEfficiencyBonus": 0.1,
+      "SabatierMethaneYieldBonus": 0.06,
+      "NitrogenBufferConservationBonus": 0.35,
+      "ElectricalPowerKwDraw": 2.0,
+      "FilterEntropyResistanceBonus": 0.2,
+      "NasaSource": "NASA ISS High-Pressure Gas Tank (HPGT) & N2/O2 Separator",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=High%20Pressure%20Gas%20Tank%20ISS%20Quest&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/iss011e10857/iss011e10857~medium.jpg",
+      "ArchitecturalDecisionDomain": "LifeSupport",
+      "WattOfPowerCost": 2000.0,
+      "LiterOfOxygenPerDayNet": 980.0,
+      "GramOfRadiationShieldingGcm2": 1.5,
+      "CommunicationDelayMitigationSec": 0.0,
+      "ArchitecturalDecisionDomainPtBr": "Suporte à Vida",
+      "NamePtBr": "Recuperação Criogênica de Nitrogênio e Reposição de Pressão da Cabine",
+      "NasaSourcePtBr": "Tanque de Gás de Alta Pressão (HPGT) e Separador N2/O2 da NASA ISS",
+      "GameUiLabel": "[ECL-09] +2000W | +980L O2 | 2g/cm²",
+      "GameUiLabelPtBr": "[ECL-09] +2000W | +980L O2 | 2g/cm²",
+      "TechnicalGlossary": {
+        "ECLSS": {
+          "TermKey": "ECLSS",
+          "GameUiLabel": "Closed-Loop Life Support",
+          "GameUiLabelPtBr": "Suporte à Vida Ciclo Fechado",
+          "MeaningEn": "Environmental Control and Life Support System: Marshall Space Flight Center hardware closing the cabin water (WPA/BPA) and air (OGA/CDRA/Sabatier) loops.",
+          "MeaningPtBr": "Sistema de Controle Ambiental e Suporte à Vida: hardware da NASA Marshall que fecha os ciclos de água (WPA/BPA) e ar (OGA/CDRA/Sabatier)."
+        }
+      }
+    },
+    {
+      "CardId": "ECL-10",
+      "SubsystemCode": "AWP-BIOREACTOR",
+      "Name": "Anaerobic Membrane Bioreactor (AnMBR) Solid Waste Methanizer",
+      "DryMassTons": 3.7,
+      "BioreactorVolumeLitersBonus": 1400.0,
+      "WaterRecoveryEfficiencyBonus": 0.02,
+      "O2GenerationEfficiencyBonus": 0.1,
+      "Co2ScrubbingEfficiencyBonus": 0.15,
+      "SabatierMethaneYieldBonus": 0.3,
+      "NitrogenBufferConservationBonus": 0.18,
+      "ElectricalPowerKwDraw": 3.4,
+      "FilterEntropyResistanceBonus": 0.26,
+      "NasaSource": "NASA TechPort Organic Waste Bioconversion to Methane & Fertilizer",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=bioreactor%20waste%20recycling%20NASA&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/KSC-20190822-PH-CSH01_0015/KSC-20190822-PH-CSH01_0015~medium.jpg",
+      "ArchitecturalDecisionDomain": "LifeSupport",
+      "WattOfPowerCost": 3400.0,
+      "LiterOfOxygenPerDayNet": 1120.0,
+      "GramOfRadiationShieldingGcm2": 4.8,
+      "CommunicationDelayMitigationSec": 0.0,
+      "ArchitecturalDecisionDomainPtBr": "Suporte à Vida",
+      "NamePtBr": "Metanizador de Resíduos Sólidos com Biorreator de Membrana Anaeróbica (AnMBR)",
+      "NasaSourcePtBr": "Bioconversão de Resíduos Orgânicos em Metano e Fertilizante do NASA TechPort",
+      "GameUiLabel": "[ECL-10] +3400W | +1120L O2 | 5g/cm²",
+      "GameUiLabelPtBr": "[ECL-10] +3400W | +1120L O2 | 5g/cm²",
+      "TechnicalGlossary": {
+        "ECLSS": {
+          "TermKey": "ECLSS",
+          "GameUiLabel": "Closed-Loop Life Support",
+          "GameUiLabelPtBr": "Suporte à Vida Ciclo Fechado",
+          "MeaningEn": "Environmental Control and Life Support System: Marshall Space Flight Center hardware closing the cabin water (WPA/BPA) and air (OGA/CDRA/Sabatier) loops.",
+          "MeaningPtBr": "Sistema de Controle Ambiental e Suporte à Vida: hardware da NASA Marshall que fecha os ciclos de água (WPA/BPA) e ar (OGA/CDRA/Sabatier)."
+        }
+      }
+    }
+  ],
+  "EnvironmentDecks": [
+    {
+      "DeckId": "ENV-DECK-ISS",
+      "TargetId": "ISS",
+      "TargetName": "International Space Station (ISS — Low Earth Orbit 414 km)",
+      "JplHorizonsCommand": "-125544",
+      "EnvironmentProperties": {
+        "MeanDistanceFromEarthKm": 414.2,
+        "SurfaceGravityMs2": 8.69,
+        "EffectiveGForce": 1e-05,
+        "SolarIrradianceFactor": 1.0,
+        "AtmosphericPressurePa": 0.0,
+        "MeanTemperatureCelsius": 4.0,
+        "AmbientRadiationIndex": 0.85,
+        "ExternalHostilityIndex": 0.15,
+        "SuitWearRatePerDayPct": 0.35,
+        "ToolWearRatePerDayPct": 0.25,
+        "TotalMissionDeltaVms": 9800.0,
+        "OutboundTransitDays": 0.25,
+        "ReturnTransitDays": 0.2,
+        "SafeReturnYieldLimitPct": 30.0,
+        "SafeReturnFuelReserveFloorPct": 16.0,
+        "BiologicalHazards": [
+          "Microgravity cephalic fluid shift & Spaceflight-Associated Neuro-ocular Syndrome (SANS)",
+          "1.5% monthly bone mineral density loss without ARED resistance exercise",
+          "South Atlantic Anomaly (SAA) trapped proton radiation passes & atomic oxygen (ATOX) hull erosion"
+        ],
+        "BiologicalHazardsPtBr": [
+          "Deslocamento cefálico de fluidos em microgravidade e Síndrome Neuro-ocular Associada ao Voo Espacial (SANS)",
+          "Perda de 1,5% ao mês na densidade mineral óssea sem exercício resistivo no ARED",
+          "Passagens de radiação de prótons aprisionados na Anomalia do Atlântico Sul (SAA) e erosão por oxigênio atômico (ATOX)"
+        ]
+      },
+      "EnvironmentCountermeasureCards": [
+        {
+          "CardId": "ENV-ISS-01",
+          "Name": "Whipple Micrometeoroid & SAA Polyethylene Liner",
+          "Effect": "Absorbs orbital debris and South Atlantic Anomaly trapped proton radiation.",
+          "BiomeShieldingBuff": 0.28,
+          "CrewProtectionBuff": 0.32,
+          "SuitPreservationBuff": 0.25,
+          "NasaApiSource": "NASA TLE API (NORAD 25544) & DONKI RBE",
+          "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Whipple%20shield%20micrometeoroid%20ISS&media_type=image",
+          "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/iss072e007525/iss072e007525~medium.jpg",
+          "ArchitecturalDecisionDomain": "RadiationShielding",
+          "WattOfPowerCost": 450.0,
+          "LiterOfOxygenPerDayNet": 0.0,
+          "GramOfRadiationShieldingGcm2": 12.0,
+          "CommunicationDelayMitigationSec": 0.0,
+          "ArchitecturalDecisionDomainPtBr": "Blindagem contra Radiação",
+          "NamePtBr": "Escudo Whipple contra Micrometeoroides e Revestimento de Polietileno para a SAA",
+          "EffectPtBr": "Absorve detritos orbitais e a radiação de prótons aprisionados na Anomalia do Atlântico Sul.",
+          "NasaApiSourcePtBr": "API de TLE da NASA (NORAD 25544) e DONKI RBE",
+          "GameUiLabel": "[ENV-ISS-01] +450W | +0L O2 | 12g/cm²",
+          "GameUiLabelPtBr": "[ENV-ISS-01] +450W | +0L O2 | 12g/cm²",
+          "TechnicalGlossary": {
+            "EDS": {
+              "TermKey": "EDS",
+              "GameUiLabel": "Electrostatic Dust Shield",
+              "GameUiLabelPtBr": "Escudo Eletrostático Anti-Poeira",
+              "MeaningEn": "Electrodynamic Dust Shield: active travelling-wave electric curtain that repels abrasive silicate regolith from suits, visors, and seals.",
+              "MeaningPtBr": "Escudo Eletrodinâmico de Poeira: cortina elétrica ativa que repele a poeira abrasiva de regolito dos trajes, visores e vedações."
+            }
+          }
+        },
+        {
+          "CardId": "ENV-ISS-02",
+          "Name": "Capillary Zero-G Acoustic Phase Separator",
+          "Effect": "Prevents gas-liquid clogging inside Chlorella and Sabatier tubes in microgravity.",
+          "BiomeShieldingBuff": 0.34,
+          "CrewProtectionBuff": 0.22,
+          "SuitPreservationBuff": 0.15,
+          "NasaApiSource": "NASA OSDR Microgravity Fluid Physics",
+          "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=capillary%20flow%20experiment%20microgravity%20ISS&media_type=image",
+          "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/iss040e088196/iss040e088196~medium.jpg",
+          "ArchitecturalDecisionDomain": "LifeSupport",
+          "WattOfPowerCost": 820.0,
+          "LiterOfOxygenPerDayNet": 340.0,
+          "GramOfRadiationShieldingGcm2": 0.0,
+          "CommunicationDelayMitigationSec": 0.0,
+          "ArchitecturalDecisionDomainPtBr": "Suporte à Vida",
+          "NamePtBr": "Separador Acústico Capilar de Fases em Gravidade Zero",
+          "EffectPtBr": "Evita o entupimento gás-líquido dentro dos tubos de Chlorella e Sabatier em microgravidade.",
+          "NasaApiSourcePtBr": "Física de Fluidos em Microgravidade do NASA OSDR",
+          "GameUiLabel": "[ENV-ISS-02] +820W | +340L O2 | 0g/cm²",
+          "GameUiLabelPtBr": "[ENV-ISS-02] +820W | +340L O2 | 0g/cm²",
+          "TechnicalGlossary": {
+            "EDS": {
+              "TermKey": "EDS",
+              "GameUiLabel": "Electrostatic Dust Shield",
+              "GameUiLabelPtBr": "Escudo Eletrostático Anti-Poeira",
+              "MeaningEn": "Electrodynamic Dust Shield: active travelling-wave electric curtain that repels abrasive silicate regolith from suits, visors, and seals.",
+              "MeaningPtBr": "Escudo Eletrodinâmico de Poeira: cortina elétrica ativa que repele a poeira abrasiva de regolito dos trajes, visores e vedações."
+            }
+          }
+        },
+        {
+          "CardId": "ENV-ISS-03",
+          "Name": "Lower-Body Negative Pressure (LBNP) + ARED Suite",
+          "Effect": "Counteracts cephalic fluid shift, SANS ocular pressure, and bone demineralization.",
+          "BiomeShieldingBuff": 0.15,
+          "CrewProtectionBuff": 0.38,
+          "SuitPreservationBuff": 0.2,
+          "NasaApiSource": "NASA-STD-3001 & OSDR Crew Health",
+          "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Lower%20Body%20Negative%20Pressure%20ISS&media_type=image",
+          "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/iss062e014912/iss062e014912~medium.jpg",
+          "ArchitecturalDecisionDomain": "LifeSupport",
+          "WattOfPowerCost": 1100.0,
+          "LiterOfOxygenPerDayNet": -45.0,
+          "GramOfRadiationShieldingGcm2": 2.0,
+          "CommunicationDelayMitigationSec": 0.0,
+          "ArchitecturalDecisionDomainPtBr": "Suporte à Vida",
+          "NamePtBr": "Pressão Negativa nos Membros Inferiores (LBNP) + Suíte ARED",
+          "EffectPtBr": "Neutraliza o deslocamento cefálico de fluidos, a pressão ocular SANS e a desmineralização óssea.",
+          "NasaApiSourcePtBr": "Padrão NASA-STD-3001 e Saúde da Tripulação OSDR",
+          "GameUiLabel": "[ENV-ISS-03] +1100W | -45L O2 | 2g/cm²",
+          "GameUiLabelPtBr": "[ENV-ISS-03] +1100W | -45L O2 | 2g/cm²",
+          "TechnicalGlossary": {
+            "EDS": {
+              "TermKey": "EDS",
+              "GameUiLabel": "Electrostatic Dust Shield",
+              "GameUiLabelPtBr": "Escudo Eletrostático Anti-Poeira",
+              "MeaningEn": "Electrodynamic Dust Shield: active travelling-wave electric curtain that repels abrasive silicate regolith from suits, visors, and seals.",
+              "MeaningPtBr": "Escudo Eletrodinâmico de Poeira: cortina elétrica ativa que repele a poeira abrasiva de regolito dos trajes, visores e vedações."
+            }
+          }
+        },
+        {
+          "CardId": "ENV-ISS-04",
+          "Name": "SiO2 Atomic Oxygen (ATOX) Protective Coating & Reboost Thruster",
+          "Effect": "Prevents thermospheric atomic oxygen corrosion on solar wings and maintains 415 km altitude.",
+          "BiomeShieldingBuff": 0.24,
+          "CrewProtectionBuff": 0.18,
+          "SuitPreservationBuff": 0.3,
+          "NasaApiSource": "NASA Glenn MISSE Atomic Oxygen Materials Testing",
+          "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=MISSE%20atomic%20oxygen%20ISS&media_type=image",
+          "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/iss055e014582/iss055e014582~medium.jpg",
+          "ArchitecturalDecisionDomain": "PowerBudgeting",
+          "WattOfPowerCost": 950.0,
+          "LiterOfOxygenPerDayNet": 0.0,
+          "GramOfRadiationShieldingGcm2": 3.5,
+          "CommunicationDelayMitigationSec": 0.0,
+          "ArchitecturalDecisionDomainPtBr": "Orçamento de Energia",
+          "NamePtBr": "Revestimento Protetor SiO2 contra Oxigênio Atômico (ATOX) e Propulsor de Reboost",
+          "EffectPtBr": "Evita a corrosão por oxigênio atômico termosférico nas asas solares e mantém a altitude de 415 km.",
+          "NasaApiSourcePtBr": "Testes de Materiais de Oxigênio Atômico MISSE da NASA Glenn",
+          "GameUiLabel": "[ENV-ISS-04] +950W | +0L O2 | 4g/cm²",
+          "GameUiLabelPtBr": "[ENV-ISS-04] +950W | +0L O2 | 4g/cm²",
+          "TechnicalGlossary": {
+            "EDS": {
+              "TermKey": "EDS",
+              "GameUiLabel": "Electrostatic Dust Shield",
+              "GameUiLabelPtBr": "Escudo Eletrostático Anti-Poeira",
+              "MeaningEn": "Electrodynamic Dust Shield: active travelling-wave electric curtain that repels abrasive silicate regolith from suits, visors, and seals.",
+              "MeaningPtBr": "Escudo Eletrodinâmico de Poeira: cortina elétrica ativa que repele a poeira abrasiva de regolito dos trajes, visores e vedações."
+            }
+          }
+        }
+      ],
+      "TargetNamePtBr": "Estação Espacial Internacional (ISS — Órbita Terrestre Baixa 414 km)"
+    },
+    {
+      "DeckId": "ENV-DECK-MOON",
+      "TargetId": "Moon",
+      "TargetName": "Moon — Lunar Gateway NRHO & Artemis South Pole Base",
+      "JplHorizonsCommand": "301",
+      "EnvironmentProperties": {
+        "MeanDistanceFromEarthKm": 384400.0,
+        "SurfaceGravityMs2": 1.62,
+        "EffectiveGForce": 0.165,
+        "SolarIrradianceFactor": 1.0,
+        "AtmosphericPressurePa": 0.0,
+        "MeanTemperatureCelsius": -53.0,
+        "AmbientRadiationIndex": 1.15,
+        "ExternalHostilityIndex": 0.45,
+        "SuitWearRatePerDayPct": 0.85,
+        "ToolWearRatePerDayPct": 0.75,
+        "TotalMissionDeltaVms": 13850.0,
+        "OutboundTransitDays": 3.5,
+        "ReturnTransitDays": 3.5,
+        "SafeReturnYieldLimitPct": 34.0,
+        "SafeReturnFuelReserveFloorPct": 24.0,
+        "BiologicalHazards": [
+          "Electrostatic razor-sharp silicate regolith abrasion on xEMU suit joints and lungs",
+          "Unshielded Solar Particle Events (SPE) outside Earth's magnetosphere",
+          "Extreme 14-day lunar night cryogenic thermal swings (-180°C to +120°C)"
+        ],
+        "BiologicalHazardsPtBr": [
+          "Abrasão eletrostática por regolito de silicato cortante nas juntas dos trajes xEMU e nos pulmões",
+          "Eventos de Partículas Solares (SPE) sem blindagem fora da magnetosfera da Terra",
+          "Oscilações térmicas criogênicas extremas durante a noite lunar de 14 dias (-180°C a +120°C)"
+        ]
+      },
+      "EnvironmentCountermeasureCards": [
+        {
+          "CardId": "ENV-LUN-01",
+          "Name": "Electrodynamic Regolith Dust Shield (EDS) + SuitPort",
+          "Effect": "Repels abrasive lunar silicate dust from xEMU suit bearings and WPA osmotic membranes.",
+          "BiomeShieldingBuff": 0.42,
+          "CrewProtectionBuff": 0.34,
+          "SuitPreservationBuff": 0.45,
+          "NasaApiSource": "NASA TechPort #182369 (Lunar Weather Array)",
+          "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Electrodynamic%20Dust%20Shield%20lunar%20NASA&media_type=image",
+          "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/KSC-20190509-PH_KLS01_0028/KSC-20190509-PH_KLS01_0028~medium.jpg",
+          "ArchitecturalDecisionDomain": "PowerBudgeting",
+          "WattOfPowerCost": 1400.0,
+          "LiterOfOxygenPerDayNet": 160.0,
+          "GramOfRadiationShieldingGcm2": 4.0,
+          "CommunicationDelayMitigationSec": 0.0,
+          "ArchitecturalDecisionDomainPtBr": "Orçamento de Energia",
+          "NamePtBr": "Escudo Eletrodinâmico de Poeira de Regolito (EDS) + SuitPort",
+          "EffectPtBr": "Repele a poeira abrasiva de silicato lunar dos rolamentos do traje xEMU e das membranas osmóticas do WPA.",
+          "NasaApiSourcePtBr": "NASA TechPort #182369 (Lunar Weather Array)",
+          "GameUiLabel": "[ENV-LUN-01] +1400W | +160L O2 | 4g/cm²",
+          "GameUiLabelPtBr": "[ENV-LUN-01] +1400W | +160L O2 | 4g/cm²",
+          "TechnicalGlossary": {
+            "EDS": {
+              "TermKey": "EDS",
+              "GameUiLabel": "Electrostatic Dust Shield",
+              "GameUiLabelPtBr": "Escudo Eletrostático Anti-Poeira",
+              "MeaningEn": "Electrodynamic Dust Shield: active travelling-wave electric curtain that repels abrasive silicate regolith from suits, visors, and seals.",
+              "MeaningPtBr": "Escudo Eletrodinâmico de Poeira: cortina elétrica ativa que repele a poeira abrasiva de regolito dos trajes, visores e vedações."
+            }
+          }
+        },
+        {
+          "CardId": "ENV-LUN-02",
+          "Name": "Shackleton Crater Polar Ice ISRU Electrolyzer",
+          "Effect": "Extracts shadowed crater ice to replenish ECLSS water and Sabatier H2 feedstock.",
+          "BiomeShieldingBuff": 0.38,
+          "CrewProtectionBuff": 0.3,
+          "SuitPreservationBuff": 0.22,
+          "NasaApiSource": "NASA Artemis III Lunar South Pole ISRU",
+          "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Shackleton%20crater%20lunar%20south%20pole%20ice&media_type=image",
+          "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/PIA12235/PIA12235~medium.jpg",
+          "ArchitecturalDecisionDomain": "LifeSupport",
+          "WattOfPowerCost": 6800.0,
+          "LiterOfOxygenPerDayNet": 3100.0,
+          "GramOfRadiationShieldingGcm2": 6.5,
+          "CommunicationDelayMitigationSec": 0.0,
+          "ArchitecturalDecisionDomainPtBr": "Suporte à Vida",
+          "NamePtBr": "Eletrolisador ISRU de Gelo Polar da Cratera Shackleton",
+          "EffectPtBr": "Extrai gelo de crateras permanentemente sombreadas para repor água do ECLSS e hidrogênio do Sabatier.",
+          "NasaApiSourcePtBr": "ISRU no Polo Sul Lunar da Missão NASA Artemis III",
+          "GameUiLabel": "[ENV-LUN-02] +6800W | +3100L O2 | 6g/cm²",
+          "GameUiLabelPtBr": "[ENV-LUN-02] +6800W | +3100L O2 | 6g/cm²",
+          "TechnicalGlossary": {
+            "EDS": {
+              "TermKey": "EDS",
+              "GameUiLabel": "Electrostatic Dust Shield",
+              "GameUiLabelPtBr": "Escudo Eletrostático Anti-Poeira",
+              "MeaningEn": "Electrodynamic Dust Shield: active travelling-wave electric curtain that repels abrasive silicate regolith from suits, visors, and seals.",
+              "MeaningPtBr": "Escudo Eletrodinâmico de Poeira: cortina elétrica ativa que repele a poeira abrasiva de regolito dos trajes, visores e vedações."
+            }
+          }
+        },
+        {
+          "CardId": "ENV-LUN-03",
+          "Name": "Algal Water-Wall Solar Storm Shelter",
+          "Effect": "Routes photobioreactor water jackets around crew quarters during DONKI X-class solar flares.",
+          "BiomeShieldingBuff": 0.35,
+          "CrewProtectionBuff": 0.48,
+          "SuitPreservationBuff": 0.2,
+          "NasaApiSource": "NASA DONKI SEP / FLR Telemetry",
+          "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Orion%20solar%20storm%20shelter%20radiation&media_type=image",
+          "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/art002e000191/art002e000191~medium.jpg",
+          "ArchitecturalDecisionDomain": "RadiationShielding",
+          "WattOfPowerCost": 2200.0,
+          "LiterOfOxygenPerDayNet": 480.0,
+          "GramOfRadiationShieldingGcm2": 24.0,
+          "CommunicationDelayMitigationSec": 0.0,
+          "ArchitecturalDecisionDomainPtBr": "Blindagem contra Radiação",
+          "NamePtBr": "Abrigo de Tempestade Solar com Parede d'Água de Microalgas",
+          "EffectPtBr": "Direciona camisas d'água do fotobiorreator ao redor dos alojamentos durante flares solares Classe X do DONKI.",
+          "NasaApiSourcePtBr": "Telemetria SEP / FLR do NASA DONKI",
+          "GameUiLabel": "[ENV-LUN-03] +2200W | +480L O2 | 24g/cm²",
+          "GameUiLabelPtBr": "[ENV-LUN-03] +2200W | +480L O2 | 24g/cm²",
+          "TechnicalGlossary": {
+            "EDS": {
+              "TermKey": "EDS",
+              "GameUiLabel": "Electrostatic Dust Shield",
+              "GameUiLabelPtBr": "Escudo Eletrostático Anti-Poeira",
+              "MeaningEn": "Electrodynamic Dust Shield: active travelling-wave electric curtain that repels abrasive silicate regolith from suits, visors, and seals.",
+              "MeaningPtBr": "Escudo Eletrodinâmico de Poeira: cortina elétrica ativa que repele a poeira abrasiva de regolito dos trajes, visores e vedações."
+            }
+          }
+        },
+        {
+          "CardId": "ENV-LUN-04",
+          "Name": "Regolith Thermal Mass Accumulator & Carbothermal O2 Rig",
+          "Effect": "Stores daytime solar heat for the 354-hour lunar night and extracts O2 from ilmenite (FeTiO3).",
+          "BiomeShieldingBuff": 0.32,
+          "CrewProtectionBuff": 0.28,
+          "SuitPreservationBuff": 0.26,
+          "NasaApiSource": "NASA Kennedy Carbothermal Regolith Reduction (CaRD)",
+          "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=lunar%20regolith%20oxygen%20extraction%20ilmenite&media_type=image",
+          "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/KSC-20200918-PH-CSH01_0002/KSC-20200918-PH-CSH01_0002~medium.jpg",
+          "ArchitecturalDecisionDomain": "PowerBudgeting",
+          "WattOfPowerCost": 7400.0,
+          "LiterOfOxygenPerDayNet": 2650.0,
+          "GramOfRadiationShieldingGcm2": 14.0,
+          "CommunicationDelayMitigationSec": 0.0,
+          "ArchitecturalDecisionDomainPtBr": "Orçamento de Energia",
+          "NamePtBr": "Acumulador de Massa Térmica de Regolito e Extrator Carbotérmico de O2",
+          "EffectPtBr": "Armazena calor solar diurno para a noite lunar de 354 horas e extrai O2 da ilmenita (FeTiO3).",
+          "NasaApiSourcePtBr": "Redução Carbotérmica de Regolito (CaRD) da NASA Kennedy",
+          "GameUiLabel": "[ENV-LUN-04] +7400W | +2650L O2 | 14g/cm²",
+          "GameUiLabelPtBr": "[ENV-LUN-04] +7400W | +2650L O2 | 14g/cm²",
+          "TechnicalGlossary": {
+            "EDS": {
+              "TermKey": "EDS",
+              "GameUiLabel": "Electrostatic Dust Shield",
+              "GameUiLabelPtBr": "Escudo Eletrostático Anti-Poeira",
+              "MeaningEn": "Electrodynamic Dust Shield: active travelling-wave electric curtain that repels abrasive silicate regolith from suits, visors, and seals.",
+              "MeaningPtBr": "Escudo Eletrodinâmico de Poeira: cortina elétrica ativa que repele a poeira abrasiva de regolito dos trajes, visores e vedações."
+            }
+          }
+        }
+      ],
+      "TargetNamePtBr": "Lua — Órbita NRHO Lunar Gateway e Base Artemis no Polo Sul"
+    },
+    {
+      "DeckId": "ENV-DECK-MARS",
+      "TargetId": "Mars",
+      "TargetName": "Mars — Areocentric Orbit & Surface ISRU Campaign",
+      "JplHorizonsCommand": "499",
+      "EnvironmentProperties": {
+        "MeanDistanceFromEarthKm": 78340000.0,
+        "SurfaceGravityMs2": 3.71,
+        "EffectiveGForce": 0.379,
+        "SolarIrradianceFactor": 0.431,
+        "AtmosphericPressurePa": 745.0,
+        "MeanTemperatureCelsius": -62.5,
+        "AmbientRadiationIndex": 1.55,
+        "ExternalHostilityIndex": 0.68,
+        "SuitWearRatePerDayPct": 1.1,
+        "ToolWearRatePerDayPct": 0.95,
+        "TotalMissionDeltaVms": 17900.0,
+        "OutboundTransitDays": 180.0,
+        "ReturnTransitDays": 180.0,
+        "SafeReturnYieldLimitPct": 36.0,
+        "SafeReturnFuelReserveFloorPct": 30.0,
+        "BiologicalHazards": [
+          "Toxic calcium/magnesium perchlorates (ClO4-) in Martian dust causing thyroid/biome toxicity",
+          "6-month interplanetary Galactic Cosmic Ray (GCR) DNA double-strand break risk",
+          "Global dust storms (Tau > 1.8) reducing solar irradiance (43.1% baseline) and abrading suit seals"
+        ],
+        "BiologicalHazardsPtBr": [
+          "Percloratos tóxicos de cálcio/magnésio (ClO4-) na poeira marciana causando toxicidade tireoidiana e no bioma",
+          "Risco de quebra dupla da fita de DNA por Raios Cósmicos Galácticos (GCR) durante os 6 meses de trânsito",
+          "Tempestades globais de poeira (Tau > 1,8) reduzindo a irradiação solar (43,1% base) e desgastando vedações"
+        ]
+      },
+      "EnvironmentCountermeasureCards": [
+        {
+          "CardId": "ENV-MAR-01",
+          "Name": "Perchlorate Bio-Scrubber Enzyme Washlock (Azospira Orizae)",
+          "Effect": "Decomposes toxic Martian perchlorates (ClO4-) into benign chloride and O2 before airlock entry.",
+          "BiomeShieldingBuff": 0.52,
+          "CrewProtectionBuff": 0.45,
+          "SuitPreservationBuff": 0.42,
+          "NasaApiSource": "NASA InSight Weather & Curiosity REMS",
+          "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Mars%20soil%20perchlorate%20Phoenix%20Curiosity&media_type=image",
+          "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/PIA24921/PIA24921~medium.jpg",
+          "ArchitecturalDecisionDomain": "LifeSupport",
+          "WattOfPowerCost": 2900.0,
+          "LiterOfOxygenPerDayNet": 820.0,
+          "GramOfRadiationShieldingGcm2": 3.0,
+          "CommunicationDelayMitigationSec": 0.0,
+          "ArchitecturalDecisionDomainPtBr": "Suporte à Vida",
+          "NamePtBr": "Eclusa de Lavagem Enzimática Bio-Scrubber de Perclorato (Azospira Orizae)",
+          "EffectPtBr": "Decompõe percloratos marcianos tóxicos (ClO4-) em cloreto benigno e O2 antes da entrada na cabine.",
+          "NasaApiSourcePtBr": "Clima da NASA InSight e Estação REMS do Curiosity",
+          "GameUiLabel": "[ENV-MAR-01] +2900W | +820L O2 | 3g/cm²",
+          "GameUiLabelPtBr": "[ENV-MAR-01] +2900W | +820L O2 | 3g/cm²",
+          "TechnicalGlossary": {
+            "EDS": {
+              "TermKey": "EDS",
+              "GameUiLabel": "Electrostatic Dust Shield",
+              "GameUiLabelPtBr": "Escudo Eletrostático Anti-Poeira",
+              "MeaningEn": "Electrodynamic Dust Shield: active travelling-wave electric curtain that repels abrasive silicate regolith from suits, visors, and seals.",
+              "MeaningPtBr": "Escudo Eletrodinâmico de Poeira: cortina elétrica ativa que repele a poeira abrasiva de regolito dos trajes, visores e vedações."
+            }
+          }
+        },
+        {
+          "CardId": "ENV-MAR-02",
+          "Name": "MOXIE Solid-Oxide + Sabatier Atmospheric CO2 Compressor",
+          "Effect": "Harvests Mars' 95.3% CO2 atmosphere (745 Pa) to feed Chlorella and synthesize CH4 return fuel.",
+          "BiomeShieldingBuff": 0.48,
+          "CrewProtectionBuff": 0.38,
+          "SuitPreservationBuff": 0.28,
+          "NasaApiSource": "NASA TechPort Perseverance MOXIE ISRU",
+          "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=MOXIE%20Mars%20Oxygen%20Perseverance&media_type=image",
+          "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/PIA24432/PIA24432~medium.jpg",
+          "ArchitecturalDecisionDomain": "LifeSupport",
+          "WattOfPowerCost": 8500.0,
+          "LiterOfOxygenPerDayNet": 4200.0,
+          "GramOfRadiationShieldingGcm2": 2.5,
+          "CommunicationDelayMitigationSec": 0.0,
+          "ArchitecturalDecisionDomainPtBr": "Suporte à Vida",
+          "NamePtBr": "Compressor de CO2 Atmosférico de Óxido Sólido MOXIE + Sabatier",
+          "EffectPtBr": "Captura a atmosfera de 95,3% de CO2 de Marte (745 Pa) para nutrir a Chlorella e sintetizar combustível CH4 de retorno.",
+          "NasaApiSourcePtBr": "ISRU MOXIE do Perseverance no NASA TechPort",
+          "GameUiLabel": "[ENV-MAR-02] +8500W | +4200L O2 | 2g/cm²",
+          "GameUiLabelPtBr": "[ENV-MAR-02] +8500W | +4200L O2 | 2g/cm²",
+          "TechnicalGlossary": {
+            "MOXIE": {
+              "TermKey": "MOXIE",
+              "GameUiLabel": "Mars CO2 -> O2 Electrolyzer",
+              "GameUiLabelPtBr": "Eletrolisador CO2 -> O2 Marte",
+              "MeaningEn": "Mars Oxygen ISRU Experiment: solid-oxide electrolysis unit compressing Martian atmospheric CO2 into breathable liters of O2 at high Watt cost.",
+              "MeaningPtBr": "Experimento ISRU de Oxigênio em Marte: eletrólise de óxido sólido que converte o CO2 marciano em litros de O2 com alto consumo em Watts."
+            }
+          }
+        },
+        {
+          "CardId": "ENV-MAR-03",
+          "Name": "Active Toroidal GCR Magneto-Shield + Radioprotectants",
+          "Effect": "Deflects heavy-ion cosmic rays and protects astronaut hematopoietic stem cells during 360d transit.",
+          "BiomeShieldingBuff": 0.56,
+          "CrewProtectionBuff": 0.55,
+          "SuitPreservationBuff": 0.32,
+          "NasaApiSource": "NASA OSDR GeneLab Deep-Space Radiation",
+          "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Mars%20radiation%20shielding%20galactic%20cosmic%20rays&media_type=image",
+          "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/PIA17601/PIA17601~medium.jpg",
+          "ArchitecturalDecisionDomain": "RadiationShielding",
+          "WattOfPowerCost": 9200.0,
+          "LiterOfOxygenPerDayNet": 0.0,
+          "GramOfRadiationShieldingGcm2": 32.0,
+          "CommunicationDelayMitigationSec": 0.0,
+          "ArchitecturalDecisionDomainPtBr": "Blindagem contra Radiação",
+          "NamePtBr": "Magneto-Escudo Toroidal Ativo contra GCR + Radioprotetores",
+          "EffectPtBr": "Deflete raios cósmicos de íons pesados e protege células-tronco hematopoiéticas durante os 360 dias de trânsito.",
+          "NasaApiSourcePtBr": "Radiação de Espaço Profundo do NASA OSDR GeneLab",
+          "GameUiLabel": "[ENV-MAR-03] +9200W | +0L O2 | 32g/cm²",
+          "GameUiLabelPtBr": "[ENV-MAR-03] +9200W | +0L O2 | 32g/cm²",
+          "TechnicalGlossary": {
+            "EDS": {
+              "TermKey": "EDS",
+              "GameUiLabel": "Electrostatic Dust Shield",
+              "GameUiLabelPtBr": "Escudo Eletrostático Anti-Poeira",
+              "MeaningEn": "Electrodynamic Dust Shield: active travelling-wave electric curtain that repels abrasive silicate regolith from suits, visors, and seals.",
+              "MeaningPtBr": "Escudo Eletrodinâmico de Poeira: cortina elétrica ativa que repele a poeira abrasiva de regolito dos trajes, visores e vedações."
+            }
+          }
+        },
+        {
+          "CardId": "ENV-MAR-04",
+          "Name": "Subsurface Rodwell Glacier Drill & Dust-Storm Laser Lidar",
+          "Effect": "Pumps pure subsurface glacial water on Mars and predicts dust storms (Tau opacity).",
+          "BiomeShieldingBuff": 0.4,
+          "CrewProtectionBuff": 0.36,
+          "SuitPreservationBuff": 0.35,
+          "NasaApiSource": "NASA Mars Subsurface Water Ice Mapping (SWIM)",
+          "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Mars%20subsurface%20water%20ice%20glacier&media_type=image",
+          "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/PIA22081/PIA22081~medium.jpg",
+          "ArchitecturalDecisionDomain": "LifeSupport",
+          "WattOfPowerCost": 6400.0,
+          "LiterOfOxygenPerDayNet": 2900.0,
+          "GramOfRadiationShieldingGcm2": 11.0,
+          "CommunicationDelayMitigationSec": 0.0,
+          "ArchitecturalDecisionDomainPtBr": "Suporte à Vida",
+          "NamePtBr": "Perfuratriz Glacial Subsuperficial Rodwell e Lidar a Laser para Tempestades de Poeira",
+          "EffectPtBr": "Bombeia água glacial subsuperficial pura em Marte e prevê tempestades de poeira (opacidade Tau).",
+          "NasaApiSourcePtBr": "Mapeamento de Gelo de Água Subsuperficial em Marte (SWIM) da NASA",
+          "GameUiLabel": "[ENV-MAR-04] +6400W | +2900L O2 | 11g/cm²",
+          "GameUiLabelPtBr": "[ENV-MAR-04] +6400W | +2900L O2 | 11g/cm²",
+          "TechnicalGlossary": {
+            "EDS": {
+              "TermKey": "EDS",
+              "GameUiLabel": "Electrostatic Dust Shield",
+              "GameUiLabelPtBr": "Escudo Eletrostático Anti-Poeira",
+              "MeaningEn": "Electrodynamic Dust Shield: active travelling-wave electric curtain that repels abrasive silicate regolith from suits, visors, and seals.",
+              "MeaningPtBr": "Escudo Eletrodinâmico de Poeira: cortina elétrica ativa que repele a poeira abrasiva de regolito dos trajes, visores e vedações."
+            }
+          }
+        }
+      ],
+      "TargetNamePtBr": "Marte — Órbita Areocêntrica e Campanha Superficial ISRU"
+    }
+  ],
+  "ArchitecturalDecisionRules": {
+    "OutpostEnvironments": [
+      "LunarOutpost",
+      "MartianOutpost"
+    ],
+    "CoreDecisions": [
+      "LifeSupport",
+      "RadiationShielding",
+      "PowerBudgeting",
+      "CommunicationDelay"
+    ],
+    "ResourceTradeOffCosts": {
+      "WattOfPower": {
+        "Unit": "W",
+        "CrewBaselineBudgetWatts": 24000,
+        "Description": "Every Watt allocated to active radiation shields, high-gain DSOC lasers, or Sabatier heaters reduces available power for OGA electrolysis and Chlorella photobioreactor LEDs.",
+        "DescriptionPtBr": "Cada Watt alocado para escudos ativos de radiação, lasers ópticos DSOC ou aquecedores Sabatier reduz a energia disponível para a eletrólise do OGA e os LEDs do fotobiorreator Chlorella."
+      },
+      "LiterOfOxygen": {
+        "Unit": "L/day",
+        "CrewConsumptionLitersPerDay": 588.0,
+        "CrewConsumptionKgPerDay": 0.84,
+        "Description": "Every Liter of O2 consumed by crew metabolic activity or lost during EVA airlock cycles must be regenerated via OGA electrolysis (costing Watts) or photobioreactor biomass.",
+        "DescriptionPtBr": "Cada Litro de O2 consumido pelo metabolismo da tripulação ou perdido em ciclos de eclusa EVA deve ser regenerado via eletrólise no OGA (custando Watts) ou biomassa do fotobiorreator."
+      },
+      "GramOfRadiationShielding": {
+        "Unit": "g/cm2",
+        "SafeOutpostFloorGcm2": 20.0,
+        "StormShelterTargetGcm2": 40.0,
+        "Description": "Every gram/cm2 of BNNT, regolith, or water-wall shielding attenuates GCR and DONKI SEP flux, trading launch dry mass and outpost construction power against crew DNA survival.",
+        "DescriptionPtBr": "Cada grama/cm² de blindagem BNNT, regolito ou parede d'água atenua o fluxo GCR e de prótons SEP do DONKI, trocando massa seca e energia de sinterização pela sobrevivência do DNA da tripulação."
+      }
+    },
+    "NasaDonkiSpaceWeatherMechanics": {
+      "ApiEndpoints": [
+        "https://api.nasa.gov/DONKI/FLR",
+        "https://api.nasa.gov/DONKI/SEP",
+        "https://api.nasa.gov/DONKI/CME"
+      ],
+      "EventClasses": [
+        "C-Class",
+        "M-Class",
+        "X-Class",
+        "SEP-ProtonStorm",
+        "CME-GeomagneticShock"
+      ],
+      "GameplayImpact": "DONKI events dynamically spike EffectiveRadiationIndex, degrade unshielded solar arrays (reducing Watt budget), disrupt RF communication links (increasing CommunicationDelaySec), and force emergency power-routing to storm shelters.",
+      "GameplayImpactPtBr": "Eventos do DONKI elevam dinamicamente o EffectiveRadiationIndex, degradam painéis solares desprotegidos (reduzindo o orçamento em Watts), interrompem links de rádio RF (aumentando o CommunicationDelaySec) e forçam o redirecionamento de energia para abrigos de tempestade solar."
+    },
+    "OutpostEnvironmentsPtBr": [
+      "Posto Lunar (LunarOutpost)",
+      "Posto Marciano (MartianOutpost)"
+    ],
+    "CoreDecisionsPtBr": [
+      "Suporte à Vida (LifeSupport)",
+      "Blindagem contra Radiação (RadiationShielding)",
+      "Orçamento de Energia (PowerBudgeting)",
+      "Atraso de Comunicação (CommunicationDelay)"
+    ]
+  },
+  "OutpostArchitecturalDecisionsDeck": [
+    {
+      "CardId": "ARC-LSS-01",
+      "OutpostEnvironment": "LunarOutpost",
+      "DecisionDomain": "LifeSupport",
+      "Name": "Shackleton Regolith Ice-Mining & Carbothermal Oxygen Plant",
+      "Rarity": "Legendary",
+      "ArchitecturalRuleSummary": "Trades high continuous Kilopower thermal load (Watts) to crack lunar ilmenite and polar ice into bulk breathable O2 reserves.",
+      "CostsAndTradeOffs": {
+        "WattOfPowerDelta": -9800.0,
+        "LiterOfOxygenPerDayDelta": 5200.0,
+        "GramOfRadiationShieldingGcm2Delta": 8.0,
+        "CommunicationDelaySecDelta": 0.0
+      },
+      "BiomeShieldingBuff": 0.3,
+      "CrewProtectionBuff": 0.35,
+      "NasaSource": "NASA Kennedy Carbothermal Regolith Reduction (CaRD) & Artemis Polar ISRU",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Artemis%20lunar%20surface%20habitat%20ISRU&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/nhq202009210003/nhq202009210003~medium.jpg",
+      "OutpostEnvironmentPtBr": "Posto Lunar",
+      "DecisionDomainPtBr": "Suporte à Vida",
+      "RarityPtBr": "Lendária",
+      "NamePtBr": "Usina de Mineração de Gelo em Regolito e Oxigênio Carbotérmico em Shackleton",
+      "ArchitecturalRuleSummaryPtBr": "Troca alto consumo térmico contínuo do Kilopower (Watts) para craquear ilmenita lunar e gelo polar em reservas massivas de O2 respirável.",
+      "NasaSourcePtBr": "Redução Carbotérmica de Regolito (CaRD) da NASA Kennedy e ISRU Polar Artemis",
+      "GameUiLabel": "[ARC-LSS-01] -9800W | +5200L O2 | 8g/cm²",
+      "GameUiLabelPtBr": "[ARC-LSS-01] -9800W | +5200L O2 | 8g/cm²",
+      "TechnicalGlossary": {
+        "MOXIE": {
+          "TermKey": "MOXIE",
+          "GameUiLabel": "Mars CO2 -> O2 Electrolyzer",
+          "GameUiLabelPtBr": "Eletrolisador CO2 -> O2 Marte",
+          "MeaningEn": "Mars Oxygen ISRU Experiment: solid-oxide electrolysis unit compressing Martian atmospheric CO2 into breathable liters of O2 at high Watt cost.",
+          "MeaningPtBr": "Experimento ISRU de Oxigênio em Marte: eletrólise de óxido sólido que converte o CO2 marciano em litros de O2 com alto consumo em Watts."
+        }
+      }
+    },
+    {
+      "CardId": "ARC-LSS-02",
+      "OutpostEnvironment": "MartianOutpost",
+      "DecisionDomain": "LifeSupport",
+      "Name": "Scaled 200x MOXIE Solid-Oxide + Chlorella Pressurized Greenhouse Dome",
+      "Rarity": "Legendary",
+      "ArchitecturalRuleSummary": "Consumes high outpost electrical power (Watts) to compress 745 Pa Martian CO2 into 7,800 L/day of O2 while using water walls for GCR shielding.",
+      "CostsAndTradeOffs": {
+        "WattOfPowerDelta": -14500.0,
+        "LiterOfOxygenPerDayDelta": 7800.0,
+        "GramOfRadiationShieldingGcm2Delta": 12.5,
+        "CommunicationDelaySecDelta": 0.0
+      },
+      "BiomeShieldingBuff": 0.46,
+      "CrewProtectionBuff": 0.42,
+      "NasaSource": "NASA TechPort MOXIE Scaled Mars ISRU & Kennedy Bioregenerative Dome",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Mars%20habitat%20greenhouse%20concept%20NASA&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/KSC-20161020-PH_KLS01_0002/KSC-20161020-PH_KLS01_0002~medium.jpg",
+      "OutpostEnvironmentPtBr": "Posto Marciano",
+      "DecisionDomainPtBr": "Suporte à Vida",
+      "RarityPtBr": "Lendária",
+      "NamePtBr": "MOXIE de Óxido Sólido Escalado 200x + Domo Estufa Pressurizado de Chlorella",
+      "ArchitecturalRuleSummaryPtBr": "Consome alta potência elétrica do posto (Watts) para comprimir o CO2 marciano a 745 Pa em 7.800 L/dia de O2 enquanto usa paredes de água para blindagem GCR.",
+      "NasaSourcePtBr": "ISRU MOXIE Escalado em Marte do NASA TechPort e Domo Biorregenerativo Kennedy",
+      "GameUiLabel": "[ARC-LSS-02] -14500W | +7800L O2 | 12g/cm²",
+      "GameUiLabelPtBr": "[ARC-LSS-02] -14500W | +7800L O2 | 12g/cm²",
+      "TechnicalGlossary": {
+        "MOXIE": {
+          "TermKey": "MOXIE",
+          "GameUiLabel": "Mars CO2 -> O2 Electrolyzer",
+          "GameUiLabelPtBr": "Eletrolisador CO2 -> O2 Marte",
+          "MeaningEn": "Mars Oxygen ISRU Experiment: solid-oxide electrolysis unit compressing Martian atmospheric CO2 into breathable liters of O2 at high Watt cost.",
+          "MeaningPtBr": "Experimento ISRU de Oxigênio em Marte: eletrólise de óxido sólido que converte o CO2 marciano em litros de O2 com alto consumo em Watts."
+        }
+      }
+    },
+    {
+      "CardId": "ARC-SHD-01",
+      "OutpostEnvironment": "LunarOutpost",
+      "DecisionDomain": "RadiationShielding",
+      "Name": "3D-Sintered Lunar Regolith Vault (45 g/cm2 Overburden) + Water Jacket",
+      "Rarity": "Legendary",
+      "ArchitecturalRuleSummary": "Invests robotic sintering power (Watts) to build a 1.5-meter lunar regolith vault over the habitat, blocking 94% of DONKI SEP protons.",
+      "CostsAndTradeOffs": {
+        "WattOfPowerDelta": -6200.0,
+        "LiterOfOxygenPerDayDelta": -150.0,
+        "GramOfRadiationShieldingGcm2Delta": 45.0,
+        "CommunicationDelaySecDelta": 5.0
+      },
+      "BiomeShieldingBuff": 0.54,
+      "CrewProtectionBuff": 0.58,
+      "NasaSource": "NASA Marshall MMPACT Lunar Regolith 3D Printing & Langley OLTARIS Shielding",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=3D%20printed%20lunar%20habitat%20regolith%20Marshall&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/MSFC-1900251/MSFC-1900251~medium.jpg",
+      "OutpostEnvironmentPtBr": "Posto Lunar",
+      "DecisionDomainPtBr": "Blindagem contra Radiação",
+      "RarityPtBr": "Lendária",
+      "NamePtBr": "Abóbada de Regolito Lunar Sinterizado em 3D (45 g/cm² de Cobertura) + Camisa d'Água",
+      "ArchitecturalRuleSummaryPtBr": "Investe potência de sinterização robótica (Watts) para erguer uma abóbada de regolito lunar de 1,5 m sobre o habitat, bloqueando 94% dos prótons SEP do DONKI.",
+      "NasaSourcePtBr": "Impressão 3D de Regolito Lunar MMPACT da NASA Marshall e Blindagem OLTARIS Langley",
+      "GameUiLabel": "[ARC-SHD-01] -6200W | -150L O2 | 45g/cm²",
+      "GameUiLabelPtBr": "[ARC-SHD-01] -6200W | -150L O2 | 45g/cm²",
+      "TechnicalGlossary": {
+        "MOXIE": {
+          "TermKey": "MOXIE",
+          "GameUiLabel": "Mars CO2 -> O2 Electrolyzer",
+          "GameUiLabelPtBr": "Eletrolisador CO2 -> O2 Marte",
+          "MeaningEn": "Mars Oxygen ISRU Experiment: solid-oxide electrolysis unit compressing Martian atmospheric CO2 into breathable liters of O2 at high Watt cost.",
+          "MeaningPtBr": "Experimento ISRU de Oxigênio em Marte: eletrólise de óxido sólido que converte o CO2 marciano em litros de O2 com alto consumo em Watts."
+        }
+      }
+    },
+    {
+      "CardId": "ARC-SHD-02",
+      "OutpostEnvironment": "MartianOutpost",
+      "DecisionDomain": "RadiationShielding",
+      "Name": "Arsia Mons Lava Tube Subsurface Outpost + BNNT Inflatable Liner",
+      "Rarity": "Legendary",
+      "ArchitecturalRuleSummary": "Relocates the Martian outpost inside a natural basaltic lava tube (+68 g/cm2 shielding), trading surface RF line-of-sight latency for near-total GCR/SEP immunity.",
+      "CostsAndTradeOffs": {
+        "WattOfPowerDelta": -4100.0,
+        "LiterOfOxygenPerDayDelta": 220.0,
+        "GramOfRadiationShieldingGcm2Delta": 68.0,
+        "CommunicationDelaySecDelta": 45.0
+      },
+      "BiomeShieldingBuff": 0.65,
+      "CrewProtectionBuff": 0.68,
+      "NasaSource": "NASA JPL Mars Subsurface Lava Tube Habitability & BNNT Radiation Liner",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Mars%20lava%20tube%20skylight%20HiRISE&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/PIA13129/PIA13129~medium.jpg",
+      "OutpostEnvironmentPtBr": "Posto Marciano",
+      "DecisionDomainPtBr": "Blindagem contra Radiação",
+      "RarityPtBr": "Lendária",
+      "NamePtBr": "Posto Subsuperficial em Tubo de Lava de Arsia Mons + Revestimento Inflável BNNT",
+      "ArchitecturalRuleSummaryPtBr": "Instala o posto marciano dentro de um tubo de lava basáltico natural (+68 g/cm² de blindagem), trocando latência de retransmissão RF na superfície por quase imunidade a GCR/SEP.",
+      "NasaSourcePtBr": "Habitabilidade em Tubos de Lava de Marte da NASA JPL e Revestimento contra Radiação BNNT",
+      "GameUiLabel": "[ARC-SHD-02] -4100W | +220L O2 | 68g/cm²",
+      "GameUiLabelPtBr": "[ARC-SHD-02] -4100W | +220L O2 | 68g/cm²",
+      "TechnicalGlossary": {
+        "BNNT": {
+          "TermKey": "BNNT",
+          "GameUiLabel": "Nanotube Rad-Shield",
+          "GameUiLabelPtBr": "Blindagem Nanotubos BNNT",
+          "MeaningEn": "Hydrogenated Boron Nitride Nanotubes providing high areal density (g/cm²) radiation shielding against GCR and SEP protons.",
+          "MeaningPtBr": "Nanotubos de Nitreto de Boro Hidrogenados que fornecem blindagem leve (g/cm²) contra raios cósmicos (GCR) e prótons solares (SEP)."
+        }
+      }
+    },
+    {
+      "CardId": "ARC-PWR-01",
+      "OutpostEnvironment": "LunarOutpost",
+      "DecisionDomain": "PowerBudgeting",
+      "Name": "Quad-Kilopower 40 kWe Fission Microgrid + Vertical Polar Solar Array",
+      "Rarity": "Legendary",
+      "ArchitecturalRuleSummary": "Eliminates the 354-hour lunar night power deficit (+40,000 Watts continuous), adding minor reactor shadow-shield mass in exchange for uninterrupted O2 electrolysis.",
+      "CostsAndTradeOffs": {
+        "WattOfPowerDelta": 40000.0,
+        "LiterOfOxygenPerDayDelta": 1400.0,
+        "GramOfRadiationShieldingGcm2Delta": 5.0,
+        "CommunicationDelaySecDelta": -10.0
+      },
+      "BiomeShieldingBuff": 0.28,
+      "CrewProtectionBuff": 0.3,
+      "NasaSource": "NASA Glenn Fission Surface Power (FSP) & Vertical Solar Array Technology (VSAT)",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Fission%20Surface%20Power%20Moon%20NASA&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/GRC-2021-C-02447/GRC-2021-C-02447~medium.jpg",
+      "OutpostEnvironmentPtBr": "Posto Lunar",
+      "DecisionDomainPtBr": "Orçamento de Energia",
+      "RarityPtBr": "Lendária",
+      "NamePtBr": "Microrrede de Fissão Quad-Kilopower 40 kWe + Painel Solar Polar Vertical",
+      "ArchitecturalRuleSummaryPtBr": "Elimina o déficit energético da noite lunar de 354 horas (+40.000 Watts contínuos), adicionando leve massa de escudo de sombra em troca de eletrólise de O2 ininterrupta.",
+      "NasaSourcePtBr": "Energia de Fissão na Superfície (FSP) e Tecnologia de Painéis Solares Verticais (VSAT) da NASA Glenn",
+      "GameUiLabel": "[ARC-PWR-01] +40000W | +1400L O2 | 5g/cm²",
+      "GameUiLabelPtBr": "[ARC-PWR-01] +40000W | +1400L O2 | 5g/cm²",
+      "TechnicalGlossary": {
+        "MOXIE": {
+          "TermKey": "MOXIE",
+          "GameUiLabel": "Mars CO2 -> O2 Electrolyzer",
+          "GameUiLabelPtBr": "Eletrolisador CO2 -> O2 Marte",
+          "MeaningEn": "Mars Oxygen ISRU Experiment: solid-oxide electrolysis unit compressing Martian atmospheric CO2 into breathable liters of O2 at high Watt cost.",
+          "MeaningPtBr": "Experimento ISRU de Oxigênio em Marte: eletrólise de óxido sólido que converte o CO2 marciano em litros de O2 com alto consumo em Watts."
+        }
+      }
+    },
+    {
+      "CardId": "ARC-PWR-02",
+      "OutpostEnvironment": "MartianOutpost",
+      "DecisionDomain": "PowerBudgeting",
+      "Name": "Dust-Tolerant Nuclear Stirling Matrix + Regenerative Methalox Fuel Cell",
+      "Rarity": "Epic",
+      "ArchitecturalRuleSummary": "Supplies +32,000 Watts during global Martian dust storms (Tau > 2.0) by burning reserve O2/CH4 at night and running nuclear Stirling units by day.",
+      "CostsAndTradeOffs": {
+        "WattOfPowerDelta": 32000.0,
+        "LiterOfOxygenPerDayDelta": -480.0,
+        "GramOfRadiationShieldingGcm2Delta": 4.0,
+        "CommunicationDelaySecDelta": -15.0
+      },
+      "BiomeShieldingBuff": 0.32,
+      "CrewProtectionBuff": 0.29,
+      "NasaSource": "NASA Glenn Nuclear Stirling & Mars Surface Regenerative Fuel Cell",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Mars%20nuclear%20power%20surface%20fission&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/GRC-2017-C-01242/GRC-2017-C-01242~medium.jpg",
+      "OutpostEnvironmentPtBr": "Posto Marciano",
+      "DecisionDomainPtBr": "Orçamento de Energia",
+      "RarityPtBr": "Épica",
+      "NamePtBr": "Matriz Nuclear Stirling Tolerante à Poeira + Célula a Combustível Methalox Regenerativa",
+      "ArchitecturalRuleSummaryPtBr": "Fornece +32.000 Watts durante tempestades globais de poeira em Marte (Tau > 2,0) queimando reservas de O2/CH4 à noite e operando unidades nucleares Stirling de dia.",
+      "NasaSourcePtBr": "Motor Nuclear Stirling da NASA Glenn e Célula a Combustível Regenerativa na Superfície de Marte",
+      "GameUiLabel": "[ARC-PWR-02] +32000W | -480L O2 | 4g/cm²",
+      "GameUiLabelPtBr": "[ARC-PWR-02] +32000W | -480L O2 | 4g/cm²",
+      "TechnicalGlossary": {
+        "MOXIE": {
+          "TermKey": "MOXIE",
+          "GameUiLabel": "Mars CO2 -> O2 Electrolyzer",
+          "GameUiLabelPtBr": "Eletrolisador CO2 -> O2 Marte",
+          "MeaningEn": "Mars Oxygen ISRU Experiment: solid-oxide electrolysis unit compressing Martian atmospheric CO2 into breathable liters of O2 at high Watt cost.",
+          "MeaningPtBr": "Experimento ISRU de Oxigênio em Marte: eletrólise de óxido sólido que converte o CO2 marciano em litros de O2 com alto consumo em Watts."
+        }
+      }
+    },
+    {
+      "CardId": "ARC-COM-01",
+      "OutpostEnvironment": "LunarOutpost",
+      "DecisionDomain": "CommunicationDelay",
+      "Name": "LunarNet L2 Halo Relay Constellation + Ka-Band Phased Array",
+      "Rarity": "Epic",
+      "ArchitecturalRuleSummary": "Eliminates lunar far-side/polar communications blackouts and reduces control-loop latency to 1.28 seconds at the cost of 3,200 Watts of continuous RF/optical power.",
+      "CostsAndTradeOffs": {
+        "WattOfPowerDelta": -3200.0,
+        "LiterOfOxygenPerDayDelta": 0.0,
+        "GramOfRadiationShieldingGcm2Delta": 1.5,
+        "CommunicationDelaySecDelta": -120.0
+      },
+      "BiomeShieldingBuff": 0.18,
+      "CrewProtectionBuff": 0.26,
+      "NasaSource": "NASA LunaNet Interoperability Specification & LCRD Optical Relay",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Laser%20Communications%20Relay%20Demonstration%20LCRD&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/GSFC_20210519_LCRD_m13792/GSFC_20210519_LCRD_m13792~medium.jpg",
+      "OutpostEnvironmentPtBr": "Posto Lunar",
+      "DecisionDomainPtBr": "Atraso de Comunicação",
+      "RarityPtBr": "Épica",
+      "NamePtBr": "Constelação Relay Halo LunarNet L2 + Matriz de Fase Banda Ka",
+      "ArchitecturalRuleSummaryPtBr": "Elimina blackouts de comunicação no polo/lado oculto lunar e reduz a latência de controle para 1,28 segundos ao custo de 3.200 Watts contínuos de energia RF/óptica.",
+      "NasaSourcePtBr": "Especificação de Interoperabilidade LunaNet da NASA e Relay Óptico LCRD",
+      "GameUiLabel": "[ARC-COM-01] -3200W | +0L O2 | 2g/cm²",
+      "GameUiLabelPtBr": "[ARC-COM-01] -3200W | +0L O2 | 2g/cm²",
+      "TechnicalGlossary": {
+        "MOXIE": {
+          "TermKey": "MOXIE",
+          "GameUiLabel": "Mars CO2 -> O2 Electrolyzer",
+          "GameUiLabelPtBr": "Eletrolisador CO2 -> O2 Marte",
+          "MeaningEn": "Mars Oxygen ISRU Experiment: solid-oxide electrolysis unit compressing Martian atmospheric CO2 into breathable liters of O2 at high Watt cost.",
+          "MeaningPtBr": "Experimento ISRU de Oxigênio em Marte: eletrólise de óxido sólido que converte o CO2 marciano em litros de O2 com alto consumo em Watts."
+        }
+      }
+    },
+    {
+      "CardId": "ARC-COM-02",
+      "OutpostEnvironment": "MartianOutpost",
+      "DecisionDomain": "CommunicationDelay",
+      "Name": "Areostationary DSOC Optical Relay + Onboard Quad-ML.NET Edge Autopilot",
+      "Rarity": "Legendary",
+      "ArchitecturalRuleSummary": "Mitigates the 4 to 24 minute (240s–1,440s) Earth-Mars one-way light time delay by running local ML.NET ECLSS fault recovery and high-bandwidth laser telemetry.",
+      "CostsAndTradeOffs": {
+        "WattOfPowerDelta": -5800.0,
+        "LiterOfOxygenPerDayDelta": 350.0,
+        "GramOfRadiationShieldingGcm2Delta": 2.0,
+        "CommunicationDelaySecDelta": -840.0
+      },
+      "BiomeShieldingBuff": 0.36,
+      "CrewProtectionBuff": 0.44,
+      "NasaSource": "NASA JPL Deep Space Network (DSN) & Psyche DSOC Mars-Distance Test",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Deep%20Space%20Network%20Goldstone%20Mars&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/PIA24125/PIA24125~medium.jpg",
+      "OutpostEnvironmentPtBr": "Posto Marciano",
+      "DecisionDomainPtBr": "Atraso de Comunicação",
+      "RarityPtBr": "Lendária",
+      "NamePtBr": "Relay Óptico Areoestacionário DSOC + Piloto Automático de Borda Quad-ML.NET",
+      "ArchitecturalRuleSummaryPtBr": "Mitiga o atraso de comunicação Terra-Marte de 4 a 24 minutos (240s–1.440s) executando recuperação autônoma de falhas ECLSS via ML.NET local e telemetria a laser.",
+      "NasaSourcePtBr": "Rede de Espaço Profundo (DSN) da NASA JPL e Teste DSOC na Distância de Marte da Missão Psyche",
+      "GameUiLabel": "[ARC-COM-02] -5800W | +350L O2 | 2g/cm²",
+      "GameUiLabelPtBr": "[ARC-COM-02] -5800W | +350L O2 | 2g/cm²",
+      "TechnicalGlossary": {
+        "DSOC": {
+          "TermKey": "DSOC",
+          "GameUiLabel": "Optical Laser Comms",
+          "GameUiLabelPtBr": "Comunicação a Laser DSOC",
+          "MeaningEn": "Deep Space Optical Communications: high-bandwidth laser transceiver mitigating Earth-Moon and Earth-Mars communication latency.",
+          "MeaningPtBr": "Comunicações Ópticas de Espaço Profundo: transceptor a laser de alta banda que mitiga o atraso de comunicação Terra-Lua e Terra-Marte."
+        }
+      }
+    }
+  ],
+  "DonkiSpaceWeatherEventsDeck": [
+    {
+      "CardId": "SWX-DONKI-01",
+      "EventCode": "DONKI-FLR-X10",
+      "EventClass": "X-Class Solar Flare (X10.4 Peak Flux)",
+      "TargetOutposts": [
+        "LunarOutpost",
+        "MartianOutpost",
+        "ISS"
+      ],
+      "NasaDonkiEndpoint": "https://api.nasa.gov/DONKI/FLR",
+      "SpaceWeatherHazardDescription": "Ionizes upper atmospheric/exospheric layers and triggers immediate HF/Ka-band radio blackouts, spiking communication latency and sensor noise.",
+      "UnmitigatedPenalties": {
+        "WattOfPowerPenalty": -6500.0,
+        "LiterOfOxygenPerDayLoss": -280.0,
+        "RequiredShieldingFloorGcm2": 28.0,
+        "CommunicationDelaySpikeSec": 620.0,
+        "RadiationIndexDelta": 0.65
+      },
+      "TacticalCountermeasureRule": "Divert +4,500 Watts to DSOC Optical Laser Beacon and switch ECLSS to local Edge-AI autonomous mode until flare flux subsides.",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=X-class%20solar%20flare%20SDO%20AIA&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/GSFC_20170906_Archive_e000393/GSFC_20170906_Archive_e000393~medium.jpg",
+      "EventClassPtBr": "Erupção Solar Classe X (Fluxo de Pico X10.4)",
+      "SpaceWeatherHazardDescriptionPtBr": "Ioniza camadas atmosféricas/exosféricas superiores e provoca blackouts imediatos de rádio HF/Banda Ka, disparando a latência de comunicação e o ruído nos sensores.",
+      "TacticalCountermeasureRulePtBr": "Desviar +4.500 Watts para o Farol a Laser Óptico DSOC e alternar o ECLSS para modo autônomo Edge-AI local até que o fluxo do flare diminua.",
+      "GameUiLabel": "[SWX-DONKI-01] -6500W | -280L O2 | 28g/cm²",
+      "GameUiLabelPtBr": "[SWX-DONKI-01] -6500W | -280L O2 | 28g/cm²",
+      "TechnicalGlossary": {
+        "DONKI": {
+          "TermKey": "DONKI",
+          "GameUiLabel": "Space Weather Alert",
+          "GameUiLabelPtBr": "Alerta de Clima Espacial",
+          "MeaningEn": "Space Weather Database Of Notifications, Knowledge, Information: real-time NASA API tracking solar flares (FLR), proton storms (SEP), and CMEs.",
+          "MeaningPtBr": "Banco de Dados de Clima Espacial da NASA: API em tempo real que monitora erupções solares (FLR), tempestades de prótons (SEP) e CMEs."
+        }
+      }
+    },
+    {
+      "CardId": "SWX-DONKI-02",
+      "EventCode": "DONKI-SEP-100MEV",
+      "EventClass": "Solar Energetic Particle (SEP) S4 Severe Proton Storm (>100 MeV)",
+      "TargetOutposts": [
+        "LunarOutpost",
+        "MartianOutpost"
+      ],
+      "NasaDonkiEndpoint": "https://api.nasa.gov/DONKI/SEP",
+      "SpaceWeatherHazardDescription": "High-energy solar protons penetrate thin hull walls, damaging Chlorella chloroplast DNA, degrading solar array junctions, and threatening crew bone marrow.",
+      "UnmitigatedPenalties": {
+        "WattOfPowerPenalty": -11000.0,
+        "LiterOfOxygenPerDayLoss": -920.0,
+        "RequiredShieldingFloorGcm2": 42.0,
+        "CommunicationDelaySpikeSec": 340.0,
+        "RadiationIndexDelta": 1.15
+      },
+      "TacticalCountermeasureRule": "Requires >= 40 g/cm2 combined BNNT + Regolith/Water-Wall shielding and temporary suspension of surface EVAs (saving O2 liters).",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=solar%20energetic%20particles%20proton%20storm%20SOHO&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/GSFC_20120123_Archive_e001881/GSFC_20120123_Archive_e001881~medium.jpg",
+      "EventClassPtBr": "Tempestade Severa S4 de Partículas Energéticas Solares (SEP > 100 MeV)",
+      "SpaceWeatherHazardDescriptionPtBr": "Prótons solares de alta energia atravessam paredes finas do casco, danificando o DNA dos cloroplastos da Chlorella, degradando junções solares e ameaçando a medula óssea da tripulação.",
+      "TacticalCountermeasureRulePtBr": "Exige >= 40 g/cm² de blindagem combinada BNNT + Regolito/Parede d'Água e suspensão temporária de EVAs na superfície (economizando litros de O2).",
+      "GameUiLabel": "[SWX-DONKI-02] -11000W | -920L O2 | 42g/cm²",
+      "GameUiLabelPtBr": "[SWX-DONKI-02] -11000W | -920L O2 | 42g/cm²",
+      "TechnicalGlossary": {
+        "DONKI": {
+          "TermKey": "DONKI",
+          "GameUiLabel": "Space Weather Alert",
+          "GameUiLabelPtBr": "Alerta de Clima Espacial",
+          "MeaningEn": "Space Weather Database Of Notifications, Knowledge, Information: real-time NASA API tracking solar flares (FLR), proton storms (SEP), and CMEs.",
+          "MeaningPtBr": "Banco de Dados de Clima Espacial da NASA: API em tempo real que monitora erupções solares (FLR), tempestades de prótons (SEP) e CMEs."
+        }
+      }
+    },
+    {
+      "CardId": "SWX-DONKI-03",
+      "EventCode": "DONKI-CME-HALO",
+      "EventClass": "Fast Halo Coronal Mass Ejection (CME > 2,100 km/s)",
+      "TargetOutposts": [
+        "LunarOutpost",
+        "MartianOutpost",
+        "ISS"
+      ],
+      "NasaDonkiEndpoint": "https://api.nasa.gov/DONKI/CME",
+      "SpaceWeatherHazardDescription": "Induces geomagnetically/crustally coupled voltage surges in outpost power grids and compresses magnetic shielding, elevating secondary neutron scatter.",
+      "UnmitigatedPenalties": {
+        "WattOfPowerPenalty": -14000.0,
+        "LiterOfOxygenPerDayLoss": -540.0,
+        "RequiredShieldingFloorGcm2": 36.0,
+        "CommunicationDelaySpikeSec": 480.0,
+        "RadiationIndexDelta": 0.9
+      },
+      "TacticalCountermeasureRule": "Engage SABERS solid-state battery isolation breakers and route +8,000 Watts to active toroidal magnetic shielding.",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Coronal%20Mass%20Ejection%20SOHO%20LASCO&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/GSFC_20140225_Archive_e001465/GSFC_20140225_Archive_e001465~medium.jpg",
+      "EventClassPtBr": "Ejeção de Massa Coronal (CME) Rápida em Halo (> 2.100 km/s)",
+      "SpaceWeatherHazardDescriptionPtBr": "Induz surtos de tensão acoplados geomagneticamente/crustalmente nas redes de energia do posto e comprime a blindagem magnética, elevando o espalhamento de nêutrons secundários.",
+      "TacticalCountermeasureRulePtBr": "Acionar disjuntores de isolamento das baterias de estado sólido SABERS e redirecionar +8.000 Watts para a blindagem magnética toroidal ativa.",
+      "GameUiLabel": "[SWX-DONKI-03] -14000W | -540L O2 | 36g/cm²",
+      "GameUiLabelPtBr": "[SWX-DONKI-03] -14000W | -540L O2 | 36g/cm²",
+      "TechnicalGlossary": {
+        "DONKI": {
+          "TermKey": "DONKI",
+          "GameUiLabel": "Space Weather Alert",
+          "GameUiLabelPtBr": "Alerta de Clima Espacial",
+          "MeaningEn": "Space Weather Database Of Notifications, Knowledge, Information: real-time NASA API tracking solar flares (FLR), proton storms (SEP), and CMEs.",
+          "MeaningPtBr": "Banco de Dados de Clima Espacial da NASA: API em tempo real que monitora erupções solares (FLR), tempestades de prótons (SEP) e CMEs."
+        }
+      }
+    },
+    {
+      "CardId": "SWX-DONKI-04",
+      "EventCode": "DONKI-FORBUSH-CONJ",
+      "EventClass": "Solar Conjunction Blackout + CME Forbush Decrease",
+      "TargetOutposts": [
+        "MartianOutpost"
+      ],
+      "NasaDonkiEndpoint": "https://api.nasa.gov/DONKI/IPS",
+      "SpaceWeatherHazardDescription": "Solar corona plasma blocks Earth-Mars radio/optical links for up to 14 days while interplanetary shockwaves Perturb Martian upper atmosphere.",
+      "UnmitigatedPenalties": {
+        "WattOfPowerPenalty": -4500.0,
+        "LiterOfOxygenPerDayLoss": -410.0,
+        "RequiredShieldingFloorGcm2": 30.0,
+        "CommunicationDelaySpikeSec": 1440.0,
+        "RadiationIndexDelta": 0.45
+      },
+      "TacticalCountermeasureRule": "Full 100% onboard Quad-Ensemble ML.NET autopilot takeover required; outpost must self-balance Watts, O2 Liters, and Shielding Grams without Earth mission control.",
+      "NasaImageApiUrl": "https://images-api.nasa.gov/search?q=Mars%20solar%20conjunction%20sun%20corona&media_type=image",
+      "NasaImageAssetUrl": "https://images-assets.nasa.gov/image/PIA19821/PIA19821~medium.jpg",
+      "EventClassPtBr": "Blackout de Conjunção Solar + Decréscimo de Forbush por CME",
+      "SpaceWeatherHazardDescriptionPtBr": "O plasma da coroa solar bloqueia os links de rádio/ópticos Terra-Marte por até 14 dias enquanto ondas de choque interplanetárias perturbam a alta atmosfera marciana.",
+      "TacticalCountermeasureRulePtBr": "Exige 100% de controle pelo piloto automático local Quad-Ensemble ML.NET; o posto deve autoequilibrar Watts, Litros de O2 e Gramas de Blindagem sem o controle de missão da Terra.",
+      "GameUiLabel": "[SWX-DONKI-04] -4500W | -410L O2 | 30g/cm²",
+      "GameUiLabelPtBr": "[SWX-DONKI-04] -4500W | -410L O2 | 30g/cm²",
+      "TechnicalGlossary": {
+        "DONKI": {
+          "TermKey": "DONKI",
+          "GameUiLabel": "Space Weather Alert",
+          "GameUiLabelPtBr": "Alerta de Clima Espacial",
+          "MeaningEn": "Space Weather Database Of Notifications, Knowledge, Information: real-time NASA API tracking solar flares (FLR), proton storms (SEP), and CMEs.",
+          "MeaningPtBr": "Banco de Dados de Clima Espacial da NASA: API em tempo real que monitora erupções solares (FLR), tempestades de prótons (SEP) e CMEs."
+        }
+      }
+    }
+  ],
+  "SupportedLocales": [
+    "en-US",
+    "pt-BR"
+  ]
+}

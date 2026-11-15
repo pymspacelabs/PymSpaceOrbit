@@ -1,0 +1,12 @@
+﻿<ContentPage xmlns:local="clr-namespace:PymSpaceOrbit"
+             xmlns:shared="clr-namespace:PymSpaceOrbit.Shared;assembly=PymSpaceOrbit.Shared"
+             x:Class="PymSpaceOrbit.MainPage"
+             BackgroundColor="{DynamicResource PageBackgroundColor}">
+
+    <BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">
+        <BlazorWebView.RootComponents>
+            <RootComponent Selector="#app" ComponentType="{x:Type shared:Routes}" />
+        </BlazorWebView.RootComponents>
+    </BlazorWebView>
+
+</ContentPage>

@@ -1,0 +1,17 @@
+{
+  "ApiSourceStatus": "DONKI:Cache | JPL/TLE:OK | OSDR:OK | ECLSS:OK | Mars:OK",
+  "LatestSolarFlareClass": "M1.4 (Moderate)",
+  "BaseSolarWeatherMultiplier": 1.15,
+  "ActiveSpaceWeatherEvents": 3,
+  "IssLiveAltitudeKm": 414.8,
+  "OsdrAlgaeStudiesCount": 0,
+  "OsdrReferenceStudy": "OSD-521 (ISS Chlorella, Bone Atrophy \u0026 Immune Study)",
+  "ArtemisTechPortProject": "TechPort #182369 (Artemis Lunar Weather \u0026 xEMU Suit - Live)",
+  "EclssPatentsAndReportsCount": 49,
+  "MarsSurfaceSummary": "InSight/REMS: -61.8\u00B0C | 742 Pa CO2 | Wind 6.4 m/s",
+  "LiveDistancesFromEarthKm": {
+    "ISS": 414.8,
+    "Moon": 366051.6,
+    "Mars": 67982764.3
+  }
+}
