@@ -31,6 +31,14 @@ jobs:
       - name: Build Web project
         run: dotnet publish src/PymSpaceOrbit.Web/PymSpaceOrbit.Web.csproj -c Release -p:AppBasePath=/PymSpaceOrbit/ -o publish/web
 
+      - name: Setup base-href, .nojekyll e 404.html to GitHub Pages
+        working-directory: ${{ github.workspace }}
+        run: |
+          REPO_NAME="${GITHUB_REPOSITORY#*/}"
+          sed -i "s|<base href=\"/\" />|<base href=\"/${REPO_NAME}/\" />|g" publish/web/wwwroot/index.html
+          touch publish/web/wwwroot/.nojekyll
+          cp publish/web/wwwroot/index.html publish/web/wwwroot/404.html
+          
       - name: Upload Web Build Artifact
         uses: actions/upload-artifact@v7
         with:
@@ -70,8 +78,13 @@ jobs:
           global-json-file: global.json
 
       - name: Install MAUI workload
-        run: dotnet workload install ${{ matrix.workload }}
-
+        run: |
+          if [ "${{ matrix.platform }}" != "Android" ]; then
+            dotnet workload install ${{ matrix.workload }} maui-android
+          else
+            dotnet workload install ${{ matrix.workload }}
+          fi
+          
       - name: Restore MAUI project
         run: dotnet restore src/PymSpaceOrbit/PymSpaceOrbit.csproj -p:TargetFrameworks=${{ matrix.target-framework }}
 

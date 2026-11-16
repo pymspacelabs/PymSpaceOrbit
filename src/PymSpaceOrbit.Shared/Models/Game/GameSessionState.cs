@@ -6,7 +6,7 @@ public sealed class GameSessionState
 {
     public Guid SessionId { get; init; } = Guid.NewGuid();
     public OutpostDestination Destination { get; set; } = OutpostDestination.Moon;
-    public string Locale { get; set; } = "pt-BR";
+    public string Locale { get; set; } = "en-US";
     public int CrewCount { get; set; } = 4;
 
     public int CurrentTurn { get; set; } = 1;

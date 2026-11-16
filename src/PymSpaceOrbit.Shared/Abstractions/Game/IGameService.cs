@@ -15,7 +15,7 @@ public interface IGameService
         OutpostDestination destination,
         int crewCount = 4,
         int minimumBaseBuildCards = 5,
-        string locale = "pt-BR",
+        string locale = "en-US",
         CancellationToken cancellationToken = default);
 
     bool PlayCardFromHand(string cardId, out string statusMessage);

@@ -1284,6 +1284,13 @@
         }
         else
         {
+            if (Session.Outcome != MissionEndingOutcome.InProgress)
+            {
+                _latestOutcomeNarrative = msg;
+                _showEndingModal = true;
+                await AudioService.SyncGameplayMusicAsync(Session);
+                return;
+            }
             Snackbar.Add(msg, Severity.Warning, c => { c.ShowCloseIcon = true; });
             await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
         }
@@ -1298,6 +1305,13 @@
         }
         else
         {
+            if (Session.Outcome != MissionEndingOutcome.InProgress)
+            {
+                _latestOutcomeNarrative = msg;
+                _showEndingModal = true;
+                await AudioService.SyncGameplayMusicAsync(Session);
+                return;
+            }
             Snackbar.Add(msg, Severity.Warning, c => { c.ShowCloseIcon = true; });
             await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
         }
@@ -1305,7 +1319,16 @@
 
     private async Task ConfirmBaseConstruction()
     {
-        if (GameService.CompleteInitialBaseConstruction(out var msg))
+        bool success = GameService.CompleteInitialBaseConstruction(out var msg);
+        if (Session.Outcome != MissionEndingOutcome.InProgress)
+        {
+            _latestOutcomeNarrative = msg;
+            _showEndingModal = true;
+            await AudioService.SyncGameplayMusicAsync(Session);
+            return;
+        }
+
+        if (success)
         {
             Snackbar.Add(msg, Severity.Success, c => { c.ShowCloseIcon = true; c.VisibleStateDuration = 3000; });
             await AudioService.PlaySoundEffectAsync(SoundEffect.StageTransitionRiser);

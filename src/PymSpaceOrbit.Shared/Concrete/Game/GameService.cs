@@ -7,6 +7,126 @@ using PymSpaceOrbit.Shared.Services;
 namespace PymSpaceOrbit.Shared.Concrete.Game;
 
 /// <summary>
+/// Canonical deterministic winning route specification for the PymSpaceOrbit campaign.
+/// Exactly ONE valid route exists: Moon expedition with the 5 canonical base cards and
+/// the 8 canonical exploration decisions (MOON-01-A through MOON-08-A).
+/// Any deviation at any step results in an immediate, thematic Game Over.
+/// </summary>
+public static class CanonicalWinningRoute
+{
+    public const OutpostDestination Destination = OutpostDestination.Moon;
+    public static readonly IReadOnlyList<string> CanonicalBaseCardIds = ["BLD-01", "BLD-02", "BLD-03", "ECL-01", "ARC-SHD-01"];
+
+    public static (MissionEndingOutcome Outcome, string ReasonEn, string ReasonPt) GetFailureForChoice(string optionId)
+    {
+        return optionId.ToUpperInvariant() switch
+        {
+            // Turn 1: Shackleton Crater Ice Drill
+            "MOON-01-B" => (
+                MissionEndingOutcome.GameOverEclssAndSuitCollapse,
+                "Cryogenic -230°C regolith dust froze and micro-punctured spacesuit joints during manual crater descent, causing rapid suit pressure loss.",
+                "A poeira criogênica a -230°C congelou e micro-perfurou as juntas dos trajes na descida manual da cratera, causando rápida perda de pressão."
+            ),
+            "MOON-01-C" => (
+                MissionEndingOutcome.GameOverCo2AndCaloricOverload,
+                "Passive mirror sublimation failed to yield sufficient water; closed-loop oxygen generation collapsed below crew metabolic requirements.",
+                "A sublimação passiva por espelhos gerou água insuficiente; a produção de oxigênio em malha fechada colapsou abaixo das necessidades vitais da tripulação."
+            ),
+
+            // Turn 2: Regolith Dust Storm at Airlock
+            "MOON-02-B" => (
+                MissionEndingOutcome.GameOverEclssAndSuitCollapse,
+                "Manual brushing abraded xEMU suit seals and clogged cabin airlock filters with jagged microscopic silicate dust, terminating life support.",
+                "A escovação manual desgastou as vedações dos trajes xEMU e entupiu os filtros de ar da eclusa com micro-lascas de silicato, interrompendo o suporte de vida."
+            ),
+            "MOON-02-C" => (
+                MissionEndingOutcome.GameOverCo2AndCaloricOverload,
+                "Flushing airlocks with pressurized cabin gas depleted nitrogen and oxygen reserves, leading to irreversible cabin depressurization.",
+                "A purga da eclusa com gás pressurizado esgotou as reservas vitais de nitrogênio e oxigênio, provocando despressurização irreversível."
+            ),
+
+            // Turn 3: 354-Hour Cryogenic Lunar Night
+            "MOON-03-B" => (
+                MissionEndingOutcome.GameOverCo2AndCaloricOverload,
+                "Passive regolith thermal bricks cooled after 72 hours; lack of nuclear power during the 354-hour lunar night froze habitat life support.",
+                "Os blocos térmicos de regolito esfriaram após 72 horas; a ausência de energia nuclear na noite de 354 horas congelou o suporte de vida do habitat."
+            ),
+            "MOON-03-C" => (
+                MissionEndingOutcome.GameOverCo2AndCaloricOverload,
+                "Hibernating ECLSS loops allowed exhaled carbon dioxide to saturate the cabin, causing lethal hypercapnia and acidosis.",
+                "A hibernação do ciclo ECLSS permitiu que o dióxido de carbono saturasse a cabine, causando hipercapnia letal e acidose respiratória."
+            ),
+
+            // Turn 4: NASA DONKI Solar Flare & Proton Storm
+            "MOON-04-B" => (
+                MissionEndingOutcome.GameOverDonkiSolarStormRadiation,
+                "OSDR radioprotectants alone could not stop ionizing proton flux; unshielded module walls allowed fatal solar flare radiation doses.",
+                "Os radioprotetores OSDR sozinhos não barraram os prótons ionizantes; as paredes desprovidas de blindagem espessa permitiram doses fatais de radiação."
+            ),
+            "MOON-04-C" => (
+                MissionEndingOutcome.GameOverDonkiSolarStormRadiation,
+                "Unshielded surface mining during an X-class solar flare irradiated astronauts and fried surface power avionics.",
+                "Manter mineração externa durante uma erupção solar classe X irradiou a tripulação e queimou os aviônicos de energia de superfície."
+            ),
+
+            // Turn 5: Carbothermal Ilmenite Oxygen Kiln
+            "MOON-05-B" => (
+                MissionEndingOutcome.GameOverCo2AndCaloricOverload,
+                "Sintering slag into landing pads consumed power without extracting ilmenite oxygen, starving the habitat atmospheric loop.",
+                "Sinterizar escória em pista de pouso consumiu energia sem extrair o oxigênio da ilmenita, esgotando o ciclo respiratório do habitat."
+            ),
+            "MOON-05-C" => (
+                MissionEndingOutcome.GameOverCo2AndCaloricOverload,
+                "Conserving kiln power starved the oxygen supply; microalgae alone could not meet crew metabolic oxygen consumption.",
+                "Poupar a fornalha reduziu a produção de oxigênio; as microalgas sozinhas não conseguiram suprir o consumo metabólico da tripulação."
+            ),
+
+            // Turn 6: Lunar Far-Side Radio Shadow
+            "MOON-06-B" => (
+                MissionEndingOutcome.GameOverEclssAndSuitCollapse,
+                "Climbing Malapert Peak in cryogenic shadow tore xEMU orthofabric on razor-sharp crater ridges, breaching life-support pressure integrity.",
+                "Subir o Pico Malapert na sombra criogênica rasgou o orto-tecido do xEMU nas rochas cortantes da cratera, rompendo a pressão do traje."
+            ),
+            "MOON-06-C" => (
+                MissionEndingOutcome.GameOverEclssAndSuitCollapse,
+                "Autonomous mode latency desynchronized Houston telemetry, preventing remote intervention during an unnoticed water loop blockage.",
+                "O atraso no modo autônomo dessincronizou a telemetria com Houston, impedindo a intervenção remota durante um bloqueio crítico na malha de água."
+            ),
+
+            // Turn 7: Lunar Lava Tube Skylight Discovery
+            "MOON-07-B" => (
+                MissionEndingOutcome.GameOverEclssAndSuitCollapse,
+                "Rappelling down into the volcanic pit lacerated suit pressure bladders on razor-sharp basalt cliffs, causing fatal depressurization.",
+                "Descer de rapel no poço vulcânico rasgou as camadas de pressão dos trajes nas paredes de basalto afiado, causando despressurização fatal."
+            ),
+            "MOON-07-C" => (
+                MissionEndingOutcome.GameOverCo2AndCaloricOverload,
+                "Surface radar survey failed to identify underground thermal shelter, leaving habitat cooling radiators overwhelmed by surface heat.",
+                "O escaneamento por radar da borda não garantiu abrigo subterrâneo, sobrecarregando os radiadores térmicos de superfície."
+            ),
+
+            // Turn 8: Gateway NRHO Rendezvous & Trans-Earth Injection
+            "MOON-08-B" => (
+                MissionEndingOutcome.GameOverEclssAndSuitCollapse,
+                "Transferring rock samples left ascent propellant tanks underfilled; the ascent vehicle failed to achieve Gateway rendezvous orbit.",
+                "Embarcar amostras de rochas deixou os tanques de subida sem combustível suficiente; o módulo de ascensão não conseguiu atingir a órbita Gateway."
+            ),
+            "MOON-08-C" => (
+                MissionEndingOutcome.GameOverCo2AndCaloricOverload,
+                "Direct trans-Earth injection lacked delta-V margin; the spacecraft exhausted fuel and life support before Earth atmospheric capture.",
+                "A trajetória direta trans-Terra não teve margem de delta-V; a nave esgotou combustível e suporte de vida antes da captura atmosférica na Terra."
+            ),
+
+            _ => (
+                MissionEndingOutcome.GameOverCo2AndCaloricOverload,
+                "Deviation from NASA canonical flight trajectory and outpost protocols caused mission failure.",
+                "Desvio da trajetória canônica e dos protocolos da NASA causou a perda da missão."
+            )
+        };
+    }
+}
+
+/// <summary>
 /// Turn-based Bio-Ship & Outpost Card Game Engine in PymSpaceOrbit.Shared.Concrete.Game.
 /// Combines the unified Ship/Base deck, 36-feature ML.NET evaluation via IPymSpaceOrbitMlModelService,
 /// a large immersive catalog of 24 kid-friendly (ages 7–12) space exploration dilemmas (72 choices),
@@ -28,7 +148,7 @@ public sealed class GameService : IGameService
         OutpostDestination destination,
         int crewCount = 4,
         int minimumBaseBuildCards = 5,
-        string locale = "pt-BR",
+        string locale = "en-US",
         CancellationToken cancellationToken = default)
     {
         if (!_mlModelService.IsInitialized)
@@ -43,14 +163,39 @@ public sealed class GameService : IGameService
         var initialPrediction = _mlModelService.EvaluateState(initialResources, destination);
 
         var catalogCards = PymSpaceOrbitCatalogLoader.AllCards;
-        var unifiedDeck = (catalogCards.Count > 0 ? catalogCards : BuildUnifiedShipAndBaseDeck())
+        var sourceCards = (catalogCards.Count > 0 ? catalogCards : BuildUnifiedShipAndBaseDeck())
             .Where(c => c.TargetAffinity is null || c.TargetAffinity == destination)
-            .OrderBy(_ => _rng.Next())
             .ToList();
 
-        int initialHandSize = Math.Min(unifiedDeck.Count, minCards + 3);
-        var hand = unifiedDeck.Take(initialHandSize).ToList();
-        var drawPile = unifiedDeck.Skip(initialHandSize).ToList();
+        List<GameCardModel> hand;
+        List<GameCardModel> drawPile;
+
+        if (destination == CanonicalWinningRoute.Destination)
+        {
+            // Guarantee that all 5 canonical base cards are present in the player's initial hand
+            var canonicalCards = sourceCards
+                .Where(c => CanonicalWinningRoute.CanonicalBaseCardIds.Contains(c.CardId, StringComparer.OrdinalIgnoreCase))
+                .ToList();
+
+            var otherCards = sourceCards
+                .Where(c => !CanonicalWinningRoute.CanonicalBaseCardIds.Contains(c.CardId, StringComparer.OrdinalIgnoreCase))
+                .OrderBy(c => c.CardId)
+                .ToList();
+
+            // Provide the 5 canonical cards plus 3 distractor cards in the opening hand (8 cards total)
+            int distractorCount = Math.Min(3, otherCards.Count);
+            var handDistractors = otherCards.Take(distractorCount).ToList();
+
+            hand = canonicalCards.Concat(handDistractors).OrderBy(c => c.CardId).ToList();
+            drawPile = otherCards.Skip(distractorCount).ToList();
+        }
+        else
+        {
+            var ordered = sourceCards.OrderBy(c => c.CardId).ToList();
+            int initialHandSize = Math.Min(ordered.Count, minCards + 3);
+            hand = ordered.Take(initialHandSize).ToList();
+            drawPile = ordered.Skip(initialHandSize).ToList();
+        }
 
         CurrentSession = new GameSessionState
         {
@@ -58,7 +203,7 @@ public sealed class GameService : IGameService
             Locale = locale,
             CrewCount = safeCrew,
             CurrentTurn = 1,
-            MaxCampaignTurns = destination == OutpostDestination.ISS ? 8 : (destination == OutpostDestination.Moon ? 10 : 12),
+            MaxCampaignTurns = destination == OutpostDestination.Moon ? 8 : (destination == OutpostDestination.ISS ? 8 : 12),
             CurrentMissionDay = 0f,
             CurrentFlightStageIndex = 1,
             Phase = TurnPhase.BuildPhase,
@@ -99,12 +244,25 @@ public sealed class GameService : IGameService
             return false;
         }
 
-        if (CurrentSession.Phase == TurnPhase.CardPlayPhase &&
-            CurrentSession.CardsPlayedThisTurn >= CurrentSession.MaxCardsPlayedPerTurn)
+        if (CurrentSession.Phase != TurnPhase.BuildPhase)
+        {
+            // During exploration turns, base architecture is locked.
+            // Equipping unauthorized extra modules overloads the habitat microgrid and destabilizes life support.
+            CurrentSession.Phase = TurnPhase.MissionEnded;
+            CurrentSession.Outcome = MissionEndingOutcome.GameOverCo2AndCaloricOverload;
+            CurrentSession.CurrentFlightStageIndex = 7;
+            statusMessage = isPt
+                ? $"GAME OVER #3: A instalação do módulo adicional '{card.GetDisplayName(true)}' sobrecarregou a microrrede de energia e desestabilizou o suporte de vida da base!"
+                : $"GAME OVER #3: Installing additional module '{card.GetDisplayName(false)}' overloaded the outpost microgrid and destabilized life support systems!";
+            CurrentSession.MissionJournalLogs.Add(statusMessage);
+            return false;
+        }
+
+        if (CurrentSession.EquippedShipAndBaseCards.Count >= CurrentSession.MinimumCardsToBuildBase)
         {
             statusMessage = isPt
-                ? $"Limite de {CurrentSession.MaxCardsPlayedPerTurn} cartas por turno atingido! Resolva a escolha de exploração."
-                : $"Turn limit of {CurrentSession.MaxCardsPlayedPerTurn} cards reached! Resolve the exploration choice.";
+                ? $"Você já equipou o limite de {CurrentSession.MinimumCardsToBuildBase} cartas para a base! Clique em CONFIRMAR BASE ou reinicie a montagem."
+                : $"You have already equipped the maximum of {CurrentSession.MinimumCardsToBuildBase} cards for the base! Click CONFIRM BASE or reset assembly.";
             return false;
         }
 
@@ -128,6 +286,12 @@ public sealed class GameService : IGameService
     {
         bool isPt = CurrentSession.Locale.StartsWith("pt", StringComparison.OrdinalIgnoreCase);
 
+        if (CurrentSession.Outcome != MissionEndingOutcome.InProgress)
+        {
+            validationMessage = isPt ? "A missão já foi encerrada." : "The mission has already ended.";
+            return false;
+        }
+
         if (CurrentSession.EquippedShipAndBaseCards.Count < CurrentSession.MinimumCardsToBuildBase)
         {
             int missing = CurrentSession.MinimumCardsToBuildBase - CurrentSession.EquippedShipAndBaseCards.Count;
@@ -137,13 +301,61 @@ public sealed class GameService : IGameService
             return false;
         }
 
+        // Validate canonical base construction
+        var equippedIds = CurrentSession.EquippedShipAndBaseCards
+            .Select(c => c.CardId)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        bool isCanonicalBase = CurrentSession.Destination == CanonicalWinningRoute.Destination
+            && CurrentSession.EquippedShipAndBaseCards.Count == CanonicalWinningRoute.CanonicalBaseCardIds.Count
+            && CanonicalWinningRoute.CanonicalBaseCardIds.All(id => equippedIds.Contains(id));
+
+        if (!isCanonicalBase)
+        {
+            // Non-canonical base configuration triggers immediate Game Over!
+            MissionEndingOutcome failureOutcome;
+            string detailEn;
+            string detailPt;
+
+            if (!equippedIds.Contains("ARC-SHD-01") || !equippedIds.Contains("BLD-01"))
+            {
+                failureOutcome = MissionEndingOutcome.GameOverDonkiSolarStormRadiation;
+                detailEn = "Base construction failed: The outpost lacked sufficient radiation shielding (BLD-01 BNNT Hull or ARC-SHD-01 Sintered Regolith Dome). Solar particle radiation penetrated the habitat, causing critical crew incapacitation.";
+                detailPt = "Falha na construção da base: A base não possui blindagem adequada contra radiação (BLD-01 Casco BNNT ou ARC-SHD-01 Domo de Regolito). A radiação solar ionizante penetrou o habitat, incapacitando a tripulação.";
+            }
+            else if (!equippedIds.Contains("BLD-03") || !equippedIds.Contains("ECL-01"))
+            {
+                failureOutcome = MissionEndingOutcome.GameOverEclssAndSuitCollapse;
+                detailEn = "Base construction failed: The outpost lacked essential spacesuit airlock or water recovery systems (BLD-03 EDS Airlock or ECL-01 WPA Water Recycler). Abrasive lunar dust clogged suit bearings and life support water loops collapsed.";
+                detailPt = "Falha na construção da base: A base não possui eclusa de trajes EDS ou sistema de água (BLD-03 Eclusa EDS ou ECL-01 Reciclador WPA). A poeira abrasiva danificou as juntas dos trajes e o circuito de água entrou em colapso.";
+            }
+            else
+            {
+                failureOutcome = MissionEndingOutcome.GameOverCo2AndCaloricOverload;
+                detailEn = "Base construction failed: The outpost lacked sustained nuclear fission microgrid power (BLD-02 Kilopower KRUSTY). Thermal heaters and CDRA carbon dioxide scrubbers froze during the lunar night, triggering fatal acidosis.";
+                detailPt = "Falha na construção da base: A base não possui energia nuclear de fissão contínua (BLD-02 Kilopower KRUSTY). Os aquecedores e removedores de CO2 congelaram na noite lunar, causando acidose letal.";
+            }
+
+            CurrentSession.Outcome = failureOutcome;
+            CurrentSession.Phase = TurnPhase.MissionEnded;
+            CurrentSession.CurrentFlightStageIndex = 7;
+
+            var (titleEn, titlePt, sumEn, sumPt) = BuildEndingNarrative(failureOutcome, CurrentSession, CurrentSession.LatestMlPrediction, detailEn, detailPt);
+            validationMessage = isPt ? $"{titlePt}\n\n{detailPt}" : $"{titleEn}\n\n{detailEn}";
+            CurrentSession.MissionJournalLogs.Add(isPt ? $"🏁 {titlePt}: {detailPt}" : $"🏁 {titleEn}: {detailEn}");
+
+            return false;
+        }
+
+        // Canonical base successfully established!
         CurrentSession.Phase = TurnPhase.ExplorationDecisionPhase;
+        CurrentSession.CurrentTurn = 1;
         CurrentSession.CardsPlayedThisTurn = 0;
         CurrentSession.PendingExplorationEvent = DrawTurnExplorationEvent();
 
         validationMessage = isPt
-            ? $"Nave e base PymGameOrbit construídas com {CurrentSession.EquippedShipAndBaseCards.Count} cartas! Primeiro desafio espacial sorteado."
-            : $"PymGameOrbit ship and base built with {CurrentSession.EquippedShipAndBaseCards.Count} cards! First space exploration challenge drawn.";
+            ? $"Nave e base PymGameOrbit construídas com sucesso segundo as especificações da NASA! Rumo ao Turno 1 no Polo Sul Lunar."
+            : $"PymGameOrbit ship and outpost base successfully built to NASA specifications! Proceeding to Turn 1 at the Lunar South Pole.";
 
         CurrentSession.MissionJournalLogs.Add(validationMessage);
         return true;
@@ -152,12 +364,16 @@ public sealed class GameService : IGameService
     public TurnExplorationEvent DrawTurnExplorationEvent()
     {
         var allEvents = BuildExplorationEventsCatalog();
-        var candidates = allEvents
-            .Where(e => e.TargetScope == CurrentSession.Destination)
-            .OrderBy(_ => _rng.Next())
-            .ToList();
 
-        var chosen = candidates.FirstOrDefault() ?? allEvents[0];
+        int safeTurn = Math.Clamp(CurrentSession.CurrentTurn, 1, 8);
+        string eventId = CurrentSession.Destination == OutpostDestination.Moon
+            ? $"EVT-MOON-0{safeTurn}"
+            : (CurrentSession.Destination == OutpostDestination.ISS ? $"EVT-ISS-0{safeTurn}" : $"EVT-MARS-0{safeTurn}");
+
+        var chosen = allEvents.FirstOrDefault(e => e.EventId.Equals(eventId, StringComparison.OrdinalIgnoreCase))
+            ?? allEvents.FirstOrDefault(e => e.TargetScope == CurrentSession.Destination)
+            ?? allEvents[0];
+
         CurrentSession.PendingExplorationEvent = chosen;
         CurrentSession.Phase = TurnPhase.ExplorationDecisionPhase;
         return chosen;
@@ -166,6 +382,20 @@ public sealed class GameService : IGameService
     public TurnResolutionResult ResolveExplorationDecisionAndAdvanceTurn(string selectedOptionId)
     {
         bool isPt = CurrentSession.Locale.StartsWith("pt", StringComparison.OrdinalIgnoreCase);
+
+        if (CurrentSession.Outcome != MissionEndingOutcome.InProgress)
+        {
+            var (tEn, tPt, sEn, sPt) = BuildEndingNarrative(CurrentSession.Outcome, CurrentSession, CurrentSession.LatestMlPrediction);
+            return new TurnResolutionResult(
+                CurrentSession.CurrentTurn,
+                CurrentSession.Phase,
+                CurrentSession.Outcome,
+                tEn, tPt, sEn, sPt,
+                string.Empty, string.Empty,
+                CurrentSession.LatestMlPrediction,
+                CurrentSession.PendingExplorationEvent);
+        }
+
         var activeEvent = CurrentSession.PendingExplorationEvent ?? DrawTurnExplorationEvent();
         var option = activeEvent.Choices.FirstOrDefault(o => o.OptionId.Equals(selectedOptionId, StringComparison.OrdinalIgnoreCase))
                      ?? activeEvent.Choices[0];
@@ -182,27 +412,77 @@ public sealed class GameService : IGameService
         var mlPred = _mlModelService.EvaluateState(CurrentSession.Resources, CurrentSession.Destination);
         CurrentSession.LatestMlPrediction = mlPred;
 
-        // 4. Check the 4 possible simulator endings (1 Nominal Success + 3 Game Overs)
-        var outcome = _mlModelService.EvaluateMissionOutcome(
+        // 4. Check if ML.NET telemetry collapsed
+        var telemetryOutcome = _mlModelService.EvaluateMissionOutcome(
             CurrentSession.Resources,
             mlPred,
             CurrentSession.Destination,
             CurrentSession.CurrentTurn,
             CurrentSession.MaxCampaignTurns);
 
-        CurrentSession.Outcome = outcome;
+        // 5. Evaluate Canonical Winning Route Decision
+        int turn = CurrentSession.CurrentTurn;
+        string expectedChoiceId = $"MOON-0{turn}-A";
+        bool isCanonicalChoice = CurrentSession.Destination == CanonicalWinningRoute.Destination
+            && option.OptionId.Equals(expectedChoiceId, StringComparison.OrdinalIgnoreCase);
 
-        if (outcome != MissionEndingOutcome.InProgress)
+        if (!isCanonicalChoice || telemetryOutcome != MissionEndingOutcome.InProgress)
         {
+            // Player deviated from the canonical winning route, or telemetry suffered catastrophic collapse!
+            MissionEndingOutcome failureOutcome;
+            string failReasonEn;
+            string failReasonPt;
+
+            if (telemetryOutcome != MissionEndingOutcome.InProgress)
+            {
+                failureOutcome = telemetryOutcome;
+                failReasonEn = "Catastrophic telemetry collapse detected by ML.NET sensor array.";
+                failReasonPt = "Colapso catastrófico de telemetria detectado pelos sensores ML.NET.";
+            }
+            else
+            {
+                (failureOutcome, failReasonEn, failReasonPt) = CanonicalWinningRoute.GetFailureForChoice(option.OptionId);
+            }
+
+            CurrentSession.Outcome = failureOutcome;
             CurrentSession.Phase = TurnPhase.MissionEnded;
-            CurrentSession.CurrentFlightStageIndex = outcome == MissionEndingOutcome.SuccessNominalReturn ? 9 : 7;
-            var (titleEn, titlePt, sumEn, sumPt) = BuildEndingNarrative(outcome, CurrentSession, mlPred);
+            CurrentSession.CurrentFlightStageIndex = 7;
+
+            var (titleEn, titlePt, sumEn, sumPt) = BuildEndingNarrative(failureOutcome, CurrentSession, mlPred, failReasonEn, failReasonPt);
+            string endingNarrativeEn = $"{sumEn}\n\nCritical Failure: {failReasonEn}";
+            string endingNarrativePt = $"{sumPt}\n\nFalha Crítica: {failReasonPt}";
+
+            CurrentSession.MissionJournalLogs.Add(isPt ? $"🏁 {titlePt}: {failReasonPt}" : $"🏁 {titleEn}: {failReasonEn}");
+
+            return new TurnResolutionResult(
+                CurrentSession.CurrentTurn,
+                CurrentSession.Phase,
+                failureOutcome,
+                titleEn,
+                titlePt,
+                endingNarrativeEn,
+                endingNarrativePt,
+                option.KidOutcomeLessonEn,
+                option.KidOutcomeLessonPtBr,
+                mlPred,
+                null);
+        }
+
+        // Canonical choice confirmed!
+        if (turn >= 8)
+        {
+            // Final stage reached through the canonical winning route! VICTORY!
+            CurrentSession.Outcome = MissionEndingOutcome.SuccessNominalReturn;
+            CurrentSession.Phase = TurnPhase.MissionEnded;
+            CurrentSession.CurrentFlightStageIndex = 9;
+
+            var (titleEn, titlePt, sumEn, sumPt) = BuildEndingNarrative(MissionEndingOutcome.SuccessNominalReturn, CurrentSession, mlPred);
             CurrentSession.MissionJournalLogs.Add(isPt ? $"🏁 {titlePt}: {sumPt}" : $"🏁 {titleEn}: {sumEn}");
 
             return new TurnResolutionResult(
                 CurrentSession.CurrentTurn,
                 CurrentSession.Phase,
-                outcome,
+                MissionEndingOutcome.SuccessNominalReturn,
                 titleEn,
                 titlePt,
                 sumEn,
@@ -213,32 +493,25 @@ public sealed class GameService : IGameService
                 null);
         }
 
-        // 5. Advance to next turn, draw up to 2 cards into PlayerHand, and prepare next phase
+        // Advance to next turn in the canonical sequence
         CurrentSession.CurrentTurn++;
         CurrentSession.CurrentFlightStageIndex = Math.Clamp(1 + (CurrentSession.CurrentTurn * 8 / CurrentSession.MaxCampaignTurns), 1, 8);
         CurrentSession.CardsPlayedThisTurn = 0;
 
-        for (int i = 0; i < 2 && CurrentSession.DrawPile.Count > 0 && CurrentSession.PlayerHand.Count < 7; i++)
-        {
-            var drawn = CurrentSession.DrawPile[0];
-            CurrentSession.DrawPile.RemoveAt(0);
-            CurrentSession.PlayerHand.Add(drawn);
-        }
-
         var nextEvent = DrawTurnExplorationEvent();
-        CurrentSession.Phase = TurnPhase.CardPlayPhase;
+        CurrentSession.Phase = TurnPhase.ExplorationDecisionPhase;
 
         string turnLog = isPt
-            ? $"[Turno {CurrentSession.CurrentTurn - 1}] Escolha '{option.LabelPtBr}' aplicada! Saúde ML: {mlPred.CrewHealthSurvivalProb * 100f:F1}% | Confiabilidade: {mlPred.SystemReliabilityIndex * 100f:F1}% | Yield CH4: {mlPred.FuelYieldRate * 100f:F1}%."
-            : $"[Turn {CurrentSession.CurrentTurn - 1}] Choice '{option.LabelEn}' applied! ML Health: {mlPred.CrewHealthSurvivalProb * 100f:F1}% | Reliability: {mlPred.SystemReliabilityIndex * 100f:F1}% | CH4 Yield: {mlPred.FuelYieldRate * 100f:F1}%.";
+            ? $"[Turno {CurrentSession.CurrentTurn - 1}] Escolha nominal '{option.LabelPtBr}' executada! Saúde ML: {mlPred.CrewHealthSurvivalProb * 100f:F1}% | Confiabilidade: {mlPred.SystemReliabilityIndex * 100f:F1}% | Yield CH4: {mlPred.FuelYieldRate * 100f:F1}%."
+            : $"[Turn {CurrentSession.CurrentTurn - 1}] Nominal choice '{option.LabelEn}' executed! ML Health: {mlPred.CrewHealthSurvivalProb * 100f:F1}% | Reliability: {mlPred.SystemReliabilityIndex * 100f:F1}% | CH4 Yield: {mlPred.FuelYieldRate * 100f:F1}%.";
         CurrentSession.MissionJournalLogs.Add(turnLog);
 
         return new TurnResolutionResult(
             CurrentSession.CurrentTurn,
             CurrentSession.Phase,
             MissionEndingOutcome.InProgress,
-            "Mission In Progress — Safe Telemetry",
-            "Missão em Andamento — Telemetria Segura",
+            "Mission In Progress — Canonical Route Maintained",
+            "Missão em Andamento — Rota Canônica Mantida",
             turnLog,
             turnLog,
             option.KidOutcomeLessonEn,
@@ -293,9 +566,11 @@ public sealed class GameService : IGameService
     private static (string TitleEn, string TitlePt, string SummaryEn, string SummaryPt) BuildEndingNarrative(
         MissionEndingOutcome outcome,
         GameSessionState s,
-        QuadMlEvaluationResult pred)
+        QuadMlEvaluationResult pred,
+        string? failureReasonEn = null,
+        string? failureReasonPt = null)
     {
-        return outcome switch
+        var baseNarrative = outcome switch
         {
             MissionEndingOutcome.SuccessNominalReturn => (
                 $"VICTORY! Safe Rate-Limit Return & Earth Touchdown ({s.Destination})",
@@ -322,6 +597,18 @@ public sealed class GameService : IGameService
                 $"A demanda metabólica ({s.CrewCount} astronautas) superou o fotobiorreator de Chlorella e o gerador de oxigênio OGA, esgotando as reservas vitais e acionando o aborto de emergência."
             )
         };
+
+        if (string.IsNullOrWhiteSpace(failureReasonEn))
+        {
+            return baseNarrative;
+        }
+
+        return (
+            baseNarrative.Item1,
+            baseNarrative.Item2,
+            $"{baseNarrative.Item3}\n\nCritical Failure Cause: {failureReasonEn}",
+            $"{baseNarrative.Item4}\n\nCausa da Falha Crítica: {failureReasonPt}"
+        );
     }
 
     private static List<GameCardModel> BuildUnifiedShipAndBaseDeck() =>

@@ -12,6 +12,8 @@ public sealed class LocalizationState
     {
         CultureInfo.CurrentCulture = CurrentCulture;
         CultureInfo.CurrentUICulture = CurrentCulture;
+        CultureInfo.DefaultThreadCurrentCulture = CurrentCulture;
+        CultureInfo.DefaultThreadCurrentUICulture = CurrentCulture;
     }
 
     public void SetCulture(string cultureName)
@@ -21,6 +23,8 @@ public sealed class LocalizationState
         CurrentCulture = culture;
         CultureInfo.CurrentCulture = culture;
         CultureInfo.CurrentUICulture = culture;
+        CultureInfo.DefaultThreadCurrentCulture = culture;
+        CultureInfo.DefaultThreadCurrentUICulture = culture;
         CultureChanged?.Invoke();
     }
 }

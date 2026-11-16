@@ -254,12 +254,8 @@ public sealed class PymSpaceOrbitMlModelService : IPymSpaceOrbitMlModelService, 
             return MissionEndingOutcome.GameOverCo2AndCaloricOverload;
         }
 
-        // Nominal Success: Completed all campaign turns or triggered Safe Rate-Limit return with healthy crew & systems
-        if (currentTurn >= maxTurns || pred.FuelYieldRate <= safeYieldFloor + 0.04f)
-        {
-            return MissionEndingOutcome.SuccessNominalReturn;
-        }
-
+        // Telemetry is within survivability envelopes.
+        // Victory is deterministic and evaluated strictly upon satisfying the canonical campaign route in GameService.
         return MissionEndingOutcome.InProgress;
     }
 

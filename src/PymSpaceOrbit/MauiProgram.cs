@@ -14,6 +14,12 @@ public static class MauiProgram
 {
     public static MauiApp CreateMauiApp()
     {
+        var defaultCulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
+        System.Globalization.CultureInfo.DefaultThreadCurrentCulture = defaultCulture;
+        System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = defaultCulture;
+        System.Globalization.CultureInfo.CurrentCulture = defaultCulture;
+        System.Globalization.CultureInfo.CurrentUICulture = defaultCulture;
+
         var builder = MauiApp.CreateBuilder();
         builder
             .UseMauiApp<App>()
