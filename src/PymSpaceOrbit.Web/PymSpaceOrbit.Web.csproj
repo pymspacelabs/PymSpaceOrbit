@@ -5,6 +5,10 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AppBasePath Condition="'$(AppBasePath)' == ''">/</AppBasePath>
+    <!-- Required for changing CurrentUICulture at runtime in Blazor WebAssembly. -->
+    <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
+    <!-- Keep the shared class library's Brazilian Portuguese satellite resource. -->
+    <SatelliteResourceLanguages>pt-BR</SatelliteResourceLanguages>
   </PropertyGroup>
 
   <ItemGroup>

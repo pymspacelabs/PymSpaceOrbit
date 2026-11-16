@@ -8,6 +8,8 @@
 @inject IAudioService AudioService
 @inject IPymGameOrbitMlModelService MlModelService
 @inject NavigationManager Navigation
+@inject IJSRuntime JS
+@inject PymSpaceOrbit.Shared.Services.IFormFactor FormFactor
 @inject ISnackbar Snackbar
 @inject ILocalizer<OptionsPage> L
 @inject LocalizationState Localization
@@ -46,7 +48,7 @@
                         <span>@L["MissionLanguage"]</span>
                     </div>
                     <div class="hud-options-control-box">
-                        <MudSelect T="string" @bind-Value="_selectedLocale"
+                        <MudSelect T="string" Value="_selectedLocale" ValueChanged="OnLocaleChanged"
                                    Variant="Variant.Outlined"
                                    Margin="Margin.Dense"
                                    Dense="true"
@@ -520,6 +522,7 @@
     {
         Localization.CultureChanged += HandleCultureChanged;
         _selectedLocale = GameService.CurrentSession.Locale;
+        Localization.SetCulture(_selectedLocale);
         _crewCount = GameService.CurrentSession.CrewCount;
         _minBaseCards = GameService.CurrentSession.MinimumCardsToBuildBase;
         _liveNasaSync = MlModelService.LiveNasaApiSyncEnabled;
@@ -627,6 +630,27 @@
             config.Icon = Icons.Material.Filled.CheckCircle;
             config.ShowCloseIcon = true;
         });
+    }
+
+    private async Task OnLocaleChanged(string locale)
+    {
+        _selectedLocale = locale;
+        GameService.CurrentSession.Locale = locale;
+        Localization.SetCulture(locale);
+
+        try
+        {
+            await JS.InvokeVoidAsync("pymSpaceOrbitLocalization.set", locale);
+        }
+        catch (JSException)
+        {
+            // The MAUI BlazorWebView does not use the Web localStorage helper.
+        }
+
+        if (FormFactor.GetFormFactor().Equals("Web", StringComparison.OrdinalIgnoreCase))
+        {
+            Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
+        }
     }
 
     private void HandleCultureChanged() => _ = InvokeAsync(StateHasChanged);

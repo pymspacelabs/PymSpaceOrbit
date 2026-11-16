@@ -8,6 +8,8 @@
 @inject IGameService GameService
 @inject IAudioService AudioService
 @inject NavigationManager Navigation
+@inject IJSRuntime JS
+@inject PymSpaceOrbit.Shared.Services.IFormFactor FormFactor
 @inject ILocalizer<MainLayout> L
 @inject LocalizationState Localization
 
@@ -257,6 +259,7 @@
 
     protected override void OnInitialized()
     {
+        GameService.CurrentSession.Locale = Localization.CurrentCulture.Name;
         Navigation.LocationChanged += HandleLocationChanged;
         Localization.CultureChanged += HandleCultureChanged;
     }
@@ -308,10 +311,25 @@
 
     private async Task ToggleLocale()
     {
-        await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
         var culture = IsPortuguese ? "en-US" : "pt-BR";
         GameService.CurrentSession.Locale = culture;
         Localization.SetCulture(culture);
+
+        try
+        {
+            await JS.InvokeVoidAsync("pymSpaceOrbitLocalization.set", culture);
+        }
+        catch (JSException)
+        {
+            // The MAUI BlazorWebView does not use the Web localStorage helper.
+        }
+
+        await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
+
+        if (FormFactor.GetFormFactor().Equals("Web", StringComparison.OrdinalIgnoreCase))
+        {
+            Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
+        }
     }
 
     private void HandleCultureChanged() => _ = InvokeAsync(StateHasChanged);

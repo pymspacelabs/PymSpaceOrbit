@@ -23,7 +23,7 @@ public static class PymSpaceOrbitServiceCollectionExtensions
         services.AddScoped<IGameService, GameService>();
         services.AddScoped<PymSpaceOrbit.Shared.Services.NasaCardImageResolver>();
         services.AddLocalization(options => options.ResourcesPath = "Resources/Localization");
-        services.AddSingleton(typeof(ILocalizer<>), typeof(Localizer<>));
+        services.AddScoped(typeof(ILocalizer<>), typeof(Localizer<>));
         services.AddScoped<LocalizationState>();
         return services;
     }

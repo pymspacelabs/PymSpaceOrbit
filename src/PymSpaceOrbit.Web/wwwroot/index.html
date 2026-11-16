@@ -27,9 +27,17 @@
         <span class="dismiss">🗙</span>
     </div>
 
-    <script src="_framework/blazor.webassembly.js"></script>
+    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
     <script type="module" src="js/audioService.js"></script>
+    <script>
+        window.pymSpaceOrbitLocalization = {
+            get: () => window.localStorage.getItem('PymSpaceOrbit.Culture'),
+            set: (culture) => window.localStorage.setItem('PymSpaceOrbit.Culture', culture)
+        };
+
+        Blazor.start();
+    </script>
 </body>
 
 </html>
