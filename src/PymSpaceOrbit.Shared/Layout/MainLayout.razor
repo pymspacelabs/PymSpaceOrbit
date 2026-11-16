@@ -8,6 +8,8 @@
 @inject IGameService GameService
 @inject IAudioService AudioService
 @inject NavigationManager Navigation
+@inject ILocalizer<MainLayout> L
+@inject LocalizationState Localization
 
 <MudThemeProvider Theme="_spaceTheme" @bind-IsDarkMode="_isDarkMode" />
 <MudPopoverProvider />
@@ -26,19 +28,19 @@
         <MudSpacer />
 
         <MudButton Variant="Variant.Text" Href="/" StartIcon="@Icons.Material.Filled.Home" Color="Color.Inherit" Size="Size.Small" Class="mx-1 appbar-nav-btn">
-            @(IsPortuguese ? "Início" : "Home")
+            @L["Home"]
         </MudButton>
 
         <MudButton Variant="Variant.Text" OnClick="OpenPlayCampaignDialog" StartIcon="@Icons.Material.Filled.SportsEsports" Color="Color.Inherit" Size="Size.Small" Class="mx-1 appbar-nav-btn">
-            @(IsPortuguese ? "Jogar" : "Play")
+            @L["Play"]
         </MudButton>
 
         <MudButton Variant="Variant.Text" Href="/info" StartIcon="@Icons.Material.Filled.CollectionsBookmark" Color="Color.Inherit" Size="Size.Small" Class="mx-1 appbar-nav-btn">
-            @(IsPortuguese ? "Card Sets" : "Cards")
+            @L["Cards"]
         </MudButton>
 
         <MudButton Variant="Variant.Text" Href="/options" StartIcon="@Icons.Material.Filled.Tune" Color="Color.Inherit" Size="Size.Small" Class="mx-1 appbar-nav-btn">
-            @(IsPortuguese ? "Opções" : "Options")
+            @L["Options"]
         </MudButton>
 
         <MudDivider Vertical="true" FlexItem="true" Class="my-2 mx-2" Style="border-color: rgba(0, 229, 255, 0.3);" />
@@ -46,11 +48,11 @@
         <!-- Locale Toggle -->
         <MudButton Variant="Variant.Outlined" Size="Size.Small" OnClick="ToggleLocale"
                    Style="color: #FFD700; border-color: rgba(255, 215, 0, 0.5); font-weight: bold; min-width: 65px; height: 28px; padding: 0 8px;">
-            @(IsPortuguese ? "🇧🇷 PT" : "🇺🇸 EN")
+            @(IsPortuguese ? L["LocalePt"] : L["LocaleEn"])
         </MudButton>
 
         <!-- Dark/Light Theme Toggle -->
-        <MudTooltip Text="@(_isDarkMode ? "Tema Claro / Light" : "Tema Escuro / Dark")">
+        <MudTooltip Text="@(_isDarkMode ? L["ThemeLight"] : L["ThemeDark"])" >
             <MudIconButton Icon="@(_isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)"
                            Color="Color.Warning"
                            Size="Size.Small"
@@ -59,7 +61,7 @@
         </MudTooltip>
 
         <!-- Audio On/Off Toggle -->
-        <MudTooltip Text="@(_isAudioOn ? "Audio Ligado / On" : "Audio desligado / Muted")">
+        <MudTooltip Text="@(_isAudioOn ? L["AudioOn"] : L["AudioOff"])" >
             <MudIconButton Icon="@(_isAudioOn ? Icons.Material.Filled.VolumeUp : Icons.Material.Filled.VolumeOff)"
                            Color="Color.Warning"
                            Size="Size.Small"
@@ -79,41 +81,40 @@
         <div class="d-flex align-center">
             <MudIcon Icon="@Icons.Material.Filled.RocketLaunch" Color="Color.Primary" Class="mr-2" />
             <MudText Typo="Typo.h6" Style="color: #00E5FF; font-weight: bold;">
-                @(IsPortuguese ? "CONFIGURAR NOVA EXPEDIÇÃO" : "NEW MISSION CAMPAIGN SETUP")
+                @L["NewMissionTitle"]
             </MudText>
         </div>
     </TitleContent>
     <DialogContent>
         <MudText Typo="Typo.subtitle2" Class="mb-3" Style="color: #8B949E;">
-            @(IsPortuguese ? "Selecione o destino da sua nave PymGameOrbit, tamanho da tripulação e regras de construção:"
-                           : "Select your PymGameOrbit mission destination, astronaut crew size and base building rules:")
+            @L["NewMissionPrompt"]
         </MudText>
 
         <MudText Typo="Typo.body2" Class="font-weight-bold mb-1" Style="color: #FFD700;">
-            @(IsPortuguese ? "Destino da Missão:" : "Mission Destination:")
+            @L["MissionDestination"]
         </MudText>
         <MudRadioGroup @bind-Value="_selectedDestination" T="OutpostDestination" Class="d-flex flex-wrap justify-space-between mb-4">
             <MudRadio Value="OutpostDestination.ISS" Color="Color.Primary" Dense="true">
                 <span style="font-weight: 600;">🛰️ ISS</span>
-                <span style="font-size: 11px; color: #8B949E; display: block;">(LEO 414 km / 8 @(IsPortuguese ? "turnos" : "turns"))</span>
+                <span style="font-size: 11px; color: #8B949E; display: block;">(LEO 414 km / 8 @L["Turns"])</span>
             </MudRadio>
             <MudRadio Value="OutpostDestination.Moon" Color="Color.Secondary" Dense="true">
-                <span style="font-weight: 600;">🌕 @(IsPortuguese ? "Lua (Moon)" : "Moon")</span>
-                <span style="font-size: 11px; color: #8B949E; display: block;">(Artemis Gateway / 10 @(IsPortuguese ? "turnos" : "turns"))</span>
+                <span style="font-weight: 600;">🌕 @L["Moon"]</span>
+                <span style="font-size: 11px; color: #8B949E; display: block;">(Artemis Gateway / 10 @L["Turns"])</span>
             </MudRadio>
             <MudRadio Value="OutpostDestination.Mars" Color="Color.Error" Dense="true">
-                <span style="font-weight: 600;">🔴 @(IsPortuguese ? "Marte (Mars)" : "Mars")</span>
-                <span style="font-size: 11px; color: #8B949E; display: block;">(ISRU Surface / 12 @(IsPortuguese ? "turnos" : "turns"))</span>
+                <span style="font-weight: 600;">🔴 @L["Mars"]</span>
+                <span style="font-size: 11px; color: #8B949E; display: block;">(ISRU Surface / 12 @L["Turns"])</span>
             </MudRadio>
         </MudRadioGroup>
 
         <div class="mb-4">
             <div class="d-flex justify-space-between align-center mb-1">
                 <MudText Typo="Typo.body2" Style="color: #00E676; font-weight: 600;">
-                    @(IsPortuguese ? "Tamanho da Tripulação:" : "Astronaut Crew Count:")
+                    @L["CrewCount"]
                 </MudText>
                 <MudChip T="string" Size="Size.Small" Color="Color.Tertiary" Variant="Variant.Outlined">
-                    @_crewCount @(IsPortuguese ? "astronautas" : "astronauts")
+                    @_crewCount @L["Astronauts"]
                 </MudChip>
             </div>
             <MudSlider T="int" Min="1" Max="16" @bind-Value="_crewCount" Color="Color.Tertiary" ValueLabel="true" />
@@ -122,10 +123,10 @@
         <div class="mb-2">
             <div class="d-flex justify-space-between align-center mb-1">
                 <MudText Typo="Typo.body2" Style="color: #00E5FF; font-weight: 600;">
-                    @(IsPortuguese ? "Mínimo de Cartas para a Base:" : "Min. Base Build Cards:")
+                    @L["MinBaseCards"]
                 </MudText>
                 <MudChip T="string" Size="Size.Small" Color="Color.Primary" Variant="Variant.Outlined">
-                    @_minCards @(IsPortuguese ? "cartas" : "cards")
+                    @_minCards @L["CardsCount"]
                 </MudChip>
             </div>
             <MudSlider T="int" Min="3" Max="8" @bind-Value="_minCards" Color="Color.Primary" ValueLabel="true" />
@@ -133,14 +134,14 @@
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="CloseTopPlayDialog" Color="Color.Default" Variant="Variant.Text">
-            @(IsPortuguese ? "Cancelar" : "Cancel")
+            @L["Cancel"]
         </MudButton>
         <MudButton OnClick="LaunchCampaignFromTopBar"
                    Variant="Variant.Filled"
                    Color="Color.Primary"
                    StartIcon="@Icons.Material.Filled.Launch"
                    Style="font-weight: bold; background: linear-gradient(90deg, #00E5FF, #0097A7); color: #000;">
-            @(IsPortuguese ? "INICIAR MISSÃO" : "LAUNCH MISSION")
+            @L["LaunchMission"]
         </MudButton>
     </DialogActions>
 </MudDialog>
@@ -257,6 +258,7 @@
     protected override void OnInitialized()
     {
         Navigation.LocationChanged += HandleLocationChanged;
+        Localization.CultureChanged += HandleCultureChanged;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -307,8 +309,12 @@
     private async Task ToggleLocale()
     {
         await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
-        GameService.CurrentSession.Locale = IsPortuguese ? "en-US" : "pt-BR";
+        var culture = IsPortuguese ? "en-US" : "pt-BR";
+        GameService.CurrentSession.Locale = culture;
+        Localization.SetCulture(culture);
     }
+
+    private void HandleCultureChanged() => _ = InvokeAsync(StateHasChanged);
 
     private async Task ToggleTheme()
     {
@@ -319,5 +325,6 @@
     public void Dispose()
     {
         Navigation.LocationChanged -= HandleLocationChanged;
+        Localization.CultureChanged -= HandleCultureChanged;
     }
 }

@@ -5,14 +5,17 @@
 @using PymSpaceOrbit.Shared.Components.Cards
 @using PymSpaceOrbit.Shared.Models.Game
 @using PymSpaceOrbit.Shared.Models.ML
+@implements IDisposable
 @inject IGameService GameService
 @inject IAudioService AudioService
 @inject IPymGameOrbitMlModelService MlModelService
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
+@inject ILocalizer<GameBoardPage> L
+@inject LocalizationState Localization
 
-<PageTitle>Pym Space Orbit — @(IsPortuguese ? "Tabuleiro de Missão" : "Mission Game Board")</PageTitle>
+<PageTitle>Pym Space Orbit — @L["GameBoardTitle"]</PageTitle>
 
 <div class="game-screen-wrapper">
     <!-- Pure CSS Sci-Fi Cockpit Board (Faithful CSS reproduction of ui_screen_gameplay_board.jpg & ui_screen_gameplay_board_with_decks.jpg) -->
@@ -31,7 +34,7 @@
                 <div class="hud-meter-inner">
                     <div class="meter-header">
                         <MudIcon Icon="@Icons.Material.Filled.Bolt" Size="Size.Small" Style="color: #00E5FF;" Class="mr-1" />
-                        <span>@(IsPortuguese ? "ENERGIA / POWER" : "POWER / BATTERY")</span>
+                        <span>@L["PowerBattery"]</span>
                     </div>
                     <div class="meter-body">
                         <span class="meter-main-val">@Session.Resources.ElectricalPowerKw.ToString("F1") kWe</span>
@@ -50,7 +53,7 @@
                 <div class="hud-meter-inner">
                     <div class="meter-header">
                         <MudIcon Icon="@Icons.Material.Filled.WaterDrop" Size="Size.Small" Style="color: #00E676;" Class="mr-1" />
-                        <span>@(IsPortuguese ? "OXIGÊNIO & ÁGUA" : "O2 & WATER LOOP")</span>
+                        <span>@L["O2Water"]</span>
                     </div>
                     <div class="meter-body">
                         <span class="meter-main-val">O2: @Session.Resources.OutpostOxygenLitersPerDayDelta.ToString("+#,##0;-#,##0;0") L/d</span>
@@ -69,7 +72,7 @@
                 <div class="hud-meter-inner">
                     <div class="meter-header">
                         <MudIcon Icon="@Icons.Material.Filled.Shield" Size="Size.Small" Style="color: #FFD700;" Class="mr-1" />
-                        <span>@(IsPortuguese ? "BLINDAGEM & TRAJES" : "SHIELDING & SUITS")</span>
+                        <span>@L["ShieldingSuits"]</span>
                     </div>
                     <div class="meter-body">
                         <span class="meter-main-val">
@@ -90,11 +93,11 @@
                 <div class="hud-meter-inner">
                     <div class="meter-header">
                         <MudIcon Icon="@Icons.Material.Filled.Psychology" Size="Size.Small" Style="color: #00E5FF;" Class="mr-1" />
-                        <span>@(IsPortuguese ? "QUAD-ENSEMBLE ML.NET" : "ML.NET SURROGATE")</span>
+                        <span>@L["MlSurrogate"]</span>
                     </div>
                     <div class="meter-body">
                         <span class="meter-main-val" style="color: #FFD700;">
-                            @(IsPortuguese ? "Saúde" : "Health"): @((Session.LatestMlPrediction.CrewHealthSurvivalProb * 100f).ToString("F0"))%
+                            @L["Health"]: @((Session.LatestMlPrediction.CrewHealthSurvivalProb * 100f).ToString("F0"))%
                         </span>
                         <span class="meter-sub-val">
                             CH4: @((Session.LatestMlPrediction.FuelYieldRate * 100f).ToString("F0"))% | @Session.LatestMlPrediction.MaxExplorationStayDays.ToString("F0")d
@@ -118,12 +121,10 @@
                     <div class="hud-build-plaque-inner">
                         <div class="build-banner-title">
                             <MudIcon Icon="@Icons.Material.Filled.PrecisionManufacturing" Color="Color.Primary" Size="Size.Small" Class="mr-2" />
-                            <span>@(IsPortuguese ? "FASE 1: CONSTRUÇÃO DA NAVE & BASE PYMGAMEORBIT" : "PHASE 1: PYMGAMEORBIT SHIP & OUTPOST BASE ASSEMBLY")</span>
+                            <span>@L["Phase1"]</span>
                         </div>
                         <div class="build-banner-subtitle">
-                            @(IsPortuguese
-                                ? $"Equipe no mínimo {Session.MinimumCardsToBuildBase} cartas da sua mão para fundar a base em {Session.Destination} (Equipadas: {Session.EquippedShipAndBaseCards.Count}/{Session.MinimumCardsToBuildBase})"
-                                : $"Equip at least {Session.MinimumCardsToBuildBase} cards from hand to establish outpost at {Session.Destination} (Equipped: {Session.EquippedShipAndBaseCards.Count}/{Session.MinimumCardsToBuildBase})")
+                            @string.Format(L["BuildInstruction"], Session.MinimumCardsToBuildBase, Session.Destination, Session.EquippedShipAndBaseCards.Count)
                         </div>
                     </div>
                 </div>
@@ -152,7 +153,7 @@
                                     <div class="empty-slot-placeholder">
                                         <MudIcon Icon="@Icons.Material.Filled.AddCircleOutline" Size="Size.Small" Style="color: rgba(0, 229, 255, 0.5);" />
                                         <span>SLOT @(slotIndex + 1)</span>
-                                        <span class="slot-hint">@(IsPortuguese ? "Equipar da Mão" : "Equip from Hand")</span>
+                                        <span class="slot-hint">@L["EquipFromHand"]</span>
                                     </div>
                                 }
                             </div>
@@ -166,7 +167,7 @@
                                        Class="hud-action-plaque-btn text-cyan"
                                        OnClick="ConfirmBaseConstruction"
                                        StartIcon="@Icons.Material.Filled.RocketLaunch">
-                                @(IsPortuguese ? "CONFIRMAR BASE" : "CONFIRM BASE")
+                                @L["ConfirmBase"]
                             </MudButton>
                         </div>
 
@@ -175,7 +176,7 @@
                                        Class="hud-action-plaque-btn text-gold"
                                        OnClick="ResetAssembly"
                                        StartIcon="@Icons.Material.Filled.RestartAlt">
-                                @(IsPortuguese ? "REINICIAR" : "RESET BASE")
+                                @L["ResetBase"]
                             </MudButton>
                         </div>
                     </div>
@@ -185,8 +186,7 @@
                 <div class="hud-hand-dock">
                     <div class="hud-hand-dock-header">
                         <span>
-                            @(IsPortuguese ? $"MÃO DO ASTRONAUTA ({Session.PlayerHand.Count} cartas disponíveis — clique em uma carta para equipar):"
-                                           : $"PLAYER HAND ({Session.PlayerHand.Count} cards available — click a card to equip):")
+                            @string.Format(L["HandAvailable"], Session.PlayerHand.Count)
                         </span>
                     </div>
                     <div class="hud-hand-slots-5">
@@ -204,7 +204,7 @@
                                 else
                                 {
                                     <div class="hand-bay-empty">
-                                        <span>@(IsPortuguese ? "VAZIO" : "EMPTY")</span>
+                                    <span>@L["Empty"]</span>
                                     </div>
                                 }
                             </div>
@@ -222,7 +222,7 @@
                 <!-- Left Column: Draw Pile (Stacked Rocket Back) & Discard Pile -->
                 <div class="hud-decks-column">
                     <!-- Draw Pile Well -->
-                    <div class="hud-deck-well" title="@(IsPortuguese ? "Pilha de Compra" : "Draw Pile")">
+        <div class="hud-deck-well" title="@L["DrawPile"]">
                         <div class="deck-stack-3d">
                             <img src="@PymGameOrbitAssets.CardBack" alt="" class="pile-img" />
                         </div>
@@ -230,16 +230,16 @@
                             <MudIcon Icon="@Icons.Material.Filled.Layers" Size="Size.Small" Class="mr-1" />
                             <span>@Session.DrawPile.Count</span>
                         </div>
-                        <span class="pile-label">@(IsPortuguese ? "COMPRA" : "DRAW")</span>
+                <span class="pile-label">@L["Draw"]</span>
                     </div>
 
                     <!-- Discard Pile Well -->
-                    <div class="hud-deck-well discard-well" title="@(IsPortuguese ? "Pilha de Descarte" : "Discard Pile")">
+        <div class="hud-deck-well discard-well" title="@L["DiscardPile"]">
                         <div class="discard-stack-outline">
                             <MudIcon Icon="@Icons.Material.Filled.DeleteSweep" Size="Size.Medium" Style="color: rgba(0, 229, 255, 0.35);" />
                             <span class="pile-number">@Session.DiscardPile.Count</span>
                         </div>
-                        <span class="pile-label">@(IsPortuguese ? "DESCARTE" : "DISCARD")</span>
+                <span class="pile-label">@L["Discard"]</span>
                     </div>
                 </div>
 
@@ -251,7 +251,7 @@
                         {
                             <div class="dilemma-header-strip">
                                 <span class="dilemma-title">
-                                    🌌 [Turno @Session.CurrentTurn/@Session.MaxCampaignTurns — Dia @Session.CurrentMissionDay.ToString("F0")] @(IsPortuguese ? Session.PendingExplorationEvent.TitlePtBr : Session.PendingExplorationEvent.TitleEn)
+                🌌 [@string.Format(L["TurnDay"], Session.CurrentTurn, Session.MaxCampaignTurns, Session.CurrentMissionDay.ToString("F0"))] @(IsPortuguese ? Session.PendingExplorationEvent.TitlePtBr : Session.PendingExplorationEvent.TitleEn)
                                 </span>
                                 <span class="dilemma-story">
                                     @(IsPortuguese ? Session.PendingExplorationEvent.StoryPromptPtBr : Session.PendingExplorationEvent.StoryPromptEn)
@@ -331,11 +331,9 @@
                     <!-- Bottom Brushed-Steel Hand Dock: 5 Slots for Player Hand -->
                     <div class="hud-hand-dock">
                         <div class="hud-hand-dock-header">
-                            <span>@(IsPortuguese ? $"MÃO DO JOGADOR ({Session.PlayerHand.Count} cartas — clique para jogar)"
-                                                 : $"PLAYER HAND ({Session.PlayerHand.Count} cards — click to play)")</span>
+                            <span>@string.Format(L["PlayerHand"], Session.PlayerHand.Count)</span>
                             <span style="color: #FFD700;">
-                                @(IsPortuguese ? $"Jogadas no turno: {Session.CardsPlayedThisTurn}/{Session.MaxCardsPlayedPerTurn}"
-                                               : $"Played this turn: {Session.CardsPlayedThisTurn}/{Session.MaxCardsPlayedPerTurn}")
+                                @string.Format(L["CardsPlayed"], Session.CardsPlayedThisTurn, Session.MaxCardsPlayedPerTurn)
                             </span>
                         </div>
                         <div class="hud-hand-slots-5">
@@ -353,7 +351,7 @@
                                     else
                                     {
                                         <div class="hand-bay-empty">
-                                            <span>@(IsPortuguese ? "VAZIO" : "EMPTY")</span>
+                        <span>@L["Empty"]</span>
                                         </div>
                                     }
                                 </div>
@@ -368,8 +366,8 @@
                         <div class="steel-plaque-led-top"></div>
                         <div class="steel-plaque-body">
                             <MudIcon Icon="@Icons.Material.Filled.HistoryEdu" Size="Size.Large" Style="color: #00E5FF;" />
-                            <span class="steel-plaque-title">@(IsPortuguese ? "DIÁRIO DE BORDO" : "MISSION LOG")</span>
-                            <span class="steel-plaque-sub">@(IsPortuguese ? $"{Session.MissionJournalLogs.Count} registros" : $"{Session.MissionJournalLogs.Count} entries")</span>
+                    <span class="steel-plaque-title">@L["MissionLog"]</span>
+                    <span class="steel-plaque-sub">@string.Format(L["Entries"], Session.MissionJournalLogs.Count)</span>
                         </div>
                         <div class="steel-plaque-led-bottom"></div>
                     </div>
@@ -378,8 +376,8 @@
                         <div class="steel-plaque-led-top"></div>
                         <div class="steel-plaque-body">
                             <MudIcon Icon="@Icons.Material.Filled.Casino" Size="Size.Large" Style="color: #FFD700;" />
-                            <span class="steel-plaque-title">@(IsPortuguese ? "NOVO EVENTO" : "DRAW EVENT")</span>
-                            <span class="steel-plaque-sub">@(IsPortuguese ? "Sortear Dilema" : "Next Dilemma")</span>
+                    <span class="steel-plaque-title">@L["DrawEvent"]</span>
+                    <span class="steel-plaque-sub">@L["NextDilemma"]</span>
                         </div>
                         <div class="steel-plaque-led-bottom"></div>
                     </div>
@@ -397,28 +395,28 @@
             {
                 <MudIcon Icon="@Icons.Material.Filled.EmojiEvents" Color="Color.Secondary" Size="Size.Large" Class="mr-2" />
                 <MudText Typo="Typo.h5" Style="color: #FFD700; font-weight: 800;">
-                    @(IsPortuguese ? "MISSÃO CONCLUÍDA COM SUCESSO!" : "MISSION ACCOMPLISHED — NOMINAL RETURN!")
+                @L["SuccessOutcome"]
                 </MudText>
             }
             else if (Session.Outcome == MissionEndingOutcome.GameOverDonkiSolarStormRadiation)
             {
                 <MudIcon Icon="@Icons.Material.Filled.WbTwilight" Color="Color.Warning" Size="Size.Large" Class="mr-2" />
                 <MudText Typo="Typo.h5" Style="color: #FFB300; font-weight: 800;">
-                    @(IsPortuguese ? "GAME OVER: TEMPESTADE SOLAR NASA DONKI!" : "GAME OVER: NASA DONKI SOLAR STORM!")
+                @L["DonkiOutcome"]
                 </MudText>
             }
             else if (Session.Outcome == MissionEndingOutcome.GameOverEclssAndSuitCollapse)
             {
                 <MudIcon Icon="@Icons.Material.Filled.Warning" Color="Color.Error" Size="Size.Large" Class="mr-2" />
                 <MudText Typo="Typo.h5" Style="color: #FF5252; font-weight: 800;">
-                    @(IsPortuguese ? "GAME OVER: COLAPSO ECLSS E DESGASTE DE TRAJES!" : "GAME OVER: ECLSS & SPACESUIT COLLAPSE!")
+                @L["EclssOutcome"]
                 </MudText>
             }
             else
             {
                 <MudIcon Icon="@Icons.Material.Filled.Air" Color="Color.Error" Size="Size.Large" Class="mr-2" />
                 <MudText Typo="Typo.h5" Style="color: #FF5252; font-weight: 800;">
-                    @(IsPortuguese ? "GAME OVER: ACIDOSE CO2 E ESGOTAMENTO VITAL!" : "GAME OVER: CDRA CO2 ACIDODIS & STARVATION!")
+                @L["Co2Outcome"]
                 </MudText>
             }
         </div>
@@ -431,19 +429,19 @@
 
             <div class="ending-telemetry-grid">
                 <div class="ending-stat-box">
-                    <span class="stat-lbl">@(IsPortuguese ? "Pontos Científicos:" : "Science Discovery:")</span>
+                <span class="stat-lbl">@L["ScienceDiscovery"]</span>
                     <span class="stat-num" style="color: #FFD700;">@Session.ScienceDiscoveryPoints PTS</span>
                 </div>
                 <div class="ending-stat-box">
-                    <span class="stat-lbl">@(IsPortuguese ? "Saúde Tripulação:" : "Crew Health ML:")</span>
+                <span class="stat-lbl">@L["CrewHealth"]</span>
                     <span class="stat-num" style="color: #00E676;">@((Session.LatestMlPrediction.CrewHealthSurvivalProb * 100f).ToString("F1"))%</span>
                 </div>
                 <div class="ending-stat-box">
-                    <span class="stat-lbl">@(IsPortuguese ? "Confiabilidade:" : "Hardware Reliability:")</span>
+                <span class="stat-lbl">@L["Reliability"]</span>
                     <span class="stat-num" style="color: #00E5FF;">@((Session.LatestMlPrediction.SystemReliabilityIndex * 100f).ToString("F1"))%</span>
                 </div>
                 <div class="ending-stat-box">
-                    <span class="stat-lbl">@(IsPortuguese ? "Dias de Estadia:" : "Max Stay Days:")</span>
+                <span class="stat-lbl">@L["StayDays"]</span>
                     <span class="stat-num" style="color: #FFB300;">@Session.LatestMlPrediction.MaxExplorationStayDays.ToString("F0") d</span>
                 </div>
             </div>
@@ -451,14 +449,14 @@
     </DialogContent>
     <DialogActions>
         <MudButton Variant="Variant.Outlined" Color="Color.Default" OnClick="ReturnToMainMenu">
-            @(IsPortuguese ? "MENU PRINCIPAL" : "MAIN MENU")
+            @L["MainMenu"]
         </MudButton>
         <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
                    OnClick="RestartGame"
                    StartIcon="@Icons.Material.Filled.Replay"
                    Style="font-weight: bold; background: linear-gradient(90deg, #00E5FF, #0097A7); color: #000;">
-            @(IsPortuguese ? "JOGAR NOVAMENTE" : "PLAY AGAIN")
+            @L["PlayAgain"]
         </MudButton>
     </DialogActions>
 </MudDialog>
@@ -469,7 +467,7 @@
         <div class="d-flex align-center">
             <MudIcon Icon="@Icons.Material.Filled.MenuBook" Color="Color.Primary" Class="mr-2" />
             <MudText Typo="Typo.h6" Style="color: #00E5FF; font-weight: bold;">
-                @(IsPortuguese ? "DIÁRIO DE BORDO DA MISSÃO" : "MISSION TELEMETRY JOURNAL")
+            @L["MissionJournal"]
             </MudText>
         </div>
     </TitleContent>
@@ -478,7 +476,7 @@
             @if (Session.MissionJournalLogs.Count == 0)
             {
                 <MudText Typo="Typo.body2" Style="color: #8B949E;">
-                    @(IsPortuguese ? "Nenhum registro ainda." : "No entries logged yet.")
+            @L["NoEntries"]
                 </MudText>
             }
             else
@@ -496,7 +494,7 @@
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Primary" OnClick="CloseJournalModal">
-            @(IsPortuguese ? "Fechar" : "Close")
+            @L["Close"]
         </MudButton>
     </DialogActions>
 </MudDialog>
@@ -1251,6 +1249,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        Localization.CultureChanged += HandleCultureChanged;
         if (Session.EquippedShipAndBaseCards.Count == 0 && Session.PlayerHand.Count == 0)
         {
             await GameService.StartNewCampaignAsync(
@@ -1357,7 +1356,7 @@
         Session.EquippedShipAndBaseCards.Clear();
         Session.CardsPlayedThisTurn = 0;
         await AudioService.PlaySoundEffectAsync(SoundEffect.CardDrawFlip);
-        Snackbar.Add(IsPortuguese ? "Montagem reiniciada. Cartas retornadas à mão." : "Assembly reset. Cards returned to hand.", Severity.Info);
+        Snackbar.Add(L["AssemblyReset"], Severity.Info);
     }
 
     private async Task MakeExplorationDecision(string optionId)
@@ -1387,10 +1386,14 @@
     private async Task DrawNewDilemma()
     {
         var drawnEvent = GameService.DrawTurnExplorationEvent();
-        Snackbar.Add(IsPortuguese ? "Novo evento espacial sorteado!" : "New space exploration challenge drawn!", Severity.Normal);
+        Snackbar.Add(L["NewEvent"], Severity.Normal);
         await AudioService.PlaySoundEffectAsync(SoundEffect.CardDrawFlip);
         await AudioService.TriggerExplorationEventAudioAsync(drawnEvent, Session);
     }
+
+    private void HandleCultureChanged() => _ = InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Localization.CultureChanged -= HandleCultureChanged;
 
     private async Task OpenJournalModal()
     {

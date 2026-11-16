@@ -3,12 +3,15 @@
 @namespace PymSpaceOrbit.Shared.Pages
 @using PymSpaceOrbit.Shared.Abstractions.Game
 @using PymSpaceOrbit.Shared.Models.Game
+@implements IDisposable
 @inject IGameService GameService
 @inject IAudioService AudioService
 @inject NavigationManager Navigation
 @inject IDialogService DialogService
+@inject ILocalizer<MainMenuPage> L
+@inject LocalizationState Localization
 
-<PageTitle>Pym Space Orbit — Main Menu</PageTitle>
+<PageTitle>Pym Space Orbit — @L["Home"]</PageTitle>
 
 <div class="menu-screen-wrapper">
     <div class="menu-screen-canvas">
@@ -19,7 +22,7 @@
         <div class="menu-top-banner">
             <h1 class="menu-game-title">PYM SPACE ORBIT</h1>
             <p class="menu-game-subtitle">
-                @(IsPortuguese ? "PymGameOrbit — Exploração Espacial & Sobrevivência" : "PymGameOrbit — Space Exploration & Survival")
+                @L["MissionSubtitle"]
             </p>
         </div>
 
@@ -32,7 +35,7 @@
                            OnClick="OpenPlayDialog"
                            StartIcon="@Icons.Material.Filled.PlayArrow"
                            Size="Size.Large">
-                    @(IsPortuguese ? "JOGAR" : "PLAY")
+                    @L["PlayButton"]
                 </MudButton>
             </div>
 
@@ -43,7 +46,7 @@
                            OnClick="StartBaseBuilderMode"
                            StartIcon="@Icons.Material.Filled.BuildCircle"
                            Size="Size.Large">
-                    @(IsPortuguese ? "MODO CONSTRUÇÃO" : "BASE BUILDER")
+                    @L["BaseBuilder"]
                 </MudButton>
             </div>
 
@@ -54,7 +57,7 @@
                            OnClick="NavigateToInfo"
                            StartIcon="@Icons.Material.Filled.CollectionsBookmark"
                            Size="Size.Large">
-                    @(IsPortuguese ? "SOBRE & CARD SETS" : "ABOUT & DECKS")
+                    @L["AboutDecks"]
                 </MudButton>
             </div>
 
@@ -65,7 +68,7 @@
                            OnClick="NavigateToOptions"
                            StartIcon="@Icons.Material.Filled.Settings"
                            Size="Size.Large">
-                    @(IsPortuguese ? "OPÇÕES" : "OPTIONS")
+                    @L["Options"]
                 </MudButton>
             </div>
         </div>
@@ -78,32 +81,31 @@
         <div class="d-flex align-center">
             <MudIcon Icon="@Icons.Material.Filled.RocketLaunch" Color="Color.Primary" Class="mr-2" />
             <MudText Typo="Typo.h6" Style="color: #00E5FF; font-weight: bold;">
-                @(IsPortuguese ? "CONFIGURAR NOVA EXPEDIÇÃO" : "NEW MISSION CAMPAIGN SETUP")
+                @L["NewMissionTitle"]
             </MudText>
         </div>
     </TitleContent>
     <DialogContent>
         <MudText Typo="Typo.subtitle2" Class="mb-3" Style="color: #8B949E;">
-            @(IsPortuguese ? "Selecione o destino da sua nave PymGameOrbit, tamanho da tripulação e regras de construção:"
-                           : "Select your PymGameOrbit mission destination, astronaut crew size and base building rules:")
+            @L["NewMissionPrompt"]
         </MudText>
 
         <!-- Destination Selector -->
         <MudText Typo="Typo.body2" Class="font-weight-bold mb-1" Style="color: #FFD700;">
-            @(IsPortuguese ? "Destino da Missão:" : "Mission Destination:")
+            @L["MissionDestination"]
         </MudText>
         <MudRadioGroup @bind-Value="_selectedDestination" T="OutpostDestination" Class="d-flex flex-wrap justify-space-between mb-4">
             <MudRadio Value="OutpostDestination.ISS" Color="Color.Primary" Dense="true">
                 <span style="font-weight: 600;">🛰️ ISS</span>
-                <span style="font-size: 11px; color: #8B949E; display: block;">(LEO 414 km / 8 @(IsPortuguese ? "turnos" : "turns"))</span>
+                <span style="font-size: 11px; color: #8B949E; display: block;">(LEO 414 km / 8 @L["Turns"])</span>
             </MudRadio>
             <MudRadio Value="OutpostDestination.Moon" Color="Color.Secondary" Dense="true">
-                <span style="font-weight: 600;">🌕 @(IsPortuguese ? "Lua (Moon)" : "Moon")</span>
-                <span style="font-size: 11px; color: #8B949E; display: block;">(Artemis Gateway / 10 @(IsPortuguese ? "turnos" : "turns"))</span>
+                <span style="font-weight: 600;">🌕 @L["Moon"]</span>
+                <span style="font-size: 11px; color: #8B949E; display: block;">(Artemis Gateway / 10 @L["Turns"])</span>
             </MudRadio>
             <MudRadio Value="OutpostDestination.Mars" Color="Color.Error" Dense="true">
-                <span style="font-weight: 600;">🔴 @(IsPortuguese ? "Marte (Mars)" : "Mars")</span>
-                <span style="font-size: 11px; color: #8B949E; display: block;">(ISRU Surface / 12 @(IsPortuguese ? "turnos" : "turns"))</span>
+                <span style="font-weight: 600;">🔴 @L["Mars"]</span>
+                <span style="font-size: 11px; color: #8B949E; display: block;">(ISRU Surface / 12 @L["Turns"])</span>
             </MudRadio>
         </MudRadioGroup>
 
@@ -111,10 +113,10 @@
         <div class="mb-4">
             <div class="d-flex justify-space-between align-center mb-1">
                 <MudText Typo="Typo.body2" Style="color: #00E676; font-weight: 600;">
-                    @(IsPortuguese ? "Tamanho da Tripulação:" : "Astronaut Crew Count:")
+                    @L["CrewCount"]
                 </MudText>
                 <MudChip T="string" Size="Size.Small" Color="Color.Tertiary" Variant="Variant.Outlined">
-                    @_crewCount @(IsPortuguese ? "astronautas" : "astronauts")
+                    @_crewCount @L["Astronauts"]
                 </MudChip>
             </div>
             <MudSlider T="int" Min="1" Max="16" @bind-Value="_crewCount" Color="Color.Tertiary" ValueLabel="true" />
@@ -124,10 +126,10 @@
         <div class="mb-2">
             <div class="d-flex justify-space-between align-center mb-1">
                 <MudText Typo="Typo.body2" Style="color: #00E5FF; font-weight: 600;">
-                    @(IsPortuguese ? "Mínimo de Cartas para a Base:" : "Min. Base Build Cards:")
+                    @L["MinBaseCards"]
                 </MudText>
                 <MudChip T="string" Size="Size.Small" Color="Color.Primary" Variant="Variant.Outlined">
-                    @_minCards @(IsPortuguese ? "cartas" : "cards")
+                    @_minCards @L["CardsCount"]
                 </MudChip>
             </div>
             <MudSlider T="int" Min="3" Max="8" @bind-Value="_minCards" Color="Color.Primary" ValueLabel="true" />
@@ -135,14 +137,14 @@
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="ClosePlayDialog" Color="Color.Default" Variant="Variant.Text">
-            @(IsPortuguese ? "Cancelar" : "Cancel")
+            @L["Cancel"]
         </MudButton>
         <MudButton OnClick="LaunchCampaign"
                    Variant="Variant.Filled"
                    Color="Color.Primary"
                    StartIcon="@Icons.Material.Filled.Launch"
                    Style="font-weight: bold; background: linear-gradient(90deg, #00E5FF, #0097A7); color: #000;">
-            @(IsPortuguese ? "INICIAR MISSÃO" : "LAUNCH MISSION")
+            @L["LaunchMission"]
         </MudButton>
     </DialogActions>
 </MudDialog>
@@ -355,10 +357,15 @@
 
     protected override void OnInitialized()
     {
+        Localization.CultureChanged += HandleCultureChanged;
         _selectedDestination = GameService.CurrentSession.Destination;
         _crewCount = GameService.CurrentSession.CrewCount;
         _minCards = GameService.CurrentSession.MinimumCardsToBuildBase;
     }
+
+    private void HandleCultureChanged() => _ = InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Localization.CultureChanged -= HandleCultureChanged;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

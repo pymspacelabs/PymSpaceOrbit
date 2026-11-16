@@ -78,11 +78,14 @@ jobs:
           global-json-file: global.json
 
       - name: Install MAUI workload
+        shell: bash
         run: |
-          if [ "${{ matrix.platform }}" != "Android" ]; then
-            dotnet workload install ${{ matrix.workload }} maui-android
-          else
-            dotnet workload install ${{ matrix.workload }}
+          if [ "${{ matrix.runner }}" == "ubuntu-latest" ]; then
+            dotnet workload install ${{ matrix.workload }}  
+          elif [ "${{ matrix.runner }}" == "xcode 27" ]; then
+            dotnet workload install ${{ matrix.workload }} maui-android maccatalyst ios 
+          else 
+            dotnet workload install ${{ matrix.workload }} maui-android 
           fi
           
       - name: Restore MAUI project

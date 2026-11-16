@@ -3,13 +3,16 @@
 @using PymSpaceOrbit.Shared.Abstractions.Game
 @using PymSpaceOrbit.Shared.Abstractions.ML
 @using PymSpaceOrbit.Shared.Models.Game
+@implements IDisposable
 @inject IGameService GameService
 @inject IAudioService AudioService
 @inject IPymGameOrbitMlModelService MlModelService
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
+@inject ILocalizer<OptionsPage> L
+@inject LocalizationState Localization
 
-<PageTitle>Pym Space Orbit — @(IsPortuguese ? "Opções" : "Options")</PageTitle>
+<PageTitle>Pym Space Orbit — @L["Options"]</PageTitle>
 
 <div class="options-screen-wrapper">
     <!-- Pure CSS Sci-Fi HUD Console (Faithful CSS transformation of ui_screen_options.jpg) -->
@@ -24,11 +27,10 @@
         <div class="hud-options-top-plaque">
             <div class="hud-plaque-inner">
                 <h1 class="options-title-text">
-                    @(IsPortuguese ? "OPÇÕES DA MISSÃO" : "MISSION OPTIONS")
+                    @L["OptionsTitle"]
                 </h1>
                 <p class="options-subtitle-text">
-                    @(IsPortuguese ? "Parâmetros Biofísicos ML.NET, Telemetria NASA & Idioma"
-                                   : "ML.NET Biophysical Parameters, NASA Telemetry & Language")
+                    @L["OptionsSubtitle"]
                 </p>
             </div>
         </div>
@@ -41,7 +43,7 @@
                 <div class="hud-options-row">
                     <div class="hud-options-label-box">
                         <MudIcon Icon="@Icons.Material.Filled.Translate" Size="Size.Small" Color="Color.Primary" Class="mr-2" />
-                        <span>@(IsPortuguese ? "Idioma da Missão / Language" : "Mission Language / Idioma")</span>
+                        <span>@L["MissionLanguage"]</span>
                     </div>
                     <div class="hud-options-control-box">
                         <MudSelect T="string" @bind-Value="_selectedLocale"
@@ -59,13 +61,13 @@
                 <div class="hud-options-row">
                     <div class="hud-options-label-box">
                         <MudIcon Icon="@Icons.Material.Filled.Groups" Size="Size.Small" Color="Color.Tertiary" Class="mr-2" />
-                        <span>@(IsPortuguese ? "Tripulação da Nave (1–16)" : "Outpost Crew Size (1–16)")</span>
+                        <span>@L["CrewSize"]</span>
                     </div>
                     <div class="hud-options-control-box">
                         <div class="slider-control-inner">
                             <MudSlider T="int" Min="1" Max="16" @bind-Value="_crewCount" Color="Color.Tertiary" Class="mr-3" />
                             <span class="hud-value-readout readout-emerald">
-                                @_crewCount @(IsPortuguese ? "astronautas" : "crew")
+                                @_crewCount @L["Crew"]
                             </span>
                         </div>
                     </div>
@@ -75,13 +77,13 @@
                 <div class="hud-options-row">
                     <div class="hud-options-label-box">
                         <MudIcon Icon="@Icons.Material.Filled.CloudSync" Size="Size.Small" Color="Color.Info" Class="mr-2" />
-                        <span>@(IsPortuguese ? "Sincronização Ao Vivo NASA API" : "Live NASA DONKI & Image Sync")</span>
+                        <span>@L["LiveSync"]</span>
                     </div>
                     <div class="hud-options-control-box">
                         <div class="switch-control-inner">
                             <MudSwitch T="bool" @bind-Value="_liveNasaSync"
                                        Color="Color.Info"
-                                       Label="@(_liveNasaSync ? (IsPortuguese ? "ATIVO (NASA API)" : "ONLINE (NASA API)") : (IsPortuguese ? "OFFLINE (CACHE)" : "OFFLINE (CACHE)"))" />
+                                       Label="@(_liveNasaSync ? L["Online"] : L["Offline"])" />
                         </div>
                     </div>
                 </div>
@@ -90,13 +92,13 @@
                 <div class="hud-options-row">
                     <div class="hud-options-label-box">
                         <MudIcon Icon="@Icons.Material.Filled.DashboardCustomize" Size="Size.Small" Color="Color.Secondary" Class="mr-2" />
-                        <span>@(IsPortuguese ? "Mín. Cartas Construção Base" : "Min. Base Build Cards (3–8)")</span>
+                        <span>@L["MinBaseCards"]</span>
                     </div>
                     <div class="hud-options-control-box">
                         <div class="slider-control-inner">
                             <MudSlider T="int" Min="3" Max="8" @bind-Value="_minBaseCards" Color="Color.Secondary" Class="mr-3" />
                             <span class="hud-value-readout readout-gold">
-                                @_minBaseCards @(IsPortuguese ? "cartas" : "cards")
+                                @_minBaseCards @L["CardsCount"]
                             </span>
                         </div>
                     </div>
@@ -109,7 +111,7 @@
                 <div class="hud-options-row">
                     <div class="hud-options-label-box">
                         <MudIcon Icon="@Icons.Material.Filled.VolumeUp" Size="Size.Small" Color="Color.Primary" Class="mr-2" />
-                        <span>@(IsPortuguese ? "Volume Geral / Master" : "Master Volume")</span>
+                        <span>@L["MasterVolume"]</span>
                     </div>
                     <div class="hud-options-control-box">
                         <div class="slider-control-inner">
@@ -125,7 +127,7 @@
                 <div class="hud-options-row">
                     <div class="hud-options-label-box">
                         <MudIcon Icon="@Icons.Material.Filled.MusicNote" Size="Size.Small" Color="Color.Secondary" Class="mr-2" />
-                        <span>@(IsPortuguese ? "Volume da Música (BGM)" : "Music Volume (BGM)")</span>
+                        <span>@L["MusicVolume"]</span>
                     </div>
                     <div class="hud-options-control-box">
                         <div class="slider-control-inner">
@@ -141,7 +143,7 @@
                 <div class="hud-options-row">
                     <div class="hud-options-label-box">
                         <MudIcon Icon="@Icons.Material.Filled.GraphicEq" Size="Size.Small" Color="Color.Tertiary" Class="mr-2" />
-                        <span>@(IsPortuguese ? "Efeitos Sonoros (SFX)" : "SFX & Ambient Volume")</span>
+                        <span>@L["SfxVolume"]</span>
                     </div>
                     <div class="hud-options-control-box">
                         <div class="slider-control-inner">
@@ -157,13 +159,13 @@
                 <div class="hud-options-row">
                     <div class="hud-options-label-box">
                         <MudIcon Icon="@(_isMuted ? Icons.Material.Filled.VolumeOff : Icons.Material.Filled.VolumeUp)" Size="Size.Small" Color="@(_isMuted ? Color.Error : Color.Success)" Class="mr-2" />
-                        <span>@(IsPortuguese ? "Saída de Áudio / Som" : "Audio Output / Sound")</span>
+                        <span>@L["AudioOutput"]</span>
                     </div>
                     <div class="hud-options-control-box">
                         <div class="switch-control-inner">
                             <MudSwitch T="bool" Value="@(!_isMuted)" ValueChanged="OnAudioEnabledChanged"
                                        Color="Color.Success"
-                                       Label="@(!_isMuted ? (IsPortuguese ? "ÁUDIO HABILITADO" : "AUDIO ENABLED") : (IsPortuguese ? "SILENCIADO (MUTE)" : "MUTED"))" />
+                                       Label="@(!_isMuted ? L["AudioEnabled"] : L["Muted"])" />
                         </div>
                     </div>
                 </div>
@@ -178,7 +180,7 @@
                            OnClick="NavigateBackToMenu"
                            StartIcon="@Icons.Material.Filled.ArrowBack"
                            Size="Size.Large">
-                    @(IsPortuguese ? "VOLTAR" : "BACK")
+                    @L["Back"]
                 </MudButton>
             </div>
 
@@ -188,7 +190,7 @@
                            OnClick="SaveOptions"
                            StartIcon="@Icons.Material.Filled.CheckCircle"
                            Size="Size.Large">
-                    @(IsPortuguese ? "SALVAR" : "SAVE")
+                    @L["Save"]
                 </MudButton>
             </div>
         </div>
@@ -516,6 +518,7 @@
 
     protected override void OnInitialized()
     {
+        Localization.CultureChanged += HandleCultureChanged;
         _selectedLocale = GameService.CurrentSession.Locale;
         _crewCount = GameService.CurrentSession.CrewCount;
         _minBaseCards = GameService.CurrentSession.MinimumCardsToBuildBase;
@@ -616,9 +619,8 @@
         await AudioService.SetMutedAsync(_isMuted);
         await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
 
-        string msg = IsPortuguese
-            ? "Configurações de missão e áudio aplicadas e salvas com sucesso!"
-            : "Mission and audio settings applied and saved successfully!";
+        Localization.SetCulture(_selectedLocale);
+        string msg = L["SaveSuccess"];
 
         Snackbar.Add(msg, Severity.Success, config =>
         {
@@ -626,4 +628,8 @@
             config.ShowCloseIcon = true;
         });
     }
+
+    private void HandleCultureChanged() => _ = InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Localization.CultureChanged -= HandleCultureChanged;
 }

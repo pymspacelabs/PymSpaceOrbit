@@ -1,4 +1,5 @@
 @namespace PymSpaceOrbit.Shared.Components.Cards
+@inject ILocalizer<PymGameOrbitCard> L
 @using System.Threading
 @using Microsoft.AspNetCore.Components.Web
 @using PymSpaceOrbit.Shared.Models.Game
@@ -63,7 +64,7 @@
                     Class="pymgameorbit-original-name-popover">
             <div class="pymgameorbit-original-name-hint" @onclick="DismissHint">
                 <span class="pymgameorbit-hint-badge">
-                    @(IsPortuguese ? "NOME CIENTÍFICO ORIGINAL" : "ORIGINAL SCIENTIFIC NAME")
+                        @L["OriginalScientificName"]
                 </span>
                 <span class="pymgameorbit-hint-title">@OriginalName</span>
             </div>

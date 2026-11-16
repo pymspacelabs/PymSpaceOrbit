@@ -3,12 +3,15 @@
 @using PymSpaceOrbit.Shared.Abstractions.Game
 @using PymSpaceOrbit.Shared.Components.Cards
 @using PymSpaceOrbit.Shared.Models.Game
+@implements IDisposable
 @inject IGameService GameService
 @inject IAudioService AudioService
 @inject NavigationManager Navigation
 @inject IDialogService DialogService
+@inject ILocalizer<InfoCardSetsPage> L
+@inject LocalizationState Localization
 
-<PageTitle>Pym Space Orbit — @(IsPortuguese ? "Galeria de Card Sets & Sobre" : "Card Sets Gallery & About")</PageTitle>
+<PageTitle>Pym Space Orbit — @L["InfoTitle"]</PageTitle>
 
 <div class="info-screen-wrapper">
     <!-- Pure CSS Sci-Fi Gallery & Inspector Console (Faithful CSS transformation of ui_screen_info_cardsets.jpg) -->
@@ -23,7 +26,7 @@
                            OnClick="NavigateBackToMenu"
                            StartIcon="@Icons.Material.Filled.ArrowBack"
                            Size="Size.Medium">
-                    @(IsPortuguese ? "VOLTAR" : "BACK")
+                    @L["Back"]
                 </MudButton>
             </div>
 
@@ -34,7 +37,7 @@
                                Class="@($"info-deck-tab {(_activeTab == 0 ? "active-tab" : "")}")"
                                OnClick="@(() => SelectTabAsync(0))"
                                StartIcon="@Icons.Material.Filled.Rocket">
-                        @(IsPortuguese ? "1. Ship Build" : "1. Ship Build")
+                        @L["ShipBuild"]
                     </MudButton>
                 </div>
 
@@ -43,7 +46,7 @@
                                Class="@($"info-deck-tab {(_activeTab == 1 ? "active-tab" : "")}")"
                                OnClick="@(() => SelectTabAsync(1))"
                                StartIcon="@Icons.Material.Filled.WaterDrop">
-                        @(IsPortuguese ? "2. ECLSS Loop" : "2. ECLSS Loop")
+                        @L["EclssLoop"]
                     </MudButton>
                 </div>
 
@@ -52,7 +55,7 @@
                                Class="@($"info-deck-tab {(_activeTab == 2 ? "active-tab" : "")}")"
                                OnClick="@(() => SelectTabAsync(2))"
                                StartIcon="@Icons.Material.Filled.Public">
-                        @(IsPortuguese ? "3. Ambientes" : "3. Environment")
+                        @L["Environments"]
                     </MudButton>
                 </div>
 
@@ -61,7 +64,7 @@
                                Class="@($"info-deck-tab {(_activeTab == 3 ? "active-tab" : "")}")"
                                OnClick="@(() => SelectTabAsync(3))"
                                StartIcon="@Icons.Material.Filled.Architecture">
-                        @(IsPortuguese ? "4. Decisões Base" : "4. Architecture")
+                        @L["Architecture"]
                     </MudButton>
                 </div>
 
@@ -70,7 +73,7 @@
                                Class="@($"info-deck-tab {(_activeTab == 4 ? "active-tab" : "")}")"
                                OnClick="@(() => SelectTabAsync(4))"
                                StartIcon="@Icons.Material.Filled.WbTwilight">
-                        @(IsPortuguese ? "5. Clima DONKI" : "5. Space Weather")
+                        @L["SpaceWeather"]
                     </MudButton>
                 </div>
             </div>
@@ -91,8 +94,8 @@
                                            Disabled="@(_currentPage <= 1)"
                                            OnClick="PreviousPageAsync" />
                             <span class="info-pagination-label">
-                                @(IsPortuguese ? $"Pág. {_currentPage}/{TotalPages}" : $"Page {_currentPage}/{TotalPages}")
-                                (@(_filteredCards.Count) @(IsPortuguese ? "cartas" : "cards"))
+                                @string.Format(L["PageCards"], $"{_currentPage}/{TotalPages}")
+                                (@(_filteredCards.Count) @L["Cards"])
                             </span>
                             <MudIconButton Icon="@Icons.Material.Filled.ChevronRight"
                                            Size="Size.Small"
@@ -153,7 +156,7 @@
                             <div class="inspector-section-box">
                                 <div class="inspector-box-header" style="color: #FFD700;">
                                     <MudIcon Icon="@Icons.Material.Filled.School" Size="Size.Small" Class="mr-1" />
-                                    <span>@(IsPortuguese ? "Resumo Educativo (7–12 anos)" : "Kid-Friendly Space Science (Ages 7–12)")</span>
+                                    <span>@L["KidScience"]</span>
                                 </div>
                                 <p class="inspector-kid-text">
                                     @(IsPortuguese ? (string.IsNullOrWhiteSpace(_selectedCard.KidSummaryPtBr) ? _selectedCard.KidSummaryEn : _selectedCard.KidSummaryPtBr)
@@ -165,7 +168,7 @@
                             <div class="inspector-section-box">
                                 <div class="inspector-box-header" style="color: #00E5FF;">
                                     <MudIcon Icon="@Icons.Material.Filled.Balance" Size="Size.Small" Class="mr-1" />
-                                    <span>@(IsPortuguese ? "Trade-Offs Biofísicos & Recursos" : "Biophysical Trade-Offs & Resources")</span>
+                                    <span>@L["Tradeoffs"]</span>
                                 </div>
                                 <div class="inspector-metrics-grid">
                                     <div class="metric-pill">
@@ -201,7 +204,7 @@
                                 <div class="inspector-section-box">
                                     <div class="inspector-box-header" style="color: #00E676;">
                                         <MudIcon Icon="@Icons.Material.Filled.MenuBook" Size="Size.Small" Class="mr-1" />
-                                        <span>@(IsPortuguese ? "Glossário Técnico do Card" : "Card Technical Glossary")</span>
+                                        <span>@L["CardGlossary"]</span>
                                     </div>
                                     <div class="inspector-glossary-list">
                                         @foreach (var term in _selectedCard.TechnicalGlossary.Values)
@@ -227,7 +230,7 @@
                                            StartIcon="@Icons.Material.Filled.LibraryBooks"
                                            OnClick="OpenGeneralGlossaryModal"
                                            Style="border-color: #FFD700; color: #FFD700; font-weight: bold; font-size: 10.5px;">
-                                    @(IsPortuguese ? "GLOSSÁRIO GERAL (ABOUT.MD)" : "FULL GLOSSARY (ABOUT.MD)")
+                                    @L["FullGlossary"]
                                 </MudButton>
                             </div>
                         </div>
@@ -246,7 +249,7 @@
         <div class="d-flex align-center">
             <MudIcon Icon="@Icons.Material.Filled.MenuBook" Color="Color.Secondary" Class="mr-2" />
             <MudText Typo="Typo.h6" Style="color: #FFD700; font-weight: bold;">
-                @(IsPortuguese ? "GLOSSÁRIO GERAL AEROESPACIAL & CLIMA ESPACIAL" : "FULL AEROSPACE & SPACE WEATHER GLOSSARY")
+                @L["FullGlossary"]
             </MudText>
         </div>
     </TitleContent>
@@ -296,7 +299,7 @@
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="CloseGeneralGlossaryModal">
-            @(IsPortuguese ? "Fechar Glossário" : "Close Glossary")
+            @L["CloseGlossary"]
         </MudButton>
     </DialogActions>
 </MudDialog>
@@ -318,7 +321,7 @@
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Primary" OnClick="CloseTermDialog">
-            @(IsPortuguese ? "Entendi" : "Got it")
+            @L["GotIt"]
         </MudButton>
     </DialogActions>
 </MudDialog>
@@ -761,9 +764,14 @@
 
     protected override void OnInitialized()
     {
+        Localization.CultureChanged += HandleCultureChanged;
         _allCards = GameService.GetAllUnifiedDeckCards().ToList();
         SelectTab(0);
     }
+
+    private void HandleCultureChanged() => _ = InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Localization.CultureChanged -= HandleCultureChanged;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
