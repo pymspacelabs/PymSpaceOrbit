@@ -54,6 +54,7 @@
             <div class="hud-menu-btn-frame frame-gold">
                 <MudButton Variant="Variant.Text"
                            Class="menu-glass-btn btn-info"
+                           Href="info"
                            OnClick="NavigateToInfo"
                            StartIcon="@Icons.Material.Filled.CollectionsBookmark"
                            Size="Size.Large">
@@ -65,6 +66,7 @@
             <div class="hud-menu-btn-frame frame-blue">
                 <MudButton Variant="Variant.Text"
                            Class="menu-glass-btn btn-options"
+                           Href="options"
                            OnClick="NavigateToOptions"
                            StartIcon="@Icons.Material.Filled.Settings"
                            Size="Size.Large">
@@ -394,13 +396,11 @@
     private async Task NavigateToInfo()
     {
         await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
-        Navigation.NavigateTo("/info");
     }
 
     private async Task NavigateToOptions()
     {
         await AudioService.PlaySoundEffectAsync(SoundEffect.UiButtonTap);
-        Navigation.NavigateTo("/options");
     }
 
     private async Task LaunchCampaign()
@@ -412,7 +412,7 @@
             _crewCount,
             _minCards,
             GameService.CurrentSession.Locale);
-        Navigation.NavigateTo("/play");
+        Navigation.NavigateTo("play");
     }
 
     private async Task StartBaseBuilderMode()
@@ -424,6 +424,6 @@
             GameService.CurrentSession.MinimumCardsToBuildBase,
             GameService.CurrentSession.Locale);
         GameService.CurrentSession.Phase = TurnPhase.BuildPhase;
-        Navigation.NavigateTo("/play");
+        Navigation.NavigateTo("play");
     }
 }

@@ -19,7 +19,7 @@
 <MudLayout Class="pym-space-root">
     <MudAppBar Elevation="1" Dense="true" Class="pym-space-appbar">
         <MudTooltip Text="PymGameOrbit">
-            <MudIconButton Icon="@Icons.Material.Filled.RocketLaunch" Color="Color.Primary" Edge="Edge.Start" Href="/" />
+            <MudIconButton Icon="@Icons.Material.Filled.RocketLaunch" Color="Color.Primary" Edge="Edge.Start" Href="" />
         </MudTooltip>
         <MudText Typo="Typo.h6" Class="ml-2 font-weight-bold" Style="color: #00E5FF; letter-spacing: 1.5px; font-size: 14px;">
             PYMGAMEORBIT
@@ -27,7 +27,7 @@
 
         <MudSpacer />
 
-        <MudButton Variant="Variant.Text" Href="/" StartIcon="@Icons.Material.Filled.Home" Color="Color.Inherit" Size="Size.Small" Class="mx-1 appbar-nav-btn">
+        <MudButton Variant="Variant.Text" Href="" StartIcon="@Icons.Material.Filled.Home" Color="Color.Inherit" Size="Size.Small" Class="mx-1 appbar-nav-btn">
             @L["Home"]
         </MudButton>
 
@@ -35,11 +35,11 @@
             @L["Play"]
         </MudButton>
 
-        <MudButton Variant="Variant.Text" Href="/info" StartIcon="@Icons.Material.Filled.CollectionsBookmark" Color="Color.Inherit" Size="Size.Small" Class="mx-1 appbar-nav-btn">
+        <MudButton Variant="Variant.Text" Href="info" StartIcon="@Icons.Material.Filled.CollectionsBookmark" Color="Color.Inherit" Size="Size.Small" Class="mx-1 appbar-nav-btn">
             @L["Cards"]
         </MudButton>
 
-        <MudButton Variant="Variant.Text" Href="/options" StartIcon="@Icons.Material.Filled.Tune" Color="Color.Inherit" Size="Size.Small" Class="mx-1 appbar-nav-btn">
+        <MudButton Variant="Variant.Text" Href="options" StartIcon="@Icons.Material.Filled.Tune" Color="Color.Inherit" Size="Size.Small" Class="mx-1 appbar-nav-btn">
             @L["Options"]
         </MudButton>
 
@@ -302,7 +302,7 @@
             _crewCount,
             _minCards,
             GameService.CurrentSession.Locale);
-        Navigation.NavigateTo("/play");
+        Navigation.NavigateTo("play");
         await AudioService.SyncGameplayMusicAsync(GameService.CurrentSession);
     }
 
