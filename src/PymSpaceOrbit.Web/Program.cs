@@ -1,58 +1,30 @@
-using PymSpaceOrbit.Web.Components;
-using PymSpaceOrbit.Shared.Services;
-using PymSpaceOrbit.Web.Services;
-using PymSpaceOrbit.Shared.Abstractions.Game;
-using PymSpaceOrbit.Shared.Abstractions.ML;
-using PymSpaceOrbit.Shared.Concrete.Game;
-using PymSpaceOrbit.Shared.Concrete.ML;
-using PymSpaceOrbit.Shared.Extensions;
-using PymSpaceOrbit.Web;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
+using PymSpaceOrbit.Shared.Abstractions.Game;
+using PymSpaceOrbit.Shared.Extensions;
+using PymSpaceOrbit.Shared.Services;
+using PymSpaceOrbit.Web;
+using PymSpaceOrbit.Web.Services;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebAssemblyHostBuilder.CreateDefault(args);
+builder.RootComponents.Add<App>("#app");
+builder.RootComponents.Add<HeadOutlet>("head::after");
 
-// Add services to the container.
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
 builder.Services.AddScoped(sp => new HttpClient
 {
     BaseAddress = new Uri("https://pymspacelabs.github.io/Simulator/")
 });
+
 builder.Services.AddPymSpaceOrbitGameServices();
 builder.Services.AddMudServices();
+
 // Add device-specific services used by the PymSpaceOrbit.Shared project
 builder.Services.AddSingleton<IFormFactor, FormFactor>();
 builder.Services.AddScoped<IAudioService, AudioService>();
 
-var app = builder.Build();
+var app  = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
-app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
-app.UseHttpsRedirection();
 
-app.UseAntiforgery();
-
-app.Use(async (context, next) =>
-{
-    if (context.Request.Path.StartsWithSegments("/assets", out var remainingAssets))
-    {
-        context.Request.Path = "/_content/PymSpaceOrbit.Shared/assets" + remainingAssets;
-    }
-    await next();
-});
-
-app.UseStaticFiles();
-app.MapStaticAssets();
-
-app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode()
-    .AddAdditionalAssemblies(
-        typeof(PymSpaceOrbit.Shared._Imports).Assembly);
-
-app.Run();
+await app.RunAsync();
+ 

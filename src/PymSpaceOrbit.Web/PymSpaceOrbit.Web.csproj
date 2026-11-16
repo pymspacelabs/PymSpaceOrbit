@@ -1,14 +1,61 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
     <TargetFramework>net11.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <AppBasePath Condition="'$(AppBasePath)' == ''">/</AppBasePath>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="11.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="11.0.0" PrivateAssets="all" />
     <PackageReference Include="MudBlazor" Version="9.12.0" />
     <ProjectReference Include="..\PymSpaceOrbit.Shared\PymSpaceOrbit.Shared.csproj" />
   </ItemGroup>
+
+  <!-- GitHub Pages static site post-processing -->
+  <Target Name="ConfigureGitHubPagesOutput" AfterTargets="Publish">
+    <PropertyGroup>
+      <TargetWwwRootDir Condition="'$(PublishDir)' != '' and Exists('$(PublishDir)wwwroot')">$(PublishDir)wwwroot</TargetWwwRootDir>
+      <TargetWwwRootDir Condition="'$(TargetWwwRootDir)' == '' and Exists('$(OutputPath)publish\wwwroot')">$(OutputPath)publish\wwwroot</TargetWwwRootDir>
+      <TargetWwwRootDir Condition="'$(TargetWwwRootDir)' == ''">$(PublishDir)</TargetWwwRootDir>
+    </PropertyGroup>
+
+    <Message Importance="high" Text="Configuring GitHub Pages output in '$(TargetWwwRootDir)' with base href '$(AppBasePath)'..." />
+
+    <!-- Create .nojekyll to prevent GitHub Pages from ignoring directories prefixed with underscore (_framework, _content) -->
+    <Touch Files="$(TargetWwwRootDir)\.nojekyll" AlwaysCreate="true" />
+
+    <!-- Update base href and generate 404.html fallback for SPA routing -->
+    <ConfigureBlazorGhPages WwwRootDir="$(TargetWwwRootDir)" BaseHref="$(AppBasePath)" Condition="Exists('$(TargetWwwRootDir)\index.html')" />
+  </Target>
+
+  <UsingTask TaskName="ConfigureBlazorGhPages" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <WwwRootDir ParameterType="System.String" Required="true" />
+      <BaseHref ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System" />
+      <Using Namespace="System.IO" />
+      <Code Type="Fragment" Language="cs">
+<![CDATA[
+        string indexPath = Path.Combine(WwwRootDir, "index.html");
+        if (File.Exists(indexPath))
+        {
+            string html = File.ReadAllText(indexPath);
+            if (!string.IsNullOrEmpty(BaseHref) && BaseHref != "/")
+            {
+                html = html.Replace("<base href=\"/\" />", "<base href=\"" + BaseHref + "\" />");
+                File.WriteAllText(indexPath, html);
+            }
+            string notFoundPath = Path.Combine(WwwRootDir, "404.html");
+            File.WriteAllText(notFoundPath, html);
+        }
+]]>
+      </Code>
+    </Task>
+  </UsingTask>
 
 </Project>

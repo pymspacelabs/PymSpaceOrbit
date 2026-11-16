@@ -1,0 +1,110 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  web-build:
+    name: Web Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - name: Restore Web project
+        run: dotnet restore src/PymSpaceOrbit.Web/PymSpaceOrbit.Web.csproj
+
+      - name: Build Web project
+        run: dotnet publish src/PymSpaceOrbit.Web/PymSpaceOrbit.Web.csproj -c Release -p:AppBasePath=/PymSpaceOrbit/ -o publish/web
+
+      - name: Upload Web Build Artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: web-build
+          path: publish/web/wwwroot
+
+  maui-build:
+    name: MAUI Build (${{ matrix.platform }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: Android
+            runner: ubuntu-latest
+            target-framework: net11.0-android
+            workload: maui-android
+          - platform: iOS
+            runner: xcode-27
+            target-framework: net11.0-ios
+            workload: maui-ios
+          - platform: macOS Catalyst
+            runner: xcode-27
+            target-framework: net11.0-maccatalyst
+            workload: maui-maccatalyst
+          - platform: Windows
+            runner: windows-latest
+            target-framework: net11.0-windows10.0.19041.0
+            workload: maui-windows
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - name: Install MAUI workload
+        run: dotnet workload install ${{ matrix.workload }}
+
+      - name: Restore MAUI project
+        run: dotnet restore src/PymSpaceOrbit/PymSpaceOrbit.csproj -p:TargetFrameworks=${{ matrix.target-framework }}
+
+      - name: Build MAUI project
+        run: dotnet build src/PymSpaceOrbit/PymSpaceOrbit.csproj -f ${{ matrix.target-framework }} -c Release /p:EnableCodeSigning=false
+
+  deploy-web:
+    name: GitHub Pages Deployment
+    needs: web-build
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: github-pages
+      cancel-in-progress: false
+    steps:
+      - name: Download Web Build Artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: web-build
+          path: ./dist
+
+      - name: Upload GitHub Pages Artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: ./dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
